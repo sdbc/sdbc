@@ -10,6 +10,12 @@
 #include <json_pack.h>
 #include <sc.h>
 
+#include <linux/version.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(3,10,0)
+	#define S_IREAD __S_IREAD
+	#define S_IWRITE __S_IWRITE
+#endif
+
 #ifndef TRAINBEGIN
 
 #define TRANBEGIN 0

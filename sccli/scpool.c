@@ -85,15 +85,18 @@ void scpool_free()
 
 	if(!scpool) return;
 	scp=scpool;
-	for(int n=0;n<SCPOOLNUM;n++,scp++) {
+	int n = 0;
+	for(;n<SCPOOLNUM;n++,scp++) {
 		if(scp->path) {
 			path_lnk *pl=scp->path;
-			for(int j=0;j<scp->path_num;j++,pl++) {
+			int j = 0;
+			for(;j<scp->path_num;j++,pl++) {
 				pthread_cond_destroy(&pl->cond);
 				pthread_mutex_destroy(&pl->mut);
 				if(pl->lnk) {
 					resource *rs=pl->lnk;
-					for(int i=0;i<pl->resource_num;i++,rs++) {
+					int i = 0;
+					for(;i<pl->resource_num;i++,rs++) {
 						if(rs->Conn.Socket > -1) {
 							disconnect(&rs->Conn);
 						}
@@ -586,7 +589,7 @@ resource * get_SC_by_weight(int path_no,int flg)
 			return bad?(resource *)-1:NULL;
 		}
 		clock_gettime(CLOCK_REALTIME, &tims);
-		tims.tv_sec+=6;//因为归还连接并不锁weightLock，可能丢失事件，等6秒
+		tims.tv_sec+=6; //因为归还连接并不锁weightLock，可能丢失事件，等6秒
 		if(pthread_cond_timedwait(&scp->weightCond,&scp->weightLock,(const struct timespec *restrict )&tims )) //实在没有了，等
 		repeat--;
 	} while(1);

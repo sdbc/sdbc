@@ -29,6 +29,8 @@
 #define		D_NODE	    para[7]		/*目的结点描述*/
 #define		PKG_CRC	    para[8]		/*数据包CRC */
 
+typedef unsigned int u_int;
+
 typedef struct {             	/*协议头	*/
 	int	para[PARANUM];
 	char	*data;

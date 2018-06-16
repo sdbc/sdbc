@@ -10,7 +10,6 @@
 
 #include <fcntl.h>
 #include <sys/stat.h>
-//#include "../include/sdbc.h"
 #include <sccli.h>
 
 int N_Get_File_Size(fd)

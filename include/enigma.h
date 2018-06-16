@@ -11,6 +11,7 @@
 
 #define ROTORSZ 256
 
+typedef unsigned int u_int;
 typedef signed char ENIGMA[3][ROTORSZ];
 typedef struct {
 	ENIGMA t;
