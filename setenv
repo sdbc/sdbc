@@ -1,0 +1,2 @@
+SDBCDIR="`pwd`"
+export SDBCDIR

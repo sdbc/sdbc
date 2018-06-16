@@ -1,0 +1,19 @@
+extern T_PkgType login_tpl[];
+typedef struct {
+	char DEVID[17];
+	char LABEL[256];
+	char CA[200];
+	char UID[17];
+	char PWD[14];
+}login_stu;
+
+extern T_PkgType log_tpl[];
+typedef struct {
+        char DEVID[17];
+        char UID[17];
+        char DBUSER[81];
+        char DBOWN[81];
+        char Logtime[YEAR_TO_SEC_LEN];
+        char DBLABEL[81];
+}log_stu ;
+

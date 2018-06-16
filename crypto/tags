@@ -1,0 +1,88 @@
+HASH	memzip.c	/^#define HASH(s,c) ((((unsigned)(s)<<5) ^ (unsigned/
+HPERM_OP	fcrypt_b.c	/^#define HPERM_OP(a,t,n,m) ((t)=((((a)<<(16-(n)))^(/
+MD5	md5_one.c	/^unsigned char *MD5(const unsigned char *d, unsigne/
+MD5_Init	md5_dgst.c	/^void MD5_Init(MD5_CTX *c)$/
+MIN	enigma2.c	/^#define MIN(a,b) ((a)>(b)?(b):(a))$/
+Ma64n	a64n.c	/^main()$/
+Mcrc	crc.c	/^main()$/
+Mteni	teni.c	/^int main(int ac,char *av[])$/
+Mtnum	tnum.c	/^main()$/
+PERM_OP	fcrypt_b.c	/^#define PERM_OP(a,b,t,n,m) ((t)=((((a)>>(n))^(b))&/
+_e_m_	expmod.c	/^u_int *_e_m_(int n,u_int *a,u_int *z,u_int *m,u_in/
+_m_m_	mulmod.c	/^u_int *_m_m_(int n,u_int *a,u_int *b,u_int *m,u_in/
+a64_byte	a64n.c	/^int a64_byte(char *byte,char *str)$/
+a64n	a64n.c	/^int a64n(char a)$/
+adda	bignum.c	/^int adda(pd,ps,cy)$/
+addm	bignum.c	/^int addm(n,pd,ps)$/
+b_revers	enigma2.c	/^void b_revers(char *buf,int len)$/
+b_to_d	a64n.c	/^char *b_to_d(n,pb,d)$/
+byte2n	a64n.c	/^void byte2n(int n,u_int num[],char *bytestr)$/
+byte_a64	a64n.c	/^char * byte_a64(char* str,char *byte,int len)$/
+crypt	fcrypt.c	/^char *crypt(const char *buf, const char *salt)$/
+crypt_password	pass.c	/^void crypt_password(pass, salt,string,len,conn)$/
+crypt_password_setup	pass.c	/^static void crypt_password_setup(pw,salt,conn)$/
+d_to_b	a64n.c	/^u_int * d_to_b(n,cp,dp)$/
+decm	bignum.c	/^u_int * decm(n,pd)$/
+deflate	memzip.c	/^static int deflate(register struct comprtok *tokp,/
+des_check_key_parity	set_key.c	/^int des_check_key_parity(const_des_cblock *key)$/
+des_crypt	fcrypt.c	/^char *des_crypt(const char *buf, const char *salt)/
+des_fcrypt	fcrypt.c	/^char *des_fcrypt(const char *buf, const char *salt/
+des_fixup_key_parity	set_key.c	/^void des_fixup_key_parity(des_cblock *key)$/
+des_is_weak_key	set_key.c	/^int des_is_weak_key(const_des_cblock *key)$/
+des_key_sched	set_key.c	/^int des_key_sched(const_des_cblock *key, des_key_s/
+des_set_key	set_key.c	/^int des_set_key(const_des_cblock *key, des_key_sch/
+des_set_key_checked	set_key.c	/^int des_set_key_checked(const_des_cblock *key, des/
+des_set_key_unchecked	set_key.c	/^void des_set_key_unchecked(const_des_cblock *key, /
+des_set_odd_parity	set_key.c	/^void des_set_odd_parity(des_cblock *key)$/
+div1	bignum.c	/^int div1(n,pa,b,pq)$/
+diva	bignum.c	/^int diva(pa,b,pq)$/
+divm	bignum.c	/^int divm(n,div,by,quot,rem)$/
+em31	prikey.c	/^int em31(int a,int z,int n)$/
+enigma1	enigma1.c	/^void enigma1(ENIGMA t,char *string,int len)$/
+enigma1_init	enigma1.c	/^void enigma1_init(ENIGMA t,char *pw)$/
+enigma2_decode	enigma2.c	/^void enigma2_decode(ENIGMA2 *ep,char *buf,int len)/
+enigma2_encode	enigma2.c	/^void enigma2_encode(ENIGMA2 *ep,char *buf,int len)/
+enigma2_init	enigma2.c	/^void enigma2_init(ENIGMA2 *ep,char *key)$/
+enigma_rev	enigma2.c	/^void enigma_rev(ENIGMA ep,char *buf,int len)$/
+fcrypt_body	fcrypt_b.c	/^void fcrypt_body(DES_LONG *out, des_key_schedule k/
+frenz_decode	enigma1.c	/^void frenz_decode(ENIGMA t,char *string,int len)$/
+frenz_encode	enigma1.c	/^void frenz_encode(ENIGMA t,char *string,int len)$/
+gencrc	crc.c	/^unsigned short gencrc(unsigned char *p,int len)$/
+get_mac	mac.c	/^int get_mac(char* out)$/
+incm	bignum.c	/^u_int *incm(n,pd)$/
+interval	teni.c	/^long interval(struct timeval *begtime,struct timev/
+isprime4	tnum.c	/^int isprime4(u_int p[4])$/
+loadnum	a64n.c	/^void loadnum(int len,char *str,u_int *num)$/
+lshift	bignum.c	/^int lshift(int n,u_int *up,int i)$/
+md5_block_data_order	md5_dgst.c	/^void md5_block_data_order (MD5_CTX *c, const void /
+md5_block_host_order	md5_dgst.c	/^void md5_block_host_order (MD5_CTX *c, const void /
+memunzip	memzip.c	/^int memunzip(char *compr_str,int t_len,char *buf,i/
+memzip	memzip.c	/^int memzip(char *dest,char *src,int srcLen)$/
+mm31	prikey.c	/^#define mm31(a,z,n) (int)((int64_t)(a)*(z)%(n))$/
+mul1	bignum.c	/^u_int *mul1(n,pa,b,pm)$/
+mula	bignum.c	/^void mula(u_int a,u_int b,u_int ip[])$/
+mulm	bignum.c	/^u_int *mulm(n,pa,pb,pm)$/
+mysub	mulm.c	/^static int mysub(int n,u_int *a,u_int *b,u_int *re/
+n2byte	a64n.c	/^void n2byte(int n,u_int *num,char *bytestr)$/
+n64a	a64n.c	/^char n64a(int n)$/
+n_ff	bignum.c	/^u_int *n_ff(n,pa)$/
+n_iszero	bignum.c	/^int n_iszero(n,pa)$/
+n_not	bignum.c	/^u_int *n_not(n,pa)$/
+n_one	bignum.c	/^u_int *n_one(n,pa)$/
+n_zero	bignum.c	/^u_int *n_zero(n,pa)$/
+numcmp	bignum.c	/^int numcmp(n,pb,ps)$/
+numcpy	bignum.c	/^void numcpy(n,to,from)$/
+prikey	prikey.c	/^char * prikey(char *keybuf,int ind,u_int *family)$/
+prikey128	prikey128.c	/^char * prikey128(char *keybuf,u_int ind[4],u_int */
+print_key	prikey.c	/^char * print_key(char *buf,char *key)$/
+printit	md5_dgst.c	/^int printit(unsigned long *l)$/
+rev_enigma	enigma2.c	/^void rev_enigma(ENIGMA ep,char *buf,int len)$/
+rshift	bignum.c	/^int rshift(int n,u_int *up,int i)$/
+ssh_crc32	crc32.c	/^ssh_crc32(const u_char *s, u_int len)$/
+str_a64n	a64n.c	/^char * str_a64n(int n,char *str,u_int *num)$/
+str_n64a	a64n.c	/^char * str_n64a(int n,u_int *num,char *str)$/
+str_rotor	enigma2.c	/^static void str_rotor(char *str,int len,int rotor)/
+strhex	a64n.c	/^char *strhex(int n,u_int *num,char *str)$/
+suba	bignum.c	/^int suba(pd,ps,cy)$/
+subm	bignum.c	/^int subm(n,pd,ps)$/
+win_slip	memzip.c	/^static void win_slip(struct comprtok *tokp)$/

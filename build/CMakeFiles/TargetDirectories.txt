@@ -1,0 +1,3 @@
+/Users/weihualiu/workspace/project/git/sdbc/build/CMakeFiles/rebuild_cache.dir
+/Users/weihualiu/workspace/project/git/sdbc/build/CMakeFiles/edit_cache.dir
+/Users/weihualiu/workspace/project/git/sdbc/build/CMakeFiles/sc.dir

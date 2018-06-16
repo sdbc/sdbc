@@ -1,0 +1,27 @@
+
+
+struct linger 
+{
+     int l_onoff;
+     int l_linger;
+};
+有三种组合方式：
+第一种
+    l_onoff = 0;
+    l_linger忽略
+    这种方式下，就是在closesocket的时候立刻返回，底层会将未发送完的数据发送完成后再释放资源，也就
+是优雅的退出。
+第二种
+    l_onoff非零
+    l_linger = 0;
+    这种方式下，在调用closesocket的时候同样会立刻返回，但不会发送未发送完成的数据，而是通过一个REST包强制的关闭socket描述符，也就是强制的退出。
+第三种
+    l_onoff非零
+    l_linger > 0
+
+    这种方式下，在调用closesocket的时候不会立刻返回，内核会延迟一段时间，这个时间就由l_linger得值来决定。
+    如果超时时间到达之前，发送完未发送的数据(包括FIN包)并得到另一端的确认，closesocket会返回正确，socket描述符优雅性退出。
+    否则，closesocket会直接返回错误值，未发送数据丢失，socket描述符被强制性退出。
+    
+    
+ 

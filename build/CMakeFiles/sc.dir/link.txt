@@ -1,0 +1,2 @@
+/Library/Developer/CommandLineTools/usr/bin/ar qc libsc.a  CMakeFiles/sc.dir/client.c.o CMakeFiles/sc.dir/getls.c.o CMakeFiles/sc.dir/sqlc.c.o CMakeFiles/sc.dir/sqlinit.c.o CMakeFiles/sc.dir/getsvc.c.o CMakeFiles/sc.dir/netconnect.c.o CMakeFiles/sc.dir/get_clikey.c.o CMakeFiles/sc.dir/scpool.c.o CMakeFiles/sc.dir/N_get_tpl.c.o
+/Library/Developer/CommandLineTools/usr/bin/ranlib libsc.a
