@@ -1,9 +1,9 @@
 /*****************************************************
  * For SDBC 4.0
- * Êı¾İ¿âÕÊºÅ¿ÚÁîµÄ»ñÈ¡º¯Êı
- * SDBC·â×°ÁËÊı¾İ¿âµÄÕÊºÅ¿ÚÁî¡£
- * ¿Í»§¶ËĞèÒªÒÔÁ¬½Ó´®¹ØÁªÊı¾İ¿â
- * ±¾³ÌĞò¾ÍÊÇÔÚauthÎÄ¼şÀïÒÔÁ¬½Ó´®ÌáÈ¡ÕÊºÅ¿ÚÁî¡£
+ * æ•°æ®åº“å¸å·å£ä»¤çš„è·å–å‡½æ•°
+ * SDBCå°è£…äº†æ•°æ®åº“çš„å¸å·å£ä»¤ã€‚
+ * å®¢æˆ·ç«¯éœ€è¦ä»¥è¿æ¥ä¸²å…³è”æ•°æ®åº“
+ * æœ¬ç¨‹åºå°±æ˜¯åœ¨authæ–‡ä»¶é‡Œä»¥è¿æ¥ä¸²æå–å¸å·å£ä»¤ã€‚
  *****************************************************/
 
 
@@ -12,36 +12,36 @@
 #include <unistd.h>
 
 /*************************************************
- * ÓÉÓÃ»§Ìá¹©µÄ½âÃÜº¯ÊıµØÖ·£¬
- * ¿ÕÎª²»ĞèÒª½âÃÜ¡£
+ * ç”±ç”¨æˆ·æä¾›çš„è§£å¯†å‡½æ•°åœ°å€ï¼Œ
+ * ç©ºä¸ºä¸éœ€è¦è§£å¯†ã€‚
  *************************************************/
 
 static const char *database_auth_item[]={
-	"^[	 ]*UID[ 	]*=[ 	]*",
-	"^[	 ]*PWD[ 	]*=[ 	]*",
-	"^[	 ]*USERNAME[ 	]*=[ 	]*",
-	"^[	 ]*PASSWORD[ 	]*=[ 	]*",
-	"^[	 ]*SID[ 	]*=[ 	]*",
-	"^[	 ]*DBOWN[ 	]*=[ 	]*",
+		"^[	 ]*UID[ 	]*=[ 	]*",
+		"^[	 ]*PWD[ 	]*=[ 	]*",
+		"^[	 ]*USERNAME[ 	]*=[ 	]*",
+		"^[	 ]*PASSWORD[ 	]*=[ 	]*",
+		"^[	 ]*SID[ 	]*=[ 	]*",
+		"^[	 ]*DBOWN[ 	]*=[ 	]*",
 };
 #define REG_NUM (sizeof(database_auth_item)/sizeof(char *))
 
 int open_auth(char * authfile,char *name,
-	char *DNS,char *UID,char *Pwd,char *DBOWN)
+			  char *DNS,char *UID,char *Pwd,char *DBOWN)
 {
-FILE *fp;
-char buffer[256];
-regex_t dns_name;
-regex_t dns_end;
-regex_t auth[REG_NUM+1];
+	FILE *fp;
+	char buffer[256];
+	regex_t dns_name;
+	regex_t dns_end;
+	regex_t auth[REG_NUM+1];
 
-char *dns_end_str="[ 	]*[<]DBLABEL";
-char dns_str[181];
-regmatch_t retstr[5];
-int i;
-int ret;
-int found=0;
-char *p;
+	char *dns_end_str="[ 	]*[<]DBLABEL";
+	char dns_str[181];
+	regmatch_t retstr[5];
+	int i;
+	int ret;
+	int found=0;
+	char *p;
 	if(DBOWN) *DBOWN=0;
 	if(!authfile||!*authfile) {
 		ShowLog(1,"authfile is Empty!");
@@ -52,13 +52,13 @@ char *p;
 		return FORMATERR;
 	}
 	for(i=0;i<REG_NUM;i++) {
-	    ret=regcomp(&auth[i],database_auth_item[i],REG_EXTENDED|REG_ICASE);
-	    if(ret) {
-		regerror(ret,&auth[i],dns_str,sizeof(dns_str));
-		ShowLog(1,"SQL_Auth regcomp %s,err=%s",
-				database_auth_item[i],dns_str);
-		return MEMERR;
-	    }
+		ret=regcomp(&auth[i],database_auth_item[i],REG_EXTENDED|REG_ICASE);
+		if(ret) {
+			regerror(ret,&auth[i],dns_str,sizeof(dns_str));
+			ShowLog(1,"SQL_Auth regcomp %s,err=%s",
+					database_auth_item[i],dns_str);
+			return MEMERR;
+		}
 	}
 	*DNS=*UID=*Pwd=0;
 	sprintf(dns_str,"^[ 	]*[<][ 	]*DBLABEL[ 	]*%s[ 	]*[>].*",name);
@@ -81,46 +81,46 @@ char *p;
 		p=skipblk(buffer);
 		if(!*p||*p=='#') continue;
 		if(!found){
-		    ret=regexec(&dns_name,p,5,retstr,0);
-		    if(ret)continue;
-		    found=1;
-		    continue;
-	        }
-	        else {
-		    ret=regexec(&dns_end,p,5,retstr,0);
-		    if(!ret)break;
+			ret=regexec(&dns_name,p,5,retstr,0);
+			if(ret)continue;
+			found=1;
+			continue;
 		}
-        	for(i=0;i<REG_NUM;i++){
+		else {
+			ret=regexec(&dns_end,p,5,retstr,0);
+			if(!ret)break;
+		}
+		for(i=0;i<REG_NUM;i++){
 			ret=regexec(&auth[i],p,5,retstr,0);
 			if(!ret){
 //ShowLog(5,"openauth[%d]:%s",i,p);
 				switch(i){
-				case 0:
-				case 2:
-					strcpy(UID,buffer+retstr[0].rm_eo);
-					if(*UID=='@' && encryptproc) {
-						strdel(UID);
-						encryptproc(UID);
-					}
-					break;
-				case 1:
-				case 3:
-					strcpy(Pwd,buffer+retstr[0].rm_eo);
-					if(*Pwd=='@' && encryptproc) {
-                                                strdel(Pwd);
-                                                encryptproc(Pwd);
-                                        }
+					case 0:
+					case 2:
+						strcpy(UID,buffer+retstr[0].rm_eo);
+						if(*UID=='@' && encryptproc) {
+							strdel(UID);
+							encryptproc(UID);
+						}
+						break;
+					case 1:
+					case 3:
+						strcpy(Pwd,buffer+retstr[0].rm_eo);
+						if(*Pwd=='@' && encryptproc) {
+							strdel(Pwd);
+							encryptproc(Pwd);
+						}
 
 						break;
-				case 4:
-					strcpy(DNS,buffer+retstr[0].rm_eo);
+					case 4:
+						strcpy(DNS,buffer+retstr[0].rm_eo);
 						break;
-				case 5:
-					if(DBOWN)
-						strcpy(DBOWN,
-						  buffer+retstr[0].rm_eo);
-				default:
-					break;
+					case 5:
+						if(DBOWN)
+							strcpy(DBOWN,
+								   buffer+retstr[0].rm_eo);
+					default:
+						break;
 				}
 			}
 		}

@@ -1,6 +1,6 @@
 /***********************************************
- * Ïß³Ì³Ø·şÎñÆ÷ 
- * SDBC 7.1 Ö§³ÖFiberized IO(coroutine,Ğ­³Ì)
+ * çº¿ç¨‹æ± æœåŠ¡å™¨
+ * SDBC 7.1 æ”¯æŒFiberized IO(coroutine,åç¨‹)
  ***********************************************/
 
 #include <sys/socket.h>
@@ -43,7 +43,7 @@ static void *thread_work(void *param);
 
 static int g_epoll_fd=-1;
 
-// SDBC task control block for epoll event 
+// SDBC task control block for epoll event
 typedef struct event_node {
 	struct event_node *next;
 	int events;
@@ -58,7 +58,7 @@ typedef struct event_node {
 	int AIO_flg;
 	INT64 timestamp;
 	int timeout;
-	volatile int status; //-1 Î´Á¬½Ó£¬0:Î´µÇÂ¼£¬1£ºÒÑµÇÂ¼
+	volatile int status; //-1 æœªè¿æ¥ï¼Œ0:æœªç™»å½•ï¼Œ1ï¼šå·²ç™»å½•
 } TCB;
 
 static int do_epoll(TCB *task,int op,int flg);
@@ -68,20 +68,20 @@ typedef  struct {
 	pthread_cond_t cond;
 	TCB *queue;
 	int svc_num;
-	char flg;	//ÎŞÊØ»¤Ïß³Ì0£¬ÓĞ1
+	char flg;	//æ— å®ˆæŠ¤çº¿ç¨‹0ï¼Œæœ‰1
 } Qpool;
 
-//¾ÍĞ÷¶ÓÁĞ
+//å°±ç»ªé˜Ÿåˆ—
 static Qpool rpool={PTHREAD_MUTEX_INITIALIZER,PTHREAD_COND_INITIALIZER,NULL,-1,0};
 
-//Ïß³Ì³Ø½Úµã
+//çº¿ç¨‹æ± èŠ‚ç‚¹
 typedef struct {
 	pthread_t tid;
 	int status;
 	ucontext_t tc;
 	INT64 timestamp;
 } resource;
-//Ïß³Ì³Ø
+//çº¿ç¨‹æ± 
 static struct {
 	pthread_mutex_t mut;
 	int num;
@@ -89,7 +89,7 @@ static struct {
 	resource *pool;
 	pthread_attr_t attr;
 } tpool={PTHREAD_MUTEX_INITIALIZER,0,1,NULL};
-//ÈÎÎñ³Ø
+//ä»»åŠ¡æ± 
 static  struct {
 	pthread_mutex_t mut;
 	pthread_cond_t cond;
@@ -112,13 +112,13 @@ T_NetHead *getNetHead(int TCBno)
 
 int TCB_add(TCB **rp,int TCBno)
 {
-TCB *task;
+	TCB *task;
 	if(TCBno<0 || TCBno>=client_q.max_client) return -1;
 	task=&client_q.pool[TCBno];
 //	task->timestamp=now_usec();
 	if(task->next) {
-		ShowLog(1,"%s:TCB:%d ÒÑ¾­ÔÚ¶ÓÁĞÖĞ",__FUNCTION__,TCBno);
-		return -2;//²»¿ÉÒÔÔÚÆäËû¶ÓÁĞ
+		ShowLog(1,"%s:TCB:%d å·²ç»åœ¨é˜Ÿåˆ—ä¸­",__FUNCTION__,TCBno);
+		return -2;//ä¸å¯ä»¥åœ¨å…¶ä»–é˜Ÿåˆ—
 	}
 	if(!rp) {
 		pthread_mutex_lock(&rpool.mut);
@@ -128,37 +128,37 @@ TCB *task;
 		*rp=task;
 		task->next=task;
 	} else {
-		task->next=(*rp)->next;//Á¬½Ó¶ÓÍ·
-		(*rp)->next=task;//¹Òµ½Á´Î²
-		*rp=task;//Ö¸Ïòµ½Á´Î²
+		task->next=(*rp)->next;//è¿æ¥é˜Ÿå¤´
+		(*rp)->next=task;//æŒ‚åˆ°é“¾å°¾
+		*rp=task;//æŒ‡å‘åˆ°é“¾å°¾
 	}
 	if(*rp==rpool.queue) {
 		pthread_mutex_unlock(&rpool.mut);
 //ShowLog(1,"%s:TCB:%d,tid=%lx",__FUNCTION__,TCBno,pthread_self());
-		pthread_cond_signal(&rpool.cond); //»½ĞÑ¹¤×÷Ïß³Ì	
+		pthread_cond_signal(&rpool.cond); //å”¤é†’å·¥ä½œçº¿ç¨‹
 	}
 	return 0;
 }
 
 int TCB_get(TCB **rp)
 {
-TCB *task;
+	TCB *task;
 	if(!rp || !*rp) return -1;
-	task=(*rp)->next;//ÕÒµ½¶ÓÍ·
+	task=(*rp)->next;//æ‰¾åˆ°é˜Ÿå¤´
 	if(!task->next) {
-		ShowLog(1,"%s:TCB=%d,´í£¬Î´ÔÚ¶ÓÁĞÖĞ£¡",__FUNCTION__,task->sv.TCB_no);
+		ShowLog(1,"%s:TCB=%d,é”™ï¼Œæœªåœ¨é˜Ÿåˆ—ä¸­ï¼",__FUNCTION__,task->sv.TCB_no);
 		return -2;
 	}
-	if(task->next == task) *rp=NULL;//×îºóÒ»¸öÁË
-	else (*rp)->next=task->next;//ĞÂµÄ¶ÓÍ·
+	if(task->next == task) *rp=NULL;//æœ€åä¸€ä¸ªäº†
+	else (*rp)->next=task->next;//æ–°çš„é˜Ÿå¤´
 	task->next=NULL;
 	return task->sv.TCB_no;
 }
 
 sdbcfunc  set_callback(int TCBno,sdbcfunc callback,int timeout)
 {
-sdbcfunc old;
-TCB *task;
+	sdbcfunc old;
+	TCB *task;
 
 	if(TCBno<0 ||TCBno>client_q.max_client) return (sdbcfunc)-1;
 	task=&client_q.pool[TCBno];
@@ -169,32 +169,32 @@ TCB *task;
 }
 /**
  * unset_callback
- * Çå³ıÓÃ»§×Ô¶¨Òå»Øµ÷º¯Êış
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return Ô­»Øµ÷º¯Êı
+ * æ¸…é™¤ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°ï¿½
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return åŸå›è°ƒå‡½æ•°
  */
 sdbcfunc unset_callback(int TCB_no)
 {
-sdbcfunc old;
-TCB *task;
-        if(TCB_no<0 || client_q.max_client <= TCB_no) return NULL;
+	sdbcfunc old;
+	TCB *task;
+	if(TCB_no<0 || client_q.max_client <= TCB_no) return NULL;
 	task=&client_q.pool[TCB_no];
 	old=task->call_back;
-        task->call_back=NULL;
-        task->timeout=task->conn.timeout;
-	
-        return old;
+	task->call_back=NULL;
+	task->timeout=task->conn.timeout;
+
+	return old;
 }
 
 /**
  * get_callback
- * È¡ÓÃ»§×Ô¶¨Òå»Øµ÷º¯Êış
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return »Øµ÷º¯Êı
+ * å–ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°ï¿½
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return å›è°ƒå‡½æ•°
  */
 sdbcfunc get_callback(int TCB_no)
 {
-        if(TCB_no<0 || client_q.max_client <= TCB_no) return NULL;
+	if(TCB_no<0 || client_q.max_client <= TCB_no) return NULL;
 	return client_q.pool[TCB_no].call_back;
 }
 
@@ -211,9 +211,9 @@ void *get_TCB_ctx(int TCBno)
 }
 void tpool_free()
 {
-int i;
+	int i;
 	if(client_q.pool) {
-		if(client_q.pool[0].ctx) 
+		if(client_q.pool[0].ctx)
 			free(client_q.pool[0].ctx);
 		for(i=0;i<client_q.max_client;i++) {
 			client_q.pool[i].conn.Var=NULL;
@@ -241,35 +241,35 @@ int i;
 	return ;
 }
 
-//½¨Á¢ĞÂÏß³Ì
+//å»ºç«‹æ–°çº¿ç¨‹
 static int new_wt(int n)
 {
-int ret;
+	int ret;
 
 	if(n<0) return n;
 	tpool.pool[n].status=1;
 	tpool.pool[n].timestamp=now_usec();
 	ret=pthread_create(&tpool.pool[n].tid,&tpool.attr,thread_work,&tpool.pool[n]);
-        if(ret) {
+	if(ret) {
 		tpool.pool[n].tid=0;
-                ShowLog(1,"%s:pthread_create:%s",__FUNCTION__,strerror(ret));
+		ShowLog(1,"%s:pthread_create:%s",__FUNCTION__,strerror(ret));
 		return ret;
-        }
+	}
 	return 0;
 }
 extern srvfunc *SRVFUNC;
 static int tpool_init(int size_ctx)
 {
-char *p;
-int ret,i,limit;
-struct rlimit sLimit;
-TCB *task;
-int mtu;
+	char *p;
+	int ret,i,limit;
+	struct rlimit sLimit;
+	TCB *task;
+	int mtu;
 
 	p=getenv("SENDSIZE");
-        if(p && isdigit(*p)) {
-                mtu=atoi(p);
-        } else mtu=0;
+	if(p && isdigit(*p)) {
+		mtu=atoi(p);
+	} else mtu=0;
 
 	rpool.svc_num=-1;
 	SRVFUNC=Function;//used by get_srvname();
@@ -281,7 +281,7 @@ int mtu;
 
 	p=getenv("MAXCLT");
 	if(!p || !isdigit(*p)) {
-		ShowLog(4,"%s:È±ÉÙ»·¾³±äÁ¿MAXCLT,ÉèÖÃÎª2",__FUNCTION__);
+		ShowLog(4,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡MAXCLT,è®¾ç½®ä¸º2",__FUNCTION__);
 		client_q.max_client=2;
 	} else {
 		client_q.max_client=atoi(p);
@@ -299,7 +299,7 @@ int mtu;
 		} else ;
 	else client_q.pool[0].ctx=NULL;
 	client_q.free_q=NULL;
-	
+
 	task=client_q.pool;
 	for(i=0;i<=client_q.max_client;i++,task++) {
 		initconnect(&task->conn);
@@ -334,7 +334,7 @@ int mtu;
 	p=getenv("MAXTHREAD");
 	if(!p || !isdigit(*p)) {
 		tpool.num=tpool.rdy_num+1;
-		ShowLog(4,"%s:È±ÉÙ»·¾³±äÁ¿MAXTHREAD,ÉèÖÃÎª%d",__FUNCTION__,tpool.num);
+		ShowLog(4,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡MAXTHREAD,è®¾ç½®ä¸º%d",__FUNCTION__,tpool.num);
 	} else tpool.num=atoi(p);
 	ShowLog(0,"%s:MAXCLIENT=%d,threads=%d",__FUNCTION__,client_q.max_client,tpool.num);
 	if(NULL==(tpool.pool=(resource *)malloc(tpool.num * sizeof(resource)))) {
@@ -345,37 +345,37 @@ int mtu;
 		return -3;
 	}
 	ret= pthread_attr_init(&tpool.attr);
-        if(ret) {
-                ShowLog(1,"%s:can not init pthread attr %s",__FUNCTION__,strerror(ret));
-        } else {
-//ÉèÖÃ·ÖÀëÏß³Ì
-        	ret=pthread_attr_setdetachstate(&tpool.attr,PTHREAD_CREATE_DETACHED);
-        	if(ret) {
-               	 ShowLog(1,"%s:can't set pthread attr PTHREAD_CREATE_DETACHED:%s",
-		 	__FUNCTION__,strerror(ret));
-       		}
-//ÉèÖÃÏß³Ì¶ÑÕ»±£»¤Çø 16K
+	if(ret) {
+		ShowLog(1,"%s:can not init pthread attr %s",__FUNCTION__,strerror(ret));
+	} else {
+//è®¾ç½®åˆ†ç¦»çº¿ç¨‹
+		ret=pthread_attr_setdetachstate(&tpool.attr,PTHREAD_CREATE_DETACHED);
+		if(ret) {
+			ShowLog(1,"%s:can't set pthread attr PTHREAD_CREATE_DETACHED:%s",
+					__FUNCTION__,strerror(ret));
+		}
+//è®¾ç½®çº¿ç¨‹å †æ ˆä¿æŠ¤åŒº 16K
 		pthread_attr_setguardsize(&tpool.attr,(size_t)(1024 * 16));
-//ÉèÖÃÓÃ»§Õ»¿Õ¼ä
+//è®¾ç½®ç”¨æˆ·æ ˆç©ºé—´
 		p=getenv("USERSTACKSZ");
 		if(p && isdigit(*p)) {
-size_t sz;
-char c;
+			size_t sz;
+			char c;
 			ret=sscanf(p,"%ld%c",&sz,&c);
 			if(ret>1) {
 				switch(toupper(c)) {
-				case 'K':
-					sz *= 1024;
-					break;
-				case 'M':
-					sz*=1024*1024;
-					break;
-				default:break;
+					case 'K':
+						sz *= 1024;
+						break;
+					case 'M':
+						sz*=1024*1024;
+						break;
+					default:break;
 				}
 			}
 			if(sz>0) {
 				sz+=PTHREAD_STACK_MIN;
-				ret = pthread_attr_setstacksize(&tpool.attr, sz);	
+				ret = pthread_attr_setstacksize(&tpool.attr, sz);
 				if(!ret) use_stack_size=sz;
 			}
 		}
@@ -389,7 +389,7 @@ char c;
 		tpool.pool[i].tc.uc_stack.ss_size=0;
 		tpool.pool[i].tc.uc_stack.ss_sp=NULL;
 		tpool.pool[i].tc.uc_link=NULL;
-	}	
+	}
 	rpool.queue=NULL;
 //ShowLog(5,"%s:maxfd=%d,maxclt=%d",__FUNCTION__,limit,client_q.max_client);
 	if( 0 <= (g_epoll_fd=epoll_create(limit>0?limit<(client_q.max_client<<1)?limit:client_q.max_client<<1:client_q.max_client))) {
@@ -397,14 +397,14 @@ char c;
 		return 0;
 	}
 	ShowLog(1,"%s:epoll_create err=%d,%s",
-		__FUNCTION__,errno,strerror(errno));
+			__FUNCTION__,errno,strerror(errno));
 	tpool_free();
 	return SYSERR;
 }
 
 static TCB *rdy_get()
 {
-TCB *enp;
+	TCB *enp;
 	if(!rpool.queue) return NULL;
 	enp=rpool.queue->next;
 	if(enp==NULL) {
@@ -420,16 +420,16 @@ TCB *enp;
 }
 /**
  * set_event
- * ÓÃ»§×Ô¶¨ÒåÊÂ¼ş
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @param fd ÊÂ¼şfd Ö»Ö§³Ö¶ÁÊÂ¼ş 
- * @param call_back ·¢ÉúÊÂ¼şµÄ»Øµ÷º¯Êı
- * @param timeout fdµÄ³¬Ê±Ãë,Ö»ÔÊĞíÉèÖÃsocket fd
- * @return ³É¹¦ 0
+ * ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @param fd äº‹ä»¶fd åªæ”¯æŒè¯»äº‹ä»¶
+ * @param call_back å‘ç”Ÿäº‹ä»¶çš„å›è°ƒå‡½æ•°
+ * @param timeout fdçš„è¶…æ—¶ç§’,åªå…è®¸è®¾ç½®socket fd
+ * @return æˆåŠŸ 0
  */
 int set_event(int TCB_no,int fd,sdbcfunc call_back,int timeout)
 {
-TCB *task;
+	TCB *task;
 
 	if(TCB_no<0 || client_q.max_client <= TCB_no) return -1;
 	task=&client_q.pool[TCB_no];
@@ -443,14 +443,14 @@ TCB *task;
 
 /**
  * clr_event
- * Çå³ıÓÃ»§×Ô¶¨ÒåÊÂ¼ş
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ³É¹¦ 0
+ * æ¸…é™¤ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return æˆåŠŸ 0
  */
 int clr_event(int TCB_no)
 {
-TCB *task;
-int ret;
+	TCB *task;
+	int ret;
 	if(TCB_no<0 || client_q.max_client <= TCB_no) return -1;
 	task=&client_q.pool[TCB_no];
 	if(task->fd == task->conn.Socket) {
@@ -461,7 +461,7 @@ int ret;
 	task->call_back=NULL;
 	ret=do_epoll(task,EPOLL_CTL_DEL,0);
 	if(ret) ShowLog(1,"%s:tid=%lx,TCB:%d,do_epoll ret=%d",
-		__FUNCTION__,pthread_self(),TCB_no,ret);
+					__FUNCTION__,pthread_self(),TCB_no,ret);
 	task->fd=task->conn.Socket;
 	task->timeout=task->conn.timeout;
 	return 0;
@@ -469,9 +469,9 @@ int ret;
 
 /**
  * get_event_fd
- * È¡ÊÂ¼şfd
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ÊÂ¼şfd
+ * å–äº‹ä»¶fd
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return äº‹ä»¶fd
  */
 int get_event_fd(int TCB_no)
 {
@@ -480,9 +480,9 @@ int get_event_fd(int TCB_no)
 }
 /**
  * get_event_status
- * È¡ÊÂ¼ş×´Ì¬
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ÊÂ¼ş×´Ì¬
+ * å–äº‹ä»¶çŠ¶æ€
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return äº‹ä»¶çŠ¶æ€
  */
 int get_event_status(int TCB_no)
 {
@@ -492,9 +492,9 @@ int get_event_status(int TCB_no)
 
 /**
  * get_event_status
- * È¡TCB×´Ì¬
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return TCB×´Ì¬
+ * å–TCBçŠ¶æ€
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return TCBçŠ¶æ€
  */
 int get_TCB_status(int TCB_no)
 {
@@ -504,11 +504,11 @@ int get_TCB_status(int TCB_no)
 
 static void client_del(TCB *task)
 {
-struct linger so_linger;
+	struct linger so_linger;
 
 	so_linger.l_onoff=1;
-        so_linger.l_linger=0;
-        setsockopt(task->conn.Socket, SOL_SOCKET, SO_LINGER, &so_linger, sizeof so_linger);
+	so_linger.l_linger=0;
+	setsockopt(task->conn.Socket, SOL_SOCKET, SO_LINGER, &so_linger, sizeof so_linger);
 	pthread_mutex_lock(&tpool.mut);
 	task->fd=-1;
 	task->AIO_flg=0;
@@ -520,40 +520,40 @@ struct linger so_linger;
 	pthread_mutex_lock(&client_q.mut);
 	TCB_add(&client_q.free_q,task->sv.TCB_no);
 	pthread_mutex_unlock(&client_q.mut);
-	pthread_cond_signal(&client_q.cond); //»½ĞÑÖ÷Ïß³Ì	
+	pthread_cond_signal(&client_q.cond); //å”¤é†’ä¸»çº¿ç¨‹
 	ShowLog(3,"%s:tid=%lx,TCB:%d deleted!",__FUNCTION__,pthread_self(),task->sv.TCB_no);
 }
 
-//¼ÓÈëĞÂÁ¬½Ó
+//åŠ å…¥æ–°è¿æ¥
 static int do_epoll(TCB *task,int op,int flg)
 {
-struct epoll_event epv = {0, {0}};
-int  ret;
+	struct epoll_event epv = {0, {0}};
+	int  ret;
 	if(task->fd<0) return FORMATERR;
 	if(task->next) {
-		ShowLog(1,"%s:tid=%lx,TCB:%d ÒÑ¾­ÔÚ¶ÓÁĞÖĞ,fd=%d,Sock=%d",__FUNCTION__,
-			pthread_self(),task->sv.TCB_no,task->fd,task->conn.Socket);
+		ShowLog(1,"%s:tid=%lx,TCB:%d å·²ç»åœ¨é˜Ÿåˆ—ä¸­,fd=%d,Sock=%d",__FUNCTION__,
+				pthread_self(),task->sv.TCB_no,task->fd,task->conn.Socket);
 		return -1;
 	}
 	epv.events =  flg?EPOLLOUT:EPOLLIN;
 	epv.events |= EPOLLONESHOT;
 	epv.data.ptr = task;
 	task->events=0;
-	if(op) 
+	if(op)
 		ret=epoll_ctl(g_epoll_fd,op,task->fd,&epv);
 	else {
 		ret=epoll_ctl(g_epoll_fd,EPOLL_CTL_MOD,task->fd,&epv);
-		if(ret < 0 && errno==ENOENT) 
+		if(ret < 0 && errno==ENOENT)
 			ret=epoll_ctl(g_epoll_fd,EPOLL_CTL_ADD,task->fd,&epv);
 	}
 	if(ret<0 || op==EPOLL_CTL_DEL) {
 		if(ret<0) {
 			if( errno != EEXIST) ShowLog(1,"%s:tid=%lx,epoll_ctl fd[%d]=%d,op=%d,ret=%d,err=%d,%s",__FUNCTION__,
-				pthread_self(),task->sv.TCB_no, task->fd,op,ret,errno,strerror(errno));
+										 pthread_self(),task->sv.TCB_no, task->fd,op,ret,errno,strerror(errno));
 		} else {
-			if(task->status>-1) 
-			   ShowLog(3,"%s:tid=%lx epoll_ctl fd[%d]=%d,deleted,op=%d",__FUNCTION__,
-				pthread_self(),task->sv.TCB_no, task->fd,op);
+			if(task->status>-1)
+				ShowLog(3,"%s:tid=%lx epoll_ctl fd[%d]=%d,deleted,op=%d",__FUNCTION__,
+						pthread_self(),task->sv.TCB_no, task->fd,op);
 			task->fd=-1;
 		}
 	}
@@ -566,128 +566,128 @@ static TCB * get_TCB(int TCB_no)
 	return &client_q.pool[TCB_no];
 }
 
-//¹¤×÷Ïß³Ì
+//å·¥ä½œçº¿ç¨‹
 static void do_work(int TCB_no)
 {
-int ret;
-TCB *task=get_TCB(TCB_no);
-T_Connect *conn;
-void (*init)(T_Connect *,T_NetHead *);
-T_SRV_Var *ctx=&task->sv;
-int timeout=0;
+	int ret;
+	TCB *task=get_TCB(TCB_no);
+	T_Connect *conn;
+	void (*init)(T_Connect *,T_NetHead *);
+	T_SRV_Var *ctx=&task->sv;
+	int timeout=0;
 
-	ctx->tid=pthread_self();//±êÖ¾¶àÏß³Ì·şÎñ
+	ctx->tid=pthread_self();//æ ‡å¿—å¤šçº¿ç¨‹æœåŠ¡
 	conn=&task->conn;
 	conn->Var=ctx;
 	timeout=task->timeout;
 	task->timeout=0;
 	ret=0;
-    do {
-	if(!task->call_back) { //SDBC±ê×¼ÊÂ¼ş 
-//Ğ­ÉÌÃÜÔ¿
-		if(task->status==-1) {
-			init=(void (*)())conn->only_do;
-			conn->only_do=0;
-			ret=mk_clikey(conn->Socket,&conn->t,conn->family);
-			if(ret<0) {
-				if(ret!=SYSERR) { 
-				char addr[16];
-					peeraddr(conn->Socket,addr);
-					ShowLog(1,"%s:tid=%lx,TCB:%d,Ğ­ÉÌÃÜÔ¿Ê§°Ü!,addr=%s,ret=%d",__FUNCTION__,
-							ctx->tid,task->sv.TCB_no,addr,ret);
+	do {
+		if(!task->call_back) { //SDBCæ ‡å‡†äº‹ä»¶
+//åå•†å¯†é’¥
+			if(task->status==-1) {
+				init=(void (*)())conn->only_do;
+				conn->only_do=0;
+				ret=mk_clikey(conn->Socket,&conn->t,conn->family);
+				if(ret<0) {
+					if(ret!=SYSERR) {
+						char addr[16];
+						peeraddr(conn->Socket,addr);
+						ShowLog(1,"%s:tid=%lx,TCB:%d,åå•†å¯†é’¥å¤±è´¥!,addr=%s,ret=%d",__FUNCTION__,
+								ctx->tid,task->sv.TCB_no,addr,ret);
+					}
+					//é‡Šæ”¾è¿æ¥
+					ret=-1;
+					break;
 				}
-	//ÊÍ·ÅÁ¬½Ó
+				conn->CryptFlg=ret;
+				task->status=0;
+				if(init) init(conn,&task->head);
+				task->timeout=60;//60ç§’å†…å¿…é¡»ç™»å½•
+				ret=0;
+				break;
+			}
+
+			ret=RecvPack(conn,&task->head);
+			if(ret) {
+				ShowLog(1,"%s:TCB:%d,æ¥æ”¶é”™è¯¯,tid=%lx,err=%d,%s,event=%08X",__FUNCTION__,
+						task->sv.TCB_no,ctx->tid,errno,strerror(errno),task->events);
 				ret=-1;
 				break;
-			} 
-			conn->CryptFlg=ret;
-			task->status=0;
-			if(init) init(conn,&task->head);
-			task->timeout=60;//60ÃëÄÚ±ØĞëµÇÂ¼
-			ret=0;
-			break;
-		}
-	
-		ret=RecvPack(conn,&task->head);
-		if(ret) {
-			ShowLog(1,"%s:TCB:%d,½ÓÊÕ´íÎó,tid=%lx,err=%d,%s,event=%08X",__FUNCTION__,
-				task->sv.TCB_no,ctx->tid,errno,strerror(errno),task->events);
-			ret=-1;
-			break;
-		}
-		task->timestamp=now_usec();
-		ShowLog(4,"%s: TCB_no=%d,tid=%lx,PROTO_NUM=%d pkg_len=%d,t_len=%d,O_NODE=%u,USEC=%llu",
-			__FUNCTION__,TCB_no,ctx->tid,
-	                task->head.PROTO_NUM,task->head.PKG_LEN,task->head.T_LEN,
-			task->head.O_NODE,task->timestamp);
-	
-		if(task->head.PROTO_NUM==65535) {
-			ShowLog(3,"%s: disconnect by client",__FUNCTION__);
-			ret=-1;
-			break;
-		} else if(task->head.PROTO_NUM==1){
-	                ret=Echo(conn,&task->head);
-	        } else if(task->status==0) {
-			if(!task->head.PROTO_NUM) {
-				ret=Function[0].funcaddr(conn,&task->head);
-				if(ret>=0) {
-					task->status=ret;
-					if(ret==1) task->timeout=conn->timeout;
-				}
-	                } else {
-	                        ShowLog(1,"%s:TCB:%d,Î´µÇÂ¼",__FUNCTION__,task->sv.TCB_no);
-	                        ret=-1;
-				break;
-	                }
-		} else if (conn->only_do) {
-			ret=conn->only_do(conn,&task->head);
-		} else {
-			if(task->head.PROTO_NUM==0) {
-				ret=get_srvname(conn,&task->head);
-				if(task->status>0) set_showid(task->ctx);//Showid Ó¦¸ÃÔÚ»á»°ÉÏÏÂÎÄ½á¹¹Àï 
-			} else if(task->head.PROTO_NUM>rpool.svc_num) {
-	                         ShowLog(1,"%s:Ã»ÓĞÕâ¸ö·şÎñºÅ %d",__FUNCTION__,task->head.PROTO_NUM);
-	                         ret=-1;
-	                } else {
-	                        ret=Function[task->head.PROTO_NUM].funcaddr(conn,&task->head);
-	                        if(ret==-1)
-					ShowLog(1,"%s:TCB:%d,disconnect by server",__FUNCTION__,
-						task->sv.TCB_no);
 			}
+			task->timestamp=now_usec();
+			ShowLog(4,"%s: TCB_no=%d,tid=%lx,PROTO_NUM=%d pkg_len=%d,t_len=%d,O_NODE=%u,USEC=%llu",
+					__FUNCTION__,TCB_no,ctx->tid,
+					task->head.PROTO_NUM,task->head.PKG_LEN,task->head.T_LEN,
+					task->head.O_NODE,task->timestamp);
+
+			if(task->head.PROTO_NUM==65535) {
+				ShowLog(3,"%s: disconnect by client",__FUNCTION__);
+				ret=-1;
+				break;
+			} else if(task->head.PROTO_NUM==1){
+				ret=Echo(conn,&task->head);
+			} else if(task->status==0) {
+				if(!task->head.PROTO_NUM) {
+					ret=Function[0].funcaddr(conn,&task->head);
+					if(ret>=0) {
+						task->status=ret;
+						if(ret==1) task->timeout=conn->timeout;
+					}
+				} else {
+					ShowLog(1,"%s:TCB:%d,æœªç™»å½•",__FUNCTION__,task->sv.TCB_no);
+					ret=-1;
+					break;
+				}
+			} else if (conn->only_do) {
+				ret=conn->only_do(conn,&task->head);
+			} else {
+				if(task->head.PROTO_NUM==0) {
+					ret=get_srvname(conn,&task->head);
+					if(task->status>0) set_showid(task->ctx);//Showid åº”è¯¥åœ¨ä¼šè¯ä¸Šä¸‹æ–‡ç»“æ„é‡Œ
+				} else if(task->head.PROTO_NUM>rpool.svc_num) {
+					ShowLog(1,"%s:æ²¡æœ‰è¿™ä¸ªæœåŠ¡å· %d",__FUNCTION__,task->head.PROTO_NUM);
+					ret=-1;
+				} else {
+					ret=Function[task->head.PROTO_NUM].funcaddr(conn,&task->head);
+					if(ret==-1)
+						ShowLog(1,"%s:TCB:%d,disconnect by server",__FUNCTION__,
+								task->sv.TCB_no);
+				}
+			}
+			if(ret==0) task->timeout=task->conn.timeout;
+		} else { //ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
+			task->timestamp=now_usec();
+			ShowLog(5,"%s:call_back TCB_no=%d,tid=%lx,USEC=%llu",__FUNCTION__,
+					TCB_no,pthread_self(),task->timestamp);
+			ret=task->call_back(conn,&task->head);
+			if(task->status==0)  //finish_login,return 0 or 1
+				task->status=ret;
+			if(ret==-1)
+				ShowLog(1,"%s:TCB:%d,disconnect by server",__FUNCTION__,
+						task->sv.TCB_no);
 		}
-		if(ret==0) task->timeout=task->conn.timeout;
-	} else { //ÓÃ»§×Ô¶¨ÒåÊÂ¼ş
-		task->timestamp=now_usec();
-		ShowLog(5,"%s:call_back TCB_no=%d,tid=%lx,USEC=%llu",__FUNCTION__,
-			TCB_no,pthread_self(),task->timestamp);
-		ret=task->call_back(conn,&task->head);
-		if(task->status==0)  //finish_login,return 0 or 1
-			task->status=ret;
-	        if(ret==-1)
-			ShowLog(1,"%s:TCB:%d,disconnect by server",__FUNCTION__,
-				task->sv.TCB_no);
-	}
-    } while(0);
-	if(!task->timeout) task->timeout=timeout; //timeout Ã»ÓĞ±»Ó¦ÓÃÉèÖÃ¹ı
+	} while(0);
+	if(!task->timeout) task->timeout=timeout; //timeout æ²¡æœ‰è¢«åº”ç”¨è®¾ç½®è¿‡
 	switch(ret) {
-	case -1:
-		do_epoll(task,EPOLL_CTL_DEL,0);
-		task->status=-2;//delete the task by return
-	case THREAD_ESCAPE:
-		break;
-	default:
-		if(do_epoll(task,EPOLL_CTL_MOD,0) && errno != EEXIST) {
-			ShowLog(1,"%s:cancel by server",__FUNCTION__);
-			task->status=-2;
-		}
-		break;
+		case -1:
+			do_epoll(task,EPOLL_CTL_DEL,0);
+			task->status=-2;//delete the task by return
+		case THREAD_ESCAPE:
+			break;
+		default:
+			if(do_epoll(task,EPOLL_CTL_MOD,0) && errno != EEXIST) {
+				ShowLog(1,"%s:cancel by server",__FUNCTION__);
+				task->status=-2;
+			}
+			break;
 	}
 	if(task->status == -2) {
 		client_del(task);
 	}
-	task->timestamp=now_usec();//taskÓërsµÄ²î¾ÍÊÇÓ¦ÓÃÈÎÎñÖ´ĞĞÊ±¼ä/
+	task->timestamp=now_usec();//taskä¸rsçš„å·®å°±æ˜¯åº”ç”¨ä»»åŠ¡æ‰§è¡Œæ—¶é—´/
 	ucontext_t *tc=task->uc.uc_link;
-	if(tc) { //·ÀÖ¹×²Õ»
+	if(tc) { //é˜²æ­¢æ’æ ˆ
 		pthread_t tid=pthread_self();
 		resource *rs=tpool.pool;
 		for(ret=0;ret<tpool.num;ret++,rs++) {
@@ -701,30 +701,30 @@ int timeout=0;
 
 static void *thread_work(void *param)
 {
-resource *rs=(resource *)param;
-int ret,fds;
-TCB *task=NULL;
-struct epoll_event event;
+	resource *rs=(resource *)param;
+	int ret,fds;
+	TCB *task=NULL;
+	struct epoll_event event;
 
 	ShowLog(2,"%s:thread %lx start!",__FUNCTION__,pthread_self());
 	getcontext(&rs->tc);
 	if(task)  pthread_mutex_unlock(&task->lock);
 
 	while(1) {
-//´Ó¾ÍĞ÷¶ÓÁĞÈ¡Ò»¸öÈÎÎñ
+//ä»å°±ç»ªé˜Ÿåˆ—å–ä¸€ä¸ªä»»åŠ¡
 		pthread_mutex_lock(&rpool.mut);
 		while(!(task=rdy_get())) {
 			if(rpool.flg >= tpool.rdy_num) break;
 			rpool.flg++;
-			ret=pthread_cond_wait(&rpool.cond,&rpool.mut); //Ã»ÓĞÈÎÎñ£¬µÈ´ı
- 			rpool.flg--;
+			ret=pthread_cond_wait(&rpool.cond,&rpool.mut); //æ²¡æœ‰ä»»åŠ¡ï¼Œç­‰å¾…
+			rpool.flg--;
 		}
 		pthread_mutex_unlock(&rpool.mut);
 		if(task) {
 			if(!task->AIO_flg && !task->call_back) {
 				task->fd=task->conn.Socket;
 				ShowLog(5,"%s:tid=%lx,TCB_no=%d from rdy_queue",__FUNCTION__,
-					pthread_self(),task->sv.TCB_no);
+						pthread_self(),task->sv.TCB_no);
 				if(task->fd>=0) {
 					do_epoll(task,0,0);
 				}
@@ -733,44 +733,44 @@ struct epoll_event event;
 		} else  {
 			fds = epoll_wait(g_epoll_fd, &event, 1 , -1);
 			if(fds < 0){
-       	 			ShowLog(1,"%s:epoll_wait err=%d,%s",__FUNCTION__,errno,strerror(errno));
+				ShowLog(1,"%s:epoll_wait err=%d,%s",__FUNCTION__,errno,strerror(errno));
 				usleep(30000000);
 				continue;
-       	 		}
-		 	task = (TCB *)event.data.ptr;
+			}
+			task = (TCB *)event.data.ptr;
 			if(task->events) {
-			    ShowLog(1,"%s:tid=%lx,TCB_no=%d,task->events=%08X,conflict!",__FUNCTION__,
-			            pthread_self(),task->sv.TCB_no,task->events);//·¢ÏÖ¾ªÈº
-			    task=NULL;
-			    continue;//¶ªµôËü
+				ShowLog(1,"%s:tid=%lx,TCB_no=%d,task->events=%08X,conflict!",__FUNCTION__,
+						pthread_self(),task->sv.TCB_no,task->events);//å‘ç°æƒŠç¾¤
+				task=NULL;
+				continue;//ä¸¢æ‰å®ƒ
 			}
 			task->events=event.events;
 		}
 		rs->timestamp=now_usec();
-		if(task->status>0) set_showid(task->ctx);//Showid Ó¦¸ÃÔÚ»á»°ÉÏÏÂÎÄ½á¹¹Àï 
-		
+		if(task->status>0) set_showid(task->ctx);//Showid åº”è¯¥åœ¨ä¼šè¯ä¸Šä¸‹æ–‡ç»“æ„é‡Œ
+
 		if(task->AIO_flg) {//fiber task
-		    task->uc.uc_link=&rs->tc;
-		    rs->tc.uc_link=(ucontext_t *)task;
-ShowLog(5,"%s:tid=%lx,resume to TCB_no=%d",__FUNCTION__,pthread_self(),task->sv.TCB_no);
-			pthread_mutex_lock(&task->lock);//·ÀÖ¹ÆäËûÏß³ÌÌáÇ°´³Èë
+			task->uc.uc_link=&rs->tc;
+			rs->tc.uc_link=(ucontext_t *)task;
+			ShowLog(5,"%s:tid=%lx,resume to TCB_no=%d",__FUNCTION__,pthread_self(),task->sv.TCB_no);
+			pthread_mutex_lock(&task->lock);//é˜²æ­¢å…¶ä»–çº¿ç¨‹æå‰é—¯å…¥
 			setcontext(&task->uc);	//== longjmp()
 			continue;//no action,logic only
 		}
-		if(task->uc.uc_stack.ss_size>0) {//call_backÄ£Ê½£¬ÇÀÈëÁË£¬½øÈëÍ¬²½Ä£Ê½
-            rs->tc.uc_link=NULL;
-ShowLog(5,"%s:tid %lx ÇÀÈë SYNC",__FUNCTION__,pthread_self());
+		if(task->uc.uc_stack.ss_size>0) {//call_backæ¨¡å¼ï¼ŒæŠ¢å…¥äº†ï¼Œè¿›å…¥åŒæ­¥æ¨¡å¼
+			rs->tc.uc_link=NULL;
+			ShowLog(5,"%s:tid %lx æŠ¢å…¥ SYNC",__FUNCTION__,pthread_self());
 			do_work(task->sv.TCB_no);
 			continue;
 		}
 		if(!rs->tc.uc_stack.ss_sp) {
-ShowLog(5,"%s:%lx create fiber for TCB_no=%d",__FUNCTION__,rs->tid,task->sv.TCB_no);
+			ShowLog(5,"%s:%lx create fiber for TCB_no=%d",__FUNCTION__,rs->tid,task->sv.TCB_no);
 			task->uc.uc_stack.ss_sp=mmap(0, use_stack_size,
-				PROT_READ | PROT_WRITE | PROT_EXEC,
-				MAP_PRIVATE | MAP_ANON | MAP_GROWSDOWN, -1, 0);
+										 PROT_READ | PROT_WRITE | PROT_EXEC,
+										 MAP_PRIVATE | MAP_ANON | MAP_GROWSDOWN, -1, 0);
 			if(task->uc.uc_stack.ss_sp==MAP_FAILED) {
 				task->uc.uc_stack.ss_sp=NULL;
-				do_work(task->sv.TCB_no); //½øĞĞÄãµÄ·şÎñ,²»Ê¹ÓÃAIO
+				do_work(task->sv.TCB_no); //è¿›è¡Œä½ çš„æœåŠ¡,ä¸ä½¿ç”¨AIO
 				continue;
 			}
 		} else {
@@ -787,7 +787,7 @@ ShowLog(5,"%s:%lx create fiber for TCB_no=%d",__FUNCTION__,rs->tid,task->sv.TCB_
 		ret=swapcontext(&rs->tc,&task->uc);
 		if(ret<0) {
 			ShowLog(1,"%s:swapcontext fault TCB_NO=%d,tid=%lx,errno=%d,%s",
-				__FUNCTION__,task->sv.TCB_no,pthread_self(),ret,strerror(abs(ret)));
+					__FUNCTION__,task->sv.TCB_no,pthread_self(),ret,strerror(abs(ret)));
 			rs->tc.uc_link=NULL;
 			task->uc.uc_link=NULL;
 			if(task->uc.uc_stack.ss_sp)
@@ -802,15 +802,15 @@ ShowLog(5,"%s:%lx create fiber for TCB_no=%d",__FUNCTION__,rs->tid,task->sv.TCB_
 			continue;
 		}
 		if(!task->AIO_flg) {//service complate
-			if(!rs->tc.uc_stack.ss_size) {//»ØÊÕfiber stack
+			if(!rs->tc.uc_stack.ss_size) {//å›æ”¶fiber stack
 //ShowLog(5,"%s:%lx release fiber from TCB_no=%d",__FUNCTION__,rs->tid,task->sv.TCB_no);
 				rs->tc.uc_stack.ss_sp=task->uc.uc_stack.ss_sp;
 				if(rs->tc.uc_stack.ss_sp)
-					 rs->tc.uc_stack.ss_size=use_stack_size;
+					rs->tc.uc_stack.ss_size=use_stack_size;
 				else rs->tc.uc_stack.ss_size=0;
 			} else {
-ShowLog(5,"%s:%lx destroy fiber from TCB_no=%d",__FUNCTION__,rs->tid,task->sv.TCB_no);
-				if(task->uc.uc_stack.ss_sp) 
+				ShowLog(5,"%s:%lx destroy fiber from TCB_no=%d",__FUNCTION__,rs->tid,task->sv.TCB_no);
+				if(task->uc.uc_stack.ss_sp)
 					munmap(task->uc.uc_stack.ss_sp,task->uc.uc_stack.ss_size);
 			}
 			task->uc.uc_stack.ss_sp=NULL;
@@ -821,8 +821,8 @@ ShowLog(5,"%s:%lx destroy fiber from TCB_no=%d",__FUNCTION__,rs->tid,task->sv.TC
 		} else {
 			pthread_mutex_unlock(&task->lock);
 
-ShowLog(5,"%s:tid=%lx,fiber yield from TCB_no=%d",
-			__FUNCTION__,pthread_self(),task->sv.TCB_no);
+			ShowLog(5,"%s:tid=%lx,fiber yield from TCB_no=%d",
+					__FUNCTION__,pthread_self(),task->sv.TCB_no);
 		}
 		mthr_showid_del(rs->tid);
 	}
@@ -841,13 +841,13 @@ ShowLog(5,"%s:tid=%lx,fiber yield from TCB_no=%d",
 //yield to schedle
 static int do_event(int sock,int flg,int timeout)
 {
-TCB *task;
-int save_fd,save_timeo=-1;
-int ret;
-pthread_t tid=pthread_self();
-resource *rs=tpool.pool;
+	TCB *task;
+	int save_fd,save_timeo=-1;
+	int ret;
+	pthread_t tid=pthread_self();
+	resource *rs=tpool.pool;
 
-	for(ret=0;ret<tpool.num;ret++,rs++) { //ÕÒÔ­À´µÄÕ»
+	for(ret=0;ret<tpool.num;ret++,rs++) { //æ‰¾åŸæ¥çš„æ ˆ
 		if(tid == rs->tid) break;
 	}
 	if(ret>=tpool.num) return THREAD_ESCAPE;
@@ -861,7 +861,7 @@ resource *rs=tpool.pool;
 	task->AIO_flg=flg+1;
 	task->fd=sock;
 	task->timestamp=now_usec();
-	pthread_mutex_lock(&task->lock);//·ÀÖ¹ÆäËûÏß³ÌÌáÇ°´³Èë
+	pthread_mutex_lock(&task->lock);//é˜²æ­¢å…¶ä»–çº¿ç¨‹æå‰é—¯å…¥
 	ret=do_epoll(task,0,flg);
 	if(ret<0) {
 		pthread_mutex_unlock(&task->lock);
@@ -877,7 +877,7 @@ resource *rs=tpool.pool;
 	if(save_timeo>-1) task->timeout=save_timeo;
 	if(flg==0 && task->events != EPOLLIN) {
 		ShowLog(1,"%s:tid=%lx resumed events=%X",__FUNCTION__,
-			pthread_self(),task->events);
+				pthread_self(),task->events);
 		return TIMEOUTERR;
 	}
 	return ret;
@@ -885,61 +885,61 @@ resource *rs=tpool.pool;
 
 static int do_yield(int socket,int rwflg,int timeout)
 {
-int ret=do_event(socket,rwflg,timeout);
+	int ret=do_event(socket,rwflg,timeout);
 	if(THREAD_ESCAPE == ret && other_yield)
 		ret=other_yield(socket,rwflg,timeout);
 	return ret;
 }
 
-//¼ì²é³¬Ê±µÄÁ¬½Ó
+//æ£€æŸ¥è¶…æ—¶çš„è¿æ¥
 int check_TCB_timeout()
 {
-int i,cltnum=client_q.max_client;
-TCB * task=client_q.pool;
-INT64 now=now_usec();
-int num=0,t;
+	int i,cltnum=client_q.max_client;
+	TCB * task=client_q.pool;
+	INT64 now=now_usec();
+	int num=0,t;
 
-        for(i=0;i<cltnum;i++,task++) {
+	for(i=0;i<cltnum;i++,task++) {
 		if(task->timeout<=0 || task->fd<0) continue;
-               	t=(int)((now-task->timestamp)/1000000);
+		t=(int)((now-task->timestamp)/1000000);
 		if(t<task->timeout) continue;
-                if(task->next) {
-			ShowLog(2,"%s:TCB_no=%d,ÒÑ¾­ÔÚ¶ÓÁĞÖĞ",__FUNCTION__,i);
+		if(task->next) {
+			ShowLog(2,"%s:TCB_no=%d,å·²ç»åœ¨é˜Ÿåˆ—ä¸­",__FUNCTION__,i);
 			continue;
 		}
-                if(task->call_back) {
+		if(task->call_back) {
 			char buf[30];
 			task->events=0X10;
 			TCB_add(NULL,task->sv.TCB_no);
 			ShowLog(5,"%s:TCB_no=%d,callback task->timeout=%d,since %s",__FUNCTION__,
-				task->sv.TCB_no,task->timeout,
-				rusecstrfmt(buf,task->timestamp,"YYYY-MM-DD HH24:MI:SS.FF6"));
-                } else {
-		  do_epoll(task,EPOLL_CTL_DEL,0);
-		  task->events=0X10;
-		  if(task->AIO_flg) {
-			TCB_add(NULL,task->sv.TCB_no);
-			ShowLog(1,"%s:TCB_no=%d.%d,AIO t=%d,task->timeout=%d",
-				__FUNCTION__,i,task->sv.TCB_no,t,task->timeout);
-		  } else {
-			client_del(task);
-			if(task->status<1) ShowLog(1,"%s:TCB:%d canceled,t=%d",__FUNCTION__,i,t);
-			else ShowLog(1,"%s:TCB:%d deleted,t=%d",__FUNCTION__,i,t);
-			num++;
-		   }
+					task->sv.TCB_no,task->timeout,
+					rusecstrfmt(buf,task->timestamp,"YYYY-MM-DD HH24:MI:SS.FF6"));
+		} else {
+			do_epoll(task,EPOLL_CTL_DEL,0);
+			task->events=0X10;
+			if(task->AIO_flg) {
+				TCB_add(NULL,task->sv.TCB_no);
+				ShowLog(1,"%s:TCB_no=%d.%d,AIO t=%d,task->timeout=%d",
+						__FUNCTION__,i,task->sv.TCB_no,t,task->timeout);
+			} else {
+				client_del(task);
+				if(task->status<1) ShowLog(1,"%s:TCB:%d canceled,t=%d",__FUNCTION__,i,t);
+				else ShowLog(1,"%s:TCB:%d deleted,t=%d",__FUNCTION__,i,t);
+				num++;
+			}
 		}
-        }
-        return num;
+	}
+	return num;
 }
 
 static int get_task_no()
 {
-int i,ret;
-struct timespec abstime;
+	int i,ret;
+	struct timespec abstime;
 	abstime.tv_sec=0;
 	pthread_mutex_lock(&client_q.mut);
 	while(0>(i=TCB_get(&client_q.free_q))) {
-		if(abstime.tv_sec==0) ShowLog(1,"%s:³¬¹ı×î´óÁ¬½ÓÊı£¡",__FUNCTION__);
+		if(abstime.tv_sec==0) ShowLog(1,"%s:è¶…è¿‡æœ€å¤§è¿æ¥æ•°ï¼",__FUNCTION__);
 		clock_gettime(CLOCK_REALTIME, &abstime);
 		abstime.tv_sec+=5;
 		ret=pthread_cond_timedwait(&client_q.cond,&client_q.mut,&abstime);
@@ -954,24 +954,24 @@ struct timespec abstime;
 }
 
 /***************************************************************
- * Ïß³Ì³ØÄ£ĞÍµÄÈë¿Úº¯Êı£¬Ö÷Ïß³ÌÖ÷Òª¸ºÔğ×ÊÔ´¹ÜÀí
- *Ó¦ÓÃ²å¼şµÄ·şÎñº¯ÊıÔÚ
+ * çº¿ç¨‹æ± æ¨¡å‹çš„å…¥å£å‡½æ•°ï¼Œä¸»çº¿ç¨‹ä¸»è¦è´Ÿè´£èµ„æºç®¡ç†
+ *åº”ç”¨æ’ä»¶çš„æœåŠ¡å‡½æ•°åœ¨
  * extern srvfunc Function[];
  */
 int TPOOL_srv(void (*conn_init)(T_Connect *,T_NetHead *),void (*quit)(int),void (*poolchk)(void),int sizeof_gda)
 {
-int ret,i;
-int s;
-struct sockaddr_in sin,cin;
-struct servent *sp;
-char *p;
-struct timeval tm;
-fd_set efds;
-socklen_t leng=1;
-int sock=-1;
-srvfunc *fp;
-TCB *task;
-struct linger so_linger;
+	int ret,i;
+	int s;
+	struct sockaddr_in sin,cin;
+	struct servent *sp;
+	char *p;
+	struct timeval tm;
+	fd_set efds;
+	socklen_t leng=1;
+	int sock=-1;
+	srvfunc *fp;
+	TCB *task;
+	struct linger so_linger;
 
 	signal(SIGPIPE,SIG_IGN);
 	signal(SIGHUP,SIG_IGN);
@@ -981,13 +981,13 @@ struct linger so_linger;
 
 	p=getenv("SERVICE");
 	if(!p || !*p) {
-		ShowLog(1,"È±ÉÙ»·¾³±äÁ¿ SERVICE ,²»ÖªÊØºòÄÄ¸ö¶Ë¿Ú£¡");
+		ShowLog(1,"ç¼ºå°‘ç¯å¢ƒå˜é‡ SERVICE ,ä¸çŸ¥å®ˆå€™å“ªä¸ªç«¯å£ï¼");
 		quit(3);
 	}
-//²âÊÔ¶Ë¿ÚÊÇ·ñ±»Õ¼ÓÃ 
+//æµ‹è¯•ç«¯å£æ˜¯å¦è¢«å ç”¨
 	sock=tcpopen("localhost",p);
 	if(sock>-1) {
-		ShowLog(1,"¶Ë¿Ú %s ÒÑ¾­±»Õ¼ÓÃ",p);
+		ShowLog(1,"ç«¯å£ %s å·²ç»è¢«å ç”¨",p);
 		close(sock);
 		sock=-1;
 		quit(255);
@@ -1008,8 +1008,8 @@ struct linger so_linger;
 		sin.sin_port=htons((u_short)atoi(p));
 	} else {
 		if((sp=getservbyname(p,"tcp"))==NULL){
-        		ShowLog(1,"getsrvbyname %s error",p);
-        		quit(3);
+			ShowLog(1,"getsrvbyname %s error",p);
+			quit(3);
 		}
 		sin.sin_port=(u_short)sp->s_port;
 	}
@@ -1017,23 +1017,23 @@ struct linger so_linger;
 	sock=socket(AF_INET,SOCK_STREAM,0);
 	if(sock < 0) {
 		ShowLog(1,"open socket error=%d,%s",errno,
-			strerror(errno));
+				strerror(errno));
 		quit(3);
 	}
 
 	bind(sock,(struct sockaddr *)&sin,sizeof(sin));
 	leng=1;
 	setsockopt(sock,SOL_SOCKET,SO_REUSEADDR,&leng,sizeof(leng));
-//±ÜÃâ TIME_WAIT
-        so_linger.l_onoff=1;
-        so_linger.l_linger=0;
-        ret=setsockopt(sock, SOL_SOCKET, SO_LINGER, &so_linger, sizeof so_linger);
-        if(ret) ShowLog(1,"set SO_LINGER err=%d,%s",errno,strerror(errno));
+//é¿å… TIME_WAIT
+	so_linger.l_onoff=1;
+	so_linger.l_linger=0;
+	ret=setsockopt(sock, SOL_SOCKET, SO_LINGER, &so_linger, sizeof so_linger);
+	if(ret) ShowLog(1,"set SO_LINGER err=%d,%s",errno,strerror(errno));
 
 	listen(sock,client_q.max_client);
 
 	ShowLog(0,"main start tid=%lx sock=%d",pthread_self(),sock);
-	
+
 	int repeat=0;
 	leng=sizeof(cin);
 
@@ -1041,7 +1041,7 @@ struct linger so_linger;
 		do {
 			FD_ZERO(&efds);
 			FD_SET(sock, &efds);
-//½¡¿µ¼ì²éÖÜÆÚ
+//å¥åº·æ£€æŸ¥å‘¨æœŸ
 			tm.tv_sec=15;
 			tm.tv_usec=0;
 			ret=select(sock+1,&efds,NULL,&efds,&tm);
@@ -1060,13 +1060,13 @@ struct linger so_linger;
 		s=accept(sock,(struct sockaddr *)&cin,&leng);
 		if(s<0) {
 			ShowLog(1,"%s:accept err=%d,%s",__FUNCTION__,errno,strerror(errno));
-                       	client_del(task);
+			client_del(task);
 			switch(errno) {
-			case EMFILE:	//fdÓÃÍêÁË,ÆäËûÏß³Ì»¹Òª¼ÌĞø¹¤×÷£¬Ö÷Ïß³ÌĞİÏ¢Ò»ÏÂ¡£  
-			case ENFILE:
-				usleep(30000000);
-				continue;
-			default:break;
+				case EMFILE:	//fdç”¨å®Œäº†,å…¶ä»–çº¿ç¨‹è¿˜è¦ç»§ç»­å·¥ä½œï¼Œä¸»çº¿ç¨‹ä¼‘æ¯ä¸€ä¸‹ã€‚
+				case ENFILE:
+					usleep(30000000);
+					continue;
+				default:break;
 			}
 			usleep(15000000);
 			if(++repeat < 20) continue;
@@ -1080,9 +1080,9 @@ struct linger so_linger;
 		task->timeout=60;
 		task->status=-1;
 		task->conn.only_do=(int (*)())conn_init;
-		ret=do_epoll(task,EPOLL_CTL_ADD,0);//ÈÎÎñ½»¸øÆäËûÏß³Ì×ö
+		ret=do_epoll(task,EPOLL_CTL_ADD,0);//ä»»åŠ¡äº¤ç»™å…¶ä»–çº¿ç¨‹åš
 	}
-	
+
 	close(sock);
 	tpool_free();
 	return (0);

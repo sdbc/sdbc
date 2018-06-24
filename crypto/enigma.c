@@ -7,51 +7,51 @@
  */
 
 #define MASK 0377
-// Ëæ»ú´®³¤¶È£¬Èç¹ûÄãÏëÊ¹ÓÃMD5£¬¼Ó´óÕâ¸öÖµ 
+// éšæœºä¸²é•¿åº¦ï¼Œå¦‚æœä½ æƒ³ä½¿ç”¨MD5ï¼ŒåŠ å¤§è¿™ä¸ªå€¼
 
-/* Éú³ÉÃÜÂëÂÖ */   
+/* ç”Ÿæˆå¯†ç è½® */
 void enigma_init(ENIGMA t,const char *bin_key,int len)
 {
-int		ic, i, k,random,seed;
-signed char	temp,*t1,*t2,*t3;
+	int		ic, i, k,random,seed;
+	signed char	temp,*t1,*t2,*t3;
 
 	if(!t || !bin_key) return;
 	if(len<=0 && !(len=strlen(bin_key))) return;
 	seed=(int)ssh_crc32((unsigned char *)bin_key,len);
 	t1=t[0]; t2=t[1]; t3=t[2];
-// ÉèÖÃic£¬³õÊ¼»¯µÄ×ÔĞı 
-	ic=seed; 
+// è®¾ç½®icï¼Œåˆå§‹åŒ–çš„è‡ªæ—‹
+	ic=seed;
 	for(i=0;i<len;i++) ic += bin_key[i];
 	ic &= MASK;
 //printf("%s:len=%d,seed=%d,ic=%d\n",__FUNCTION__,len,seed,ic);
-// ic£¬³õÊ¼»¯µÄ×ÔĞı 
+// icï¼Œåˆå§‹åŒ–çš„è‡ªæ—‹
 	for(i=0;i<ROTORSZ;i++) {
 		t1[i] = (i+ic) & MASK;
 		t3[i] = 0;
 	}
 
-	if(len>ROTORSZ) {//Èç¹ûÃÜÔ¿³¤ÓÚROTORSZ,Ê¹ÓÃ×îºóÒ»²¿·Ö
+	if(len>ROTORSZ) {//å¦‚æœå¯†é’¥é•¿äºROTORSZ,ä½¿ç”¨æœ€åä¸€éƒ¨åˆ†
 		bin_key += len-ROTORSZ;
 		len = ROTORSZ;
 	}
 	for(i=0;i<ROTORSZ;i++) {
 		seed = (seed<<1) + (signed)bin_key[i%len];
 		random = (seed&0X7FFFFFFF) % 65529;	//random(key);
-// ÒÔÉÏÉú³É¾¡¿ÉÄÜËæ»úµÄrandom£¬ÄãÓĞ³ä·ÖµÄ×ÔÓÉ¶ÈÑ¡ÔñÄãµÄËã·¨ 
-/* Éú³ÉÖ÷±àÂëÂÖ t1 */
+// ä»¥ä¸Šç”Ÿæˆå°½å¯èƒ½éšæœºçš„randomï¼Œä½ æœ‰å……åˆ†çš„è‡ªç”±åº¦é€‰æ‹©ä½ çš„ç®—æ³•
+/* ç”Ÿæˆä¸»ç¼–ç è½® t1 */
 		k = ROTORSZ-1 - i;
 		ic = random % (k+1);
 
 		temp = t1[k]; t1[k] = t1[ic]; t1[ic] = temp;
 /************************************************************************
- * Éú³É·´ÉäÂÖ ·´ÉäÂÖÖ»Òª²»ÖØ²»Â©µÄ°Ñ¸÷µãÁ½Á½Á¬½ÓÆğÀ´¼´¿É,
+ * ç”Ÿæˆåå°„è½® åå°„è½®åªè¦ä¸é‡ä¸æ¼çš„æŠŠå„ç‚¹ä¸¤ä¸¤è¿æ¥èµ·æ¥å³å¯,
  ************************************************************************/
 		if(t3[k]!=0) continue;
 		ic = (random&MASK) % k;
 		while(t3[ic]!=0) ic = (ic+1) % k;
 		t3[k] = ic; t3[ic] = k;
 	}
-/* t2Îªt1µÄÄæ */
+/* t2ä¸ºt1çš„é€† */
 	for(i=0;i<ROTORSZ;i++)
 		t2[t1[i]&MASK] = i;
 /*
@@ -65,12 +65,12 @@ ShowLog(5,"%s:len=%d,t1=%s",__FUNCTION__,len,buf);
 
 void enigma(ENIGMA t,char *string,int len)
 {
-register int  n1,n2, k;
-signed char *t1,*t2,*t3;
+	register int  n1,n2, k;
+	signed char *t1,*t2,*t3;
 
 	if(!t || !string || len <= 0) return;
 	t1=t[0]; t2=t[1]; t3=t[2];
-//³õÊ¼Î»ÖÃºÍÓëlenºÍTÓĞ¹Ø£¬²»ÖªµÀT¾Í²»ÖªµÀËü£¬Ò²ÎŞ·¨Í¨¹ıÃ÷ÎÄ¡¢ÃÜÎÄµÄ¹ØÏµÍÆ¶ÏT¡£
+//åˆå§‹ä½ç½®å’Œä¸lenå’ŒTæœ‰å…³ï¼Œä¸çŸ¥é“Tå°±ä¸çŸ¥é“å®ƒï¼Œä¹Ÿæ— æ³•é€šè¿‡æ˜æ–‡ã€å¯†æ–‡çš„å…³ç³»æ¨æ–­Tã€‚
 	n2=t[len&1][(len>>9)&MASK]&MASK;
 	n1=t3[(len>>1)&MASK]&MASK;
 //printf("%s:len=%d,n1=%d,n2=%d\n",__FUNCTION__,len,n1,n2);
@@ -85,14 +85,14 @@ signed char *t1,*t2,*t3;
 
 void enigma_encrypt(ENIGMA t,char *string,int len)
 {
-register signed char *p;
-register int x,n1;       //xĞı×ªÒò×Ó
-signed char *t1,*t2,*t3;
-int  n2, k;
+	register signed char *p;
+	register int x,n1;       //xæ—‹è½¬å› å­
+	signed char *t1,*t2,*t3;
+	int  n2, k;
 //int r=0;
 
-        if(!t || !string || len <= 0) return;
-        t1=t[0]; t2=t[1]; t3=t[2];
+	if(!t || !string || len <= 0) return;
+	t1=t[0]; t2=t[1]; t3=t[2];
 
 	n2=t[len&1][(len>>9)&MASK]&MASK;
 	n1=t3[(len>>1)&MASK]&MASK;
@@ -111,12 +111,12 @@ int  n2, k;
 
 void enigma_decrypt(ENIGMA t,char *string,int len)
 {
-register signed char *p;
-register int n1, n2, k,x;
-signed char *t1,*t2,*t3;
+	register signed char *p;
+	register int n1, n2, k,x;
+	signed char *t1,*t2,*t3;
 
-        if(!t || !string || len <= 0) return;
-        t1=t[0]; t2=t[1]; t3=t[2];
+	if(!t || !string || len <= 0) return;
+	t1=t[0]; t2=t[1]; t3=t[2];
 	n2=t[len&1][(len>>9)&MASK]&MASK;
 	n1=t3[(len>>1)&MASK]&MASK;
 

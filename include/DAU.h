@@ -1,4 +1,4 @@
-/* DAU=Data Access Utility 
+/* DAU=Data Access Utility
 	2008-11-18 by ylh */
 
 
@@ -12,7 +12,7 @@
 typedef struct {
 	SRM			srm;		//SRM=Struct Relational Map
 	T_SQL_Connect		*SQL_Connect;
-	char 			*tail;		//bindÓÃÁÙÊ±Ö¸Õë
+	char 			*tail;		//bindç”¨ä¸´æ—¶æŒ‡é’ˆ
 	sqlo_stmt_handle_t	cursor;		//prepare cursor
 	T_Tree			*bt_pre;	//prepare bind tree
 	sqlo_stmt_handle_t	ins_sth;	//insert cursor
@@ -21,10 +21,10 @@ typedef struct {
 	T_Tree			*bt_upd;	//update bind tree
 	sqlo_stmt_handle_t	del_sth;	//delete cursor
 	T_Tree			*bt_del;	//delete bind tree
-	unsigned int		pos;            //DAU³ØÊ¹ÓÃ
+	unsigned int		pos;            //DAUæ± ä½¿ç”¨
 } DAU;
 
-// set col_to_lower = 1, Éú³ÉÄ£°åÊ±ÁÐÃû¸ÄÐ¡Ð´¡£
+// set col_to_lower = 1, ç”Ÿæˆæ¨¡æ¿æ—¶åˆ—åæ”¹å°å†™ã€‚
 extern char col_to_lower;
 
 #ifdef __cplusplus
@@ -32,69 +32,69 @@ extern "C" {
 #endif
 
 /********************************************
- * ³õÊ¼»¯DAU£¬¹ØÁªÊý¾Ý¿âºÍrecord
+ * åˆå§‹åŒ–DAUï¼Œå…³è”æ•°æ®åº“å’Œrecord
  ********************************************/
 int DAU_init(DAU *DP,T_SQL_Connect *SQL_Connect,const char *tabname,void *record,T_PkgType *tp);
 
-//msg ÓÃÓÚÉú³ÉSQLÓï¾äºÍ·µ»Ø´íÎóÐÅÏ¢
+//msg ç”¨äºŽç”ŸæˆSQLè¯­å¥å’Œè¿”å›žé”™è¯¯ä¿¡æ¯
 int DAU_insert(DAU *DP,char *msg);
 
-//whereÊÇwhere×Ó¾ä£¬Í¬Ê±ÀûÓÃÕâ¸ö¿Õ¼äÉú³ÉÍêÕûµÄSQLÓï¾ä
-//Èç¹ûÒÑ¾­ÊÇupdate¿ªÍ·µÄ£¬¾ÍÖ±½ÓÀûÓÃ£¬²»Éú³ÉÁË
+//whereæ˜¯whereå­å¥ï¼ŒåŒæ—¶åˆ©ç”¨è¿™ä¸ªç©ºé—´ç”Ÿæˆå®Œæ•´çš„SQLè¯­å¥
+//å¦‚æžœå·²ç»æ˜¯updateå¼€å¤´çš„ï¼Œå°±ç›´æŽ¥åˆ©ç”¨ï¼Œä¸ç”Ÿæˆäº†
 int DAU_update(DAU *DP,char *where);
 
-//whereÊÇwhere×Ó¾ä£¬Í¬Ê±ÀûÓÃÕâ¸ö¿Õ¼äÉú³ÉÍêÕûµÄSQLÓï¾ä
-//Èç¹ûÒÑ¾­ÊÇdelete¿ªÍ·µÄ£¬¾ÍÖ±½ÓÀûÓÃ£¬²»Éú³ÉÁË
+//whereæ˜¯whereå­å¥ï¼ŒåŒæ—¶åˆ©ç”¨è¿™ä¸ªç©ºé—´ç”Ÿæˆå®Œæ•´çš„SQLè¯­å¥
+//å¦‚æžœå·²ç»æ˜¯deleteå¼€å¤´çš„ï¼Œå°±ç›´æŽ¥åˆ©ç”¨ï¼Œä¸ç”Ÿæˆäº†
 int DAU_delete(DAU *DP,char *where);
 /****************************************************
- * µ÷ÓÃselectÓï¾ä£¬
- * whereÊÇwhere×Ó¾ä£¬Í¬Ê±ÀûÓÃÕâ¸ö¿Õ¼äÉú³ÉÍêÕûµÄSQLÓï¾ä
- * Èç¹ûÒÑ¾­ÊÇselect¿ªÍ·µÄ£¬¾ÍÖ±½ÓÀûÓÃ£¬²»Éú³ÉÁË
+ * è°ƒç”¨selectè¯­å¥ï¼Œ
+ * whereæ˜¯whereå­å¥ï¼ŒåŒæ—¶åˆ©ç”¨è¿™ä¸ªç©ºé—´ç”Ÿæˆå®Œæ•´çš„SQLè¯­å¥
+ * å¦‚æžœå·²ç»æ˜¯selectå¼€å¤´çš„ï¼Œå°±ç›´æŽ¥åˆ©ç”¨ï¼Œä¸ç”Ÿæˆäº†
  ****************************************************/
 int DAU_select(DAU *DP,char *where,int rownum);
 
 /*****************************************************
- * ÒÔÓÎ±ê·½Ê½´ò¿ª½á¹û¼¯
- * where ÓÃÓÚÉú³ÉÓï¾ä£¬ »¹ÒªÀûÓÃÕâ¸ö¿Õ¼äÉú³ÉÍêÕûµÄSQLÓï¾ä
- * Í¬Ê±Ò²ÊÇ´æ·ÅFetch½á¹û¼¯µÄbuffer
- * Èç¹ûÒÑ¾­ÊÇselect¿ªÍ·µÄ£¬¾ÍÖ±½ÓÀûÓÃ£¬²»Éú³ÉÁË
+ * ä»¥æ¸¸æ ‡æ–¹å¼æ‰“å¼€ç»“æžœé›†
+ * where ç”¨äºŽç”Ÿæˆè¯­å¥ï¼Œ è¿˜è¦åˆ©ç”¨è¿™ä¸ªç©ºé—´ç”Ÿæˆå®Œæ•´çš„SQLè¯­å¥
+ * åŒæ—¶ä¹Ÿæ˜¯å­˜æ”¾Fetchç»“æžœé›†çš„buffer
+ * å¦‚æžœå·²ç»æ˜¯selectå¼€å¤´çš„ï¼Œå°±ç›´æŽ¥åˆ©ç”¨ï¼Œä¸ç”Ÿæˆäº†
  ****************************************************/
 int DAU_prepare(DAU *DP,char *where);
 
-//È¡½á¹û¼¯ÀïµÄÏÂÒ»Ìõ¼ÇÂ¼£¬³É¹¦·µ»Ø0
-//ÄÜ¹»×Ô¶¯Ê¶±ðDAUÊÇselectµÄ»¹ÊÇprepareµÄ
+//å–ç»“æžœé›†é‡Œçš„ä¸‹ä¸€æ¡è®°å½•ï¼ŒæˆåŠŸè¿”å›ž0
+//èƒ½å¤Ÿè‡ªåŠ¨è¯†åˆ«DAUæ˜¯selectçš„è¿˜æ˜¯prepareçš„
 int DAU_next(DAU *DP);
 
 /*****************************************************
- * Ö´ÐÐÎÞ·µ»Ø½á¹û¼¯µÄSQLÓï¾ä£¬Ê¹ÓÃDAU_deleteµÄÓÎ±ê£¬
- * ²»ÒªÓëDAU_deleteÍ¬Ê±Ê¹ÓÃ
- * DAUÖÐµÄ½á¹¹ºÍÄ£°åÐèÂú×ãbindµÄÐèÒª¡£
- * Éæ¼°±íÃûµÄ$DB.·ûºÅ½«ÓÃDBOWNÈ¡´ú¡£
+ * æ‰§è¡Œæ— è¿”å›žç»“æžœé›†çš„SQLè¯­å¥ï¼Œä½¿ç”¨DAU_deleteçš„æ¸¸æ ‡ï¼Œ
+ * ä¸è¦ä¸ŽDAU_deleteåŒæ—¶ä½¿ç”¨
+ * DAUä¸­çš„ç»“æž„å’Œæ¨¡æ¿éœ€æ»¡è¶³bindçš„éœ€è¦ã€‚
+ * æ¶‰åŠè¡¨åçš„$DB.ç¬¦å·å°†ç”¨DBOWNå–ä»£ã€‚
  *****************************************************/
 int DAU_exec(DAU *DP,char *stmt);
 int bind_exec(DAU *DP,char *stmt);
 
 /*********************************************
- * ¶à±íµÄselect
- * whereÊÇwhere×Ó¾ä£¬Í¬Ê±ÀûÓÃÕâ¸ö¿Õ¼äÉú³ÉÍêÕûµÄSQLÓï¾ä
- * Èç¹ûÒÑ¾­ÊÇselect¿ªÍ·µÄ£¬¾ÍÖ±½ÓÀûÓÃ£¬²»Éú³ÉÁË
- * ²»Ö§³Öbind 
+ * å¤šè¡¨çš„select
+ * whereæ˜¯whereå­å¥ï¼ŒåŒæ—¶åˆ©ç”¨è¿™ä¸ªç©ºé—´ç”Ÿæˆå®Œæ•´çš„SQLè¯­å¥
+ * å¦‚æžœå·²ç»æ˜¯selectå¼€å¤´çš„ï¼Œå°±ç›´æŽ¥åˆ©ç”¨ï¼Œä¸ç”Ÿæˆäº†
+ * ä¸æ”¯æŒbind
  *********************************************/
 int DAU_getm(int n,DAU DP[],char *where,int rownum);
 
-//¶à±íµÄselect, È¡½á¹û¼¯ÀïµÄÏÂÒ»Ìõ¼ÇÂ¼£¬³É¹¦·µ»Ø0
+//å¤šè¡¨çš„select, å–ç»“æžœé›†é‡Œçš„ä¸‹ä¸€æ¡è®°å½•ï¼ŒæˆåŠŸè¿”å›ž0
 int DAU_nextm(int n,DAU *DP);
 
-//ÊÍ·ÅDAU£¬ÔÚÓÎ±ê×´Ì¬ÏÂ¹Ø±ÕÓÎ±ê
+//é‡Šæ”¾DAUï¼Œåœ¨æ¸¸æ ‡çŠ¶æ€ä¸‹å…³é—­æ¸¸æ ‡
 void DAU_free(DAU DP[]);
 extern void  DAU_freem(int n,DAU *DP);
 
-/* ¹ØÓÚÖ÷¼üµÄº¯Êý£¬Èç¹û³ýÖ÷¼üÍâ»¹ÓÐÆäËûÌõ¼þ£¬·ÅÔÚstmt£¬·ñÔò*stmt=0 */
+/* å…³äºŽä¸»é”®çš„å‡½æ•°ï¼Œå¦‚æžœé™¤ä¸»é”®å¤–è¿˜æœ‰å…¶ä»–æ¡ä»¶ï¼Œæ”¾åœ¨stmtï¼Œå¦åˆ™*stmt=0 */
 extern int select_by_PK(DAU *DP,char *stmt);
 extern int prepare_by_PK(DAU *DP,char *stmt);
 extern int update_by_PK(DAU *DP,char *stmt);
 extern int delete_by_PK(DAU *DP,char *stmt);
-/* ¼ÙÐÞ¸Ä£¬Îª½â¾ö²åÈëÊ±ÖØÂëËÙ¶ÈºÜÂýµÄÎÊÌâ£¬×¢ÒâÓëÆäËûÐÞ¸ÄÌõ¼þµÄ³åÍ» */
+/* å‡ä¿®æ”¹ï¼Œä¸ºè§£å†³æ’å…¥æ—¶é‡ç é€Ÿåº¦å¾ˆæ…¢çš„é—®é¢˜ï¼Œæ³¨æ„ä¸Žå…¶ä»–ä¿®æ”¹æ¡ä»¶çš„å†²çª */
 extern int dummy_update(DAU *DP,char *stmt);
 // at SRM_to_DAU.c
 extern int SRM_to_DAU(DAU *DP,T_SQL_Connect *SQL_Connect,SRM *srmp);
@@ -105,21 +105,21 @@ extern int bind_ins(DAU *DP,char *buf);
 extern int bind_select(DAU *DP,char *stmt,int recnum);
 extern int print_bind(void *content);
 /**
- * ´òÓ¡ bind Öµ£¬ÔÚstmtÖÐ 
+ * æ‰“å° bind å€¼ï¼Œåœ¨stmtä¸­
  */
 extern int DAU_print_bind(DAU *DP,char *stmt);
 
 int get_upd_returning(DAU *DP);
-// at DAU_mk.c ÓÃÄ£°å¿âÉú³ÉDAU
+// at DAU_mk.c ç”¨æ¨¡æ¿åº“ç”ŸæˆDAU
 int DAU_mk(DAU *DP,T_SQL_Connect *SQL_Connect,const char *tabname);
 
 #ifdef __cplusplus
 }
 #endif
 
-//Éú³É°ë¸öUPDATEÓï¾ä:"UPDATE DBOWN.TABNAME "
+//ç”ŸæˆåŠä¸ªUPDATEè¯­å¥:"UPDATE DBOWN.TABNAME "
 #define DAU_mk_update(DP,buf) SRM_mk_update(&(DP)->srm,(DP)->SQL_Connect->DBOWN,(buf))
-/* ¶ÔÑ¡ÔñµÄÁÐ¹¹½¨updateÓï¾ä£¬Èç¹ûchooseÎª¿Õ£¬È«²¿ÁÐ ,·µ»ØÎ²²¿ */
+/* å¯¹é€‰æ‹©çš„åˆ—æž„å»ºupdateè¯­å¥ï¼Œå¦‚æžœchooseä¸ºç©ºï¼Œå…¨éƒ¨åˆ— ,è¿”å›žå°¾éƒ¨ */
 #define DAU_mk_upd_col(DP,choose,stmt) SRM_mk_upd_col(&(DP)->srm,(DP)->SQL_Connect->DBOWN,(choose),(stmt));
 
 #define DAU_mk_delete(DP,where) SRM_mk_delete(&(DP)->srm,(DP)->SQL_Connect->DBOWN,where)
@@ -136,27 +136,27 @@ int DAU_mk(DAU *DP,T_SQL_Connect *SQL_Connect,const char *tabname);
 //#define DAU_patt_copy(DP,tpl,choose) SRM_patt_copy(&(DP)->srm,(tpl),(choose))
 
 /**
- *  ÒÔÏÂº¯ÊýÈ¡Êý¾ÝÏîµÄÖ¸Õë£¬Êý¾ÝÀàÐÍ¡¢³¤¶ÈÓÉÓ¦ÓÃÈí¼þ¸ºÔð
+ *  ä»¥ä¸‹å‡½æ•°å–æ•°æ®é¡¹çš„æŒ‡é’ˆï¼Œæ•°æ®ç±»åž‹ã€é•¿åº¦ç”±åº”ç”¨è½¯ä»¶è´Ÿè´£
  */
-// °´Ãû×ÖÈ¡Ö¸Õë£¬²»ºÏÊÊµÄÁÐÃû·µ»Ø¿ÕÖ¸Õë
+// æŒ‰åå­—å–æŒ‡é’ˆï¼Œä¸åˆé€‚çš„åˆ—åè¿”å›žç©ºæŒ‡é’ˆ
 #define DAU_getP_by_key(DP,key) SRM_getP_by_key(&(DP)->srm,(key))
-//°´ÁÐºÅÈ¡Ö¸Õë£¬²»ºÏÊÊµÄÁÐºÅ·µ»Ø¿ÕÖ¸Õë
+//æŒ‰åˆ—å·å–æŒ‡é’ˆï¼Œä¸åˆé€‚çš„åˆ—å·è¿”å›žç©ºæŒ‡é’ˆ
 #define DAU_getP_by_index(DP,idx) SRM_getP_by_index(&(DP)->srm,(idx))
 
-/* ½«srcÖÐµÄÍ¬Ãû³ÉÔ±¿½±´µ½desc,¸ñÊ½×Ô¶¯×ª»» */
+/* å°†srcä¸­çš„åŒåæˆå‘˜æ‹·è´åˆ°desc,æ ¼å¼è‡ªåŠ¨è½¬æ¢ */
 #define DAU_copy(desc,src,choose) SRM_copy(&(desc)->srm,&(src)->srm,(choose))
 
-/* ´øRETURNING×Ó¾äµÄ²åÈëÓï¾ä */
+/* å¸¦RETURNINGå­å¥çš„æ’å…¥è¯­å¥ */
 #define DAU_ins_returning(DP,stmt) bind_ins((DP),(stmt))
-/* Éú³ÉRETURNING×Ó¾ä£¬·µ»ØÎ²²¿ */
+/* ç”ŸæˆRETURNINGå­å¥ï¼Œè¿”å›žå°¾éƒ¨ */
 #define DAU_mk_returning(DP,choose,stmt) SRM_mk_returning(&(DP)->srm,(choose),(stmt))
-/* DAU_setBind():ÉèÖÃÄ£°åÖÐµÄbindtype,chooseÊÇÁÐÃûÁÐ±í,NULLÈ«²¿ÁÐ¡£
-   bindtype¿ÉÒÔÊÇ0,NOSELECT,NOINSERT,NOSELECT|NOINSERT....
+/* DAU_setBind():è®¾ç½®æ¨¡æ¿ä¸­çš„bindtype,chooseæ˜¯åˆ—ååˆ—è¡¨,NULLå…¨éƒ¨åˆ—ã€‚
+   bindtypeå¯ä»¥æ˜¯0,NOSELECT,NOINSERT,NOSELECT|NOINSERT....
 */
 #define DAU_setBind(DP,bindtype,choose) SRM_setBind(&(DP)->srm,(bindtype),(choose))
 
 #define DAU_RecSize(DP) SRM_RecSize(&(DP)->srm)
-/* °´ÕÕkeyÈ¡Ä£°å */
+/* æŒ‰ç…§keyå–æ¨¡æ¿ */
 #define DAU_getType(DP,key) SRM_getType(&(DP)->srm,(key))
 #define DAU_getRec(DP) ((DP)->srm.rec)
 #define DAU_except_col(DP,buf,except) SRM_except_col(&(DP)->srm,(buf),(except))

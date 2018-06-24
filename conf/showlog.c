@@ -1,9 +1,9 @@
 /****************************************************
- * SDBCµÄÈÕÖ¾¹ÜÀí¡£
- * ÈÕÖ¾ÎÄ¼şÃûÊÇÑ­»·Ê¹ÓÃµÄ£¬¿ÉÒÔ°´ÖÜÑ­»·»ò°´ÈÕÑ­»·¡£
- * Ò²¿ÉÒÔÃ¿ÈÕ·ÖÊ±¶ÎĞ´ÎÄ¼ş
- * ÈÕÖ¾·Ö¼¶ÏÔÊ¾£¬¿ÉÒÔÍ¨¹ı»·¾³±äÁ¿¿ØÖÆÈÕÖ¾¼¶±ğ¡£
- * ±¾º¯ÊıÊÇ¶à½ø³Ì¶àÏß³Ì°²È«µÄ¡£
+ * SDBCçš„æ—¥å¿—ç®¡ç†ã€‚
+ * æ—¥å¿—æ–‡ä»¶åæ˜¯å¾ªç¯ä½¿ç”¨çš„ï¼Œå¯ä»¥æŒ‰å‘¨å¾ªç¯æˆ–æŒ‰æ—¥å¾ªç¯ã€‚
+ * ä¹Ÿå¯ä»¥æ¯æ—¥åˆ†æ—¶æ®µå†™æ–‡ä»¶
+ * æ—¥å¿—åˆ†çº§æ˜¾ç¤ºï¼Œå¯ä»¥é€šè¿‡ç¯å¢ƒå˜é‡æ§åˆ¶æ—¥å¿—çº§åˆ«ã€‚
+ * æœ¬å‡½æ•°æ˜¯å¤šè¿›ç¨‹å¤šçº¿ç¨‹å®‰å…¨çš„ã€‚
  ***************************************************/
 
 #include <fcntl.h>
@@ -32,7 +32,7 @@ struct mt_showid {
 
 static int mts_cmp(void *s,void *d,int len)
 {
-struct mt_showid *m1,*m2;
+	struct mt_showid *m1,*m2;
 	m1=(struct mt_showid *)s;
 	m2=(struct mt_showid *)d;
 	if(pthread_equal(m1->tid,m2->tid)) return 0;
@@ -41,16 +41,16 @@ struct mt_showid *m1,*m2;
 
 static int mthr_dup(T_Tree *tp,void *cont,int len)
 {
-struct mt_showid *m1,*m=(struct mt_showid *)cont;
+	struct mt_showid *m1,*m=(struct mt_showid *)cont;
 	m1=(struct mt_showid *)tp->Content;
-//Èç¹ûtidÒÑ´æÔÚ£¬showid¸üĞÂ  
+//å¦‚æœtidå·²å­˜åœ¨ï¼Œshowidæ›´æ–°
 	m1->showid=m->showid;
 	return 0;
 }
-//¶¨ÖÆÏß³ÌµÄShowid  
+//å®šåˆ¶çº¿ç¨‹çš„Showid
 void mthr_showid_add(pthread_t tid,char *showid)
 {
-struct mt_showid mid;
+	struct mt_showid mid;
 	mid.tid=tid;
 	mid.showid=showid;
 	pthread_rwlock_wrlock(&rwlock);
@@ -59,12 +59,12 @@ struct mt_showid mid;
 	pthread_rwlock_unlock(&rwlock);
 }
 
-//È¡ÏûÏß³ÌµÄShowid
+//å–æ¶ˆçº¿ç¨‹çš„Showid
 
 int mthr_showid_del(pthread_t tid)
 {
-struct mt_showid mid;
-int i=0;
+	struct mt_showid mid;
+	int i=0;
 	mid.tid=tid;
 	mid.showid=0;
 	pthread_rwlock_wrlock(&rwlock);
@@ -73,23 +73,23 @@ int i=0;
 	pthread_rwlock_unlock(&rwlock);
 	return i;
 }
-//ÉèÖÃÈÕÖ¾¼¶±ğ,ÔÊĞí³ÌĞò¶¯Ì¬ÉèÖÃÈÕÖ¾¼¶±ğ
-//·µ»ØÔ­ÏÈµÄ¼¶±ğ
+//è®¾ç½®æ—¥å¿—çº§åˆ«,å…è®¸ç¨‹åºåŠ¨æ€è®¾ç½®æ—¥å¿—çº§åˆ«
+//è¿”å›åŸå…ˆçš„çº§åˆ«
 int setShowLevel(int new_level)
 {
-int old=level;
+	int old=level;
 	level=new_level;
 	return old;
 }
 
-//Éú³É·ÖÊ±¼ä¶ÎÈÕÖ¾Ãû 
-//8-20µã6¶Î£¬0-8µã£¬20-24µã¸÷Ò»¶Î 
+//ç”Ÿæˆåˆ†æ—¶é—´æ®µæ—¥å¿—å
+//8-20ç‚¹6æ®µï¼Œ0-8ç‚¹ï¼Œ20-24ç‚¹å„ä¸€æ®µ
 // LOGSEG=8-20?6
 static char * psfx(char *buf,int bh,int eh,int n,int now)
 {
-int j,bm,em;
-int len;
-char *p;
+	int j,bm,em;
+	int len;
+	char *p;
 
 	if(n<1) return NULL;
 	bm=bh*60;
@@ -108,15 +108,15 @@ char *p;
 
 static char *getsfx(int now)
 {
-int bh,eh,m,n;
-int ret;
-int n1,n2;
-char *p,buf[5];
+	int bh,eh,m,n;
+	int ret;
+	int n1,n2;
+	char *p,buf[5];
 
 
 	p=getenv("LOGSEG");
 	if(!p || !*p) return "log";
-	
+
 	ret=sscanf(p,"%d?%d:%d",&bh,&m,&n);
 	if(ret<1) return "log";
 	else if(ret == 1 ) {
@@ -127,57 +127,57 @@ char *p,buf[5];
 		} else if(ret==3) ret=5;
 	}
 	switch(ret) {
-	case 1:
-		return psfx(buf,0,24,bh,now);
-		break;
-	case 2:
-		if(bh>23) bh=23;
-		if(now/60<bh) return psfx(buf,0,bh,1,now);
-		else return psfx(buf,bh,24,m,now);
-		break;
-	case 3:
-		eh=24;
-	case 4:
-		if(eh>24) eh=24;
-		if(bh>eh) bh=eh;
-		n1=24-eh;
-		n2=n*n1/bh;
-		if(eh<24 && n2<1) n2=1;
-		n1=n-n2;
-		if(n1<1) n1=1;
-		ret=now/60;
-		if(ret<bh) return psfx(buf,0,bh,n1,now);
-		else if(ret <eh ||eh >=24) return psfx(buf,bh,eh,m,now);
-		else return psfx(buf,eh,24,n2,now);
-		break;
-	case 5:
-		if(eh>24) eh=24;
-		if(bh>(eh-1)) bh=eh-1;
-		ret=now/60;
-		if(ret<bh) return psfx(buf,0,bh,1,now);
-		else if(ret<eh || eh==24) return psfx(buf,bh,eh,m,now);
-		else  return psfx(buf,eh,24,1,now);
-		break;
+		case 1:
+			return psfx(buf,0,24,bh,now);
+			break;
+		case 2:
+			if(bh>23) bh=23;
+			if(now/60<bh) return psfx(buf,0,bh,1,now);
+			else return psfx(buf,bh,24,m,now);
+			break;
+		case 3:
+			eh=24;
+		case 4:
+			if(eh>24) eh=24;
+			if(bh>eh) bh=eh;
+			n1=24-eh;
+			n2=n*n1/bh;
+			if(eh<24 && n2<1) n2=1;
+			n1=n-n2;
+			if(n1<1) n1=1;
+			ret=now/60;
+			if(ret<bh) return psfx(buf,0,bh,n1,now);
+			else if(ret <eh ||eh >=24) return psfx(buf,bh,eh,m,now);
+			else return psfx(buf,eh,24,n2,now);
+			break;
+		case 5:
+			if(eh>24) eh=24;
+			if(bh>(eh-1)) bh=eh-1;
+			ret=now/60;
+			if(ret<bh) return psfx(buf,0,bh,1,now);
+			else if(ret<eh || eh==24) return psfx(buf,bh,eh,m,now);
+			else  return psfx(buf,eh,24,1,now);
+			break;
 	}
 	return "log";
 }
 
 static int setlogfile(time_t today)
 {
-struct tm tim;
-char *cp,*mode="a";
-struct stat sbuf;
-int ret,fd,fflag;
-char *dp,*sfx;
-char fn[512];
-FILE *efd=0;
+	struct tm tim;
+	char *cp,*mode="a";
+	struct stat sbuf;
+	int ret,fd,fflag;
+	char *dp,*sfx;
+	char fn[512];
+	FILE *efd=0;
 
 	localtime_r(&today,&tim);
 	cp=getenv("LOGFILE");
 	if(!cp || !*cp) return 0;
 	sfx=getsfx(tim.tm_hour*60+tim.tm_min);
- 	dp=getenv("LOGDAY");
-	if(dp&&toupper(*dp)=='D') 
+	dp=getenv("LOGDAY");
+	if(dp&&toupper(*dp)=='D')
 		sprintf(fn,"%s%02d.%s",cp,tim.tm_mday,sfx);
 	else sprintf(fn,"%s%d.%s",cp,tim.tm_wday,sfx);
 
@@ -187,18 +187,18 @@ FILE *efd=0;
 		strcpy(LOGFILE,fn);
 		ret=stat(LOGFILE,&sbuf);
 		if(ret<0 || ((today-timezone)/86400-
-			(sbuf.st_ctime-timezone)/86400)>0) mode="w"; 
-    		efd=freopen(LOGFILE,mode,stderr);
-    		if(efd) {
-	    		fd=fileno(efd);
-	    		fflag=fcntl(fd,F_GETFL,0);
-	    		if(fflag>=0)
-    			ret=fcntl(fd,F_SETFL,fflag|O_DSYNC);
+					 (sbuf.st_ctime-timezone)/86400)>0) mode="w";
+		efd=freopen(LOGFILE,mode,stderr);
+		if(efd) {
+			fd=fileno(efd);
+			fflag=fcntl(fd,F_GETFL,0);
+			if(fflag>=0)
+				ret=fcntl(fd,F_SETFL,fflag|O_DSYNC);
 			pthread_mutex_unlock(&log_mutex);
-	    		return 1;
-    		} else {
+			return 1;
+		} else {
 			fprintf(stderr,"open logfile %s:errno=%d,%s\n",
-				LOGFILE,errno,strerror(errno));
+					LOGFILE,errno,strerror(errno));
 			efd=freopen("/dev/null","w",stderr);
 		}
 	}
@@ -207,20 +207,20 @@ FILE *efd=0;
 	pthread_mutex_unlock(&log_mutex);
 	return 0;
 }
-/* ·µ»Ø0Ã»¼Ç,·µ»Ø1 ¼ÇÁË */     
+/* è¿”å›0æ²¡è®°,è¿”å›1 è®°äº† */
 int ShowLog(int debug_level,const char * fmt,...)
 {
-char *cp;
-struct tm *today_t;
-time_t tim;
-va_list vlist;
-int len;
-char *showid=Showid;
+	char *cp;
+	struct tm *today_t;
+	time_t tim;
+	va_list vlist;
+	int len;
+	char *showid=Showid;
 
 	if(debug_level==-1){
 		pthread_mutex_lock(&log_mutex);
 		if(stderr) {
-				fflush(stderr);
+			fflush(stderr);
 		}
 		*LOGFILE=0;
 		if(mthr_flg) {
@@ -241,12 +241,12 @@ char *showid=Showid;
 	time(&tim);
 	today_t=localtime((time_t *)&tim);
 	len=strlen(fmt);
-char ufmt[len+((showid)?strlen(showid):1)+50];
+	char ufmt[len+((showid)?strlen(showid):1)+50];
 
 	setlogfile(tim);
-	if(mthr_flg) {	//¶àÏß³ÌÈÕÖ¾ 
-	struct mt_showid mid;
-	T_Tree *tp;
+	if(mthr_flg) {	//å¤šçº¿ç¨‹æ—¥å¿—
+		struct mt_showid mid;
+		T_Tree *tp;
 
 		mid.tid=pthread_self();
 		mid.showid=0;
@@ -257,14 +257,14 @@ char ufmt[len+((showid)?strlen(showid):1)+50];
 		else showid=((struct mt_showid *)tp->Content)->showid;
 	}
 	cp=ufmt+sprintf(ufmt,"%d %s %02d/%02d %02d:%02d\'%02d %s",
-			debug_level,
-			showid?showid:"",
-			today_t->tm_mon+1,
-			today_t->tm_mday,
-			today_t->tm_hour,
-			today_t->tm_min,
-			today_t->tm_sec,
-			fmt
+					debug_level,
+					showid?showid:"",
+					today_t->tm_mon+1,
+					today_t->tm_mday,
+					today_t->tm_hour,
+					today_t->tm_min,
+					today_t->tm_sec,
+					fmt
 	);
 	if(fmt[len-1]!='\n') strcpy(cp,"\n");
 	va_start(vlist,fmt);
@@ -273,6 +273,6 @@ char ufmt[len+((showid)?strlen(showid):1)+50];
 	fflush(stderr);
 	pthread_mutex_unlock(&log_mutex);
 	va_end(vlist);
-	
+
 	return 1;
 }

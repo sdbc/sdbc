@@ -1,6 +1,6 @@
 /*******************************************************
  * Secure Database Connect
- * SDBC 6.0 for ORACLE 
+ * SDBC 6.0 for ORACLE
  * 2012.09.15 by ylh
  *******************************************************/
 
@@ -28,21 +28,21 @@ extern int locktab(T_Connect *connect,T_NetHead *NetHead);
 //extern int SQL_Quit(T_SRV_Var *);
 extern const char * _get_data_type_str(int dtype);
 /************************************************
- * mod_DB.c:Êı¾İ¿âÁ¬½Ó³Ø¸ß¼¶¹ÜÀíÆ÷
- ************************************************/ 
+ * mod_DB.c:æ•°æ®åº“è¿æ¥æ± é«˜çº§ç®¡ç†å™¨
+ ************************************************/
 /**
- * DB_connect_MGR:ÏòÊı¾İ¿âÁ¬½Ó³Ø¸ß¼¶¹ÜÀíÆ÷ÉêÇëÊı¾İ¿âÁ¬½Ó(mod_DB.c)
- * ·µ»ØÖµ:0:³É¹¦È¡µÃÁ¬½Ó¡£1:Á¬½ÓÃ¦£¬ÄãµÄÈÎÎñÅÅÈë¶ÓÁĞ£¬-1:³ö´í¡£
+ * DB_connect_MGR:å‘æ•°æ®åº“è¿æ¥æ± é«˜çº§ç®¡ç†å™¨ç”³è¯·æ•°æ®åº“è¿æ¥(mod_DB.c)
+ * è¿”å›å€¼:0:æˆåŠŸå–å¾—è¿æ¥ã€‚1:è¿æ¥å¿™ï¼Œä½ çš„ä»»åŠ¡æ’å…¥é˜Ÿåˆ—ï¼Œ-1:å‡ºé”™ã€‚
  */
 int DB_connect_MGR(int TCBno,int poolno,T_SQL_Connect **sqlp,sdbcfunc call_back);
-/* ÊÍ·Åmod_DBµÄ¶ÓÁĞ½á¹¹   */
+/* é‡Šæ”¾mod_DBçš„é˜Ÿåˆ—ç»“æ„   */
 void mod_DB_free(void);
-/* È¡·şÎñÆ÷½á¹¹ */
+/* å–æœåŠ¡å™¨ç»“æ„ */
 T_SRV_Var * get_SRV_Var(int TCBno);
 /******************************************************
  * bind_DB.c
- * ÅäºÏmod_DB,ÓÃÓÚÈ¡µÃÊı¾İ¿âÁ¬½Óºó£¬´«µİ¸øÏàÓ¦µÄTCB,
- * »ò´ÓÏàÓ¦µÄTCBÖĞ³ıÈ¥Ö®¡£ ¿ÉÒÔ±»ÆäËûÓ¦ÓÃĞèÇóÖØÔØ
+ * é…åˆmod_DB,ç”¨äºå–å¾—æ•°æ®åº“è¿æ¥åï¼Œä¼ é€’ç»™ç›¸åº”çš„TCB,
+ * æˆ–ä»ç›¸åº”çš„TCBä¸­é™¤å»ä¹‹ã€‚ å¯ä»¥è¢«å…¶ä»–åº”ç”¨éœ€æ±‚é‡è½½
  *****************************************************/
 int bind_DB(int TCBno,T_SQL_Connect *sql);
 int unbind_DB(int TCBno);
@@ -50,11 +50,11 @@ int unbind_DB(int TCBno);
 int dui(T_Connect *conn,T_NetHead *nethead);
 int page_select(T_Connect *conn,T_NetHead *nethead);
 
-//Çå¿Õ·şÎñÆ÷ÖĞµÄÄ£°å¿â
+//æ¸…ç©ºæœåŠ¡å™¨ä¸­çš„æ¨¡æ¿åº“
 int tpl_cancel(T_Connect *conn,T_NetHead *head);
-//È¡Êı¾İ¿â±íÄ£°å
-//head->data="±íÃû1,±íÃû2,,,"
-//·µ»ØJSON¶ÔÏó:{±íÃû:[Ä£°å],±íÃû:[Ä£°å],...}
+//å–æ•°æ®åº“è¡¨æ¨¡æ¿
+//head->data="è¡¨å1,è¡¨å2,,,"
+//è¿”å›JSONå¯¹è±¡:{è¡¨å:[æ¨¡æ¿],è¡¨å:[æ¨¡æ¿],...}
 int get_tpl(T_Connect *conn,T_NetHead *head);
 
 #ifdef __cplusplus

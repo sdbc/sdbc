@@ -1,14 +1,14 @@
 /**************************************************************************
- * memzip.c ¿ª·¢Õß ÓàÁ¢»ª 2007.6.13
- * ver 0.0.3.0 Ê¹ÓÃÁËHASH±í£¬Ö§³Ö»¬¶¯´°¿Ú¡£È¡ÏûÁË´°¿Ú´óĞ¡µÄÉèÖÃ¡£
- * ÎªÔÚÏß½»Ò×Ğ´µÄÒ»¸öÑ¹Ëõ³ÌĞò¡£Ñ¹ËõÊÇ»ùÓÚ×Ö·û´®µÄ£¬²ÉÓÃdeflateËã·¨
- * ¼´Ê¹Ñ¹Ëõ²»ÁË£¬Ò²¾ö²»ÄÜ±ä³¤£¬±ÜÃâÍ¨ĞÅ¹ı³Ì²úÉú´æ´¢Òç³ö
- * ÔİÊ±Ã»ÓĞ²ÉÓÃ huffumanËã·¨£¬¿¼ÂÇµ½Ã¿¸öÍ¨ĞÅ°ü´«ËÍhuffmanÊ÷£¬Ñ¹Ëõ½«ÎŞÀû¿ÉÍ¼
- * Ëã·¨À´Ô´ÓÚgzip£¬¸Ä½øÖ®´¦ÔÚÓÚ¼ÓÇ¿ÁËĞ¡Æ¥ÅäµÄĞ§ÂÊ£¬±ÜÃâÁËÎªÇø±ğÆ¥Åä×ÓÓëÔ­Êı¾İ
- * µÄÊı¾İ±ê³ß£¬ËüÊ¹Ñ¹ËõºóµÄÊı¾İ±ä´óÎª9/8£¬
- * ±¾·¨²ÉÓÃ±ê¼Ç×Ö½ÚÀ´±ê¼ÇÆ¥Åä×Ó¡£
- * Èç¹ûÔ­ÎÄÖĞº¬ÓĞ±ê¼Ç£¬Ôò×ªÒå¡£
- * ±¾³ÌĞò²ÉÓÃ±ä³¤Æ¥Åä×Ó¡£×îĞ¡µÄÆ¥Åä×Ó2×Ö½Ú£¬×î´óµÄ4×Ö½Ú¡£
+ * memzip.c å¼€å‘è€… ä½™ç«‹å 2007.6.13
+ * ver 0.0.3.0 ä½¿ç”¨äº†HASHè¡¨ï¼Œæ”¯æŒæ»‘åŠ¨çª—å£ã€‚å–æ¶ˆäº†çª—å£å¤§å°çš„è®¾ç½®ã€‚
+ * ä¸ºåœ¨çº¿äº¤æ˜“å†™çš„ä¸€ä¸ªå‹ç¼©ç¨‹åºã€‚å‹ç¼©æ˜¯åŸºäºå­—ç¬¦ä¸²çš„ï¼Œé‡‡ç”¨deflateç®—æ³•
+ * å³ä½¿å‹ç¼©ä¸äº†ï¼Œä¹Ÿå†³ä¸èƒ½å˜é•¿ï¼Œé¿å…é€šä¿¡è¿‡ç¨‹äº§ç”Ÿå­˜å‚¨æº¢å‡º
+ * æš‚æ—¶æ²¡æœ‰é‡‡ç”¨ huffumanç®—æ³•ï¼Œè€ƒè™‘åˆ°æ¯ä¸ªé€šä¿¡åŒ…ä¼ é€huffmanæ ‘ï¼Œå‹ç¼©å°†æ— åˆ©å¯å›¾
+ * ç®—æ³•æ¥æºäºgzipï¼Œæ”¹è¿›ä¹‹å¤„åœ¨äºåŠ å¼ºäº†å°åŒ¹é…çš„æ•ˆç‡ï¼Œé¿å…äº†ä¸ºåŒºåˆ«åŒ¹é…å­ä¸åŸæ•°æ®
+ * çš„æ•°æ®æ ‡å°ºï¼Œå®ƒä½¿å‹ç¼©åçš„æ•°æ®å˜å¤§ä¸º9/8ï¼Œ
+ * æœ¬æ³•é‡‡ç”¨æ ‡è®°å­—èŠ‚æ¥æ ‡è®°åŒ¹é…å­ã€‚
+ * å¦‚æœåŸæ–‡ä¸­å«æœ‰æ ‡è®°ï¼Œåˆ™è½¬ä¹‰ã€‚
+ * æœ¬ç¨‹åºé‡‡ç”¨å˜é•¿åŒ¹é…å­ã€‚æœ€å°çš„åŒ¹é…å­2å­—èŠ‚ï¼Œæœ€å¤§çš„4å­—èŠ‚ã€‚
  **************************************************************************/
 #include <stdio.h>
 #include <fcntl.h>
@@ -17,9 +17,9 @@
 #include <sc.h>
 
 /* used by comprtok.flgbyte */
-#define ESC  0X10		//×ªÒå×Ö·û
-#define MFLG 0X11		//±ê¼Ç×Ö·û
-#define MBASE 0x12		//¶ÌÆ¥Åä±ê¼Ç×Ö·û£¬MBASE£­MBASE+5,·Ö±ğ±íÊ¾3-8×Ö½ÚµÄÆ¥Åä³¤¶È¡£
+#define ESC  0X10		//è½¬ä¹‰å­—ç¬¦
+#define MFLG 0X11		//æ ‡è®°å­—ç¬¦
+#define MBASE 0x12		//çŸ­åŒ¹é…æ ‡è®°å­—ç¬¦ï¼ŒMBASEï¼MBASE+5,åˆ†åˆ«è¡¨ç¤º3-8å­—èŠ‚çš„åŒ¹é…é•¿åº¦ã€‚
 
 #define MAX_DISTANCE 16576
 
@@ -30,43 +30,43 @@
 #define DNIL ((NIL << 16)+NIL)
 #define HASH(s,c) ((((unsigned)(s)<<5) ^ (unsigned)(c)) & HASH_MASK)
 
-/* Æ¥Åä×ÓµÄÃèÊö½á¹¹ */
+/* åŒ¹é…å­çš„æè¿°ç»“æ„ */
 struct comprtok {
-	char flgbyte;	//±ê¼Ç×Ö·û
-	char len;	//Æ¥Åä³¤¶È£¬¶ÌÆ¥Åä²»Ê¹ÓÃ¡£³¤Æ¥Åä±íÊ¾9£­264×Ö½ÚµÄÆ¥Åä¡£
-/* ±ä³¤µÄÆ¥Åä¾àÀë¡£Èç¹û3×Ö½ÚÆ¥Åä£¬distance[0]=0~255,±íÊ¾1£­256×Ö½Ú·¶Î§ÄÚµÄÆ¥Åä£¬
-¶à×Ö½ÚÆ¥ÅäÊ±£ºdistance[0]={0-191},±íÊ¾1-192·¶Î§ÄÚµÄÆ¥Åä£¬Ò»¸ö×Ö½Ú¡£Èç¹ûD7D6ÖÃ1£¬
-ĞèÒªÁ½¸ö×Ö½Ú£¬±íÊ¾193-MAX_DISTANCEµÄÆ¥Åä¾àÀë */
+	char flgbyte;	//æ ‡è®°å­—ç¬¦
+	char len;	//åŒ¹é…é•¿åº¦ï¼ŒçŸ­åŒ¹é…ä¸ä½¿ç”¨ã€‚é•¿åŒ¹é…è¡¨ç¤º9ï¼264å­—èŠ‚çš„åŒ¹é…ã€‚
+/* å˜é•¿çš„åŒ¹é…è·ç¦»ã€‚å¦‚æœ3å­—èŠ‚åŒ¹é…ï¼Œdistance[0]=0~255,è¡¨ç¤º1ï¼256å­—èŠ‚èŒƒå›´å†…çš„åŒ¹é…ï¼Œ
+å¤šå­—èŠ‚åŒ¹é…æ—¶ï¼šdistance[0]={0-191},è¡¨ç¤º1-192èŒƒå›´å†…çš„åŒ¹é…ï¼Œä¸€ä¸ªå­—èŠ‚ã€‚å¦‚æœD7D6ç½®1ï¼Œ
+éœ€è¦ä¸¤ä¸ªå­—èŠ‚ï¼Œè¡¨ç¤º193-MAX_DISTANCEçš„åŒ¹é…è·ç¦» */
 	unsigned char distance[2];
-	char *strend;	//Æ¥Åä×ÓºóÃæµÄ×Ö½Ú
-	char *strbegin; //´°¿Ú¿ªÊ¼µÄÎ»ÖÃ
+	char *strend;	//åŒ¹é…å­åé¢çš„å­—èŠ‚
+	char *strbegin; //çª—å£å¼€å§‹çš„ä½ç½®
 	unsigned short head[HASH_SIZE]; //hash head
 	unsigned short prev[32768];	//link tab
 	unsigned short h;		//HASH key
 };
 
-/* deflateÔ¤Ñ¹Ëõ£¬Èë¿Ú²ÎÊı£º
-tokp:Æ¥Åä×ÓÃèÊö·û¡£
-strbegin:´®¿ªÊ¼µÄÎ»ÖÃ¡£
-strstart:µ±Ç°Î»ÖÃ¡£
-len:strstartÖ®ºóµÄ³¤¶È¡£
-·µ»ØÖµ:<0±íÊ¾Ã»ÓĞÑ¹Ëõ¡£>=0±íÊ¾Ñ¹ËõÀûÈó£¬Æ¥Åä×ÓÃèÊöÔÚtokpÀï
+/* deflateé¢„å‹ç¼©ï¼Œå…¥å£å‚æ•°ï¼š
+tokp:åŒ¹é…å­æè¿°ç¬¦ã€‚
+strbegin:ä¸²å¼€å§‹çš„ä½ç½®ã€‚
+strstart:å½“å‰ä½ç½®ã€‚
+len:strstartä¹‹åçš„é•¿åº¦ã€‚
+è¿”å›å€¼:<0è¡¨ç¤ºæ²¡æœ‰å‹ç¼©ã€‚>=0è¡¨ç¤ºå‹ç¼©åˆ©æ¶¦ï¼ŒåŒ¹é…å­æè¿°åœ¨tokpé‡Œ
 */
 #define IBASE (MBASE-3)
 static int deflate(register struct comprtok *tokp,register char *strstart,int len)
 {
-register char *p,*p1;
-int i,gain,g1,j;
-register unsigned int pos,b;
-int distance,cur;
-unsigned short *prev;
+	register char *p,*p1;
+	int i,gain,g1,j;
+	register unsigned int pos,b;
+	int distance,cur;
+	unsigned short *prev;
 	if(len < 3) return -1;
 	cur=strstart-tokp->strbegin;
 	b=0;
 	if(cur>MAX_DISTANCE) b=cur-MAX_DISTANCE;
 	gain=-1;
 	prev=tokp->prev;
-	
+
 	for(pos=tokp->head[tokp->h]; pos != NIL && pos>=b;
 		pos=prev[pos]) {
 /*
@@ -76,47 +76,47 @@ if(pos==tokp->prev[pos]) {
 	break;
 }
 */
-	    p=tokp->strbegin+pos;
-	    if(*strstart!=*p || strstart[1]!=p[1] || strstart[2]!=p[2])
+		p=tokp->strbegin+pos;
+		if(*strstart!=*p || strstart[1]!=p[1] || strstart[2]!=p[2])
 			continue;
-	    distance=cur-pos;
-	    i=3;
-	    p+=i;
+		distance=cur-pos;
+		i=3;
+		p+=i;
 		for( p1=strstart+i ; i<len && *p==*p1;p++,p1++)
 		{
 			if(++i == 264) {
 				p++,p1++;
 				break;
 			}
-	   	}
-/* ¼ÆËãÀûÈó */
-	    g1=i-2;
-	    if(i==3) {
-		if(distance>256) continue;
+		}
+/* è®¡ç®—åˆ©æ¶¦ */
+		g1=i-2;
+		if(i==3) {
+			if(distance>256) continue;
 
-	    } else {
-		if(distance>192) --g1;
-	    	if(i>8) g1--;
-	    }
-	    j=(distance<i);	//ÖØµş
-	    if(g1>gain) {
-		if(i<9) tokp->flgbyte=i+IBASE;
-		else {
-			tokp->flgbyte=MFLG;
-			tokp->len=i-9;
-		}
-		if(i==3 || distance<193) {
-			*tokp->distance=distance-1;
 		} else {
-			distance -= 193;
-			*tokp->distance=(distance>>8) | 0xC0;
-			tokp->distance[1]=distance;
+			if(distance>192) --g1;
+			if(i>8) g1--;
 		}
-		tokp->strend=p1;
-		gain=g1;
-		if(j && g1>20) break; //ÖØµşÍË³ö£¬·ñÔò£¬Ñ¹ËõÂÔÓĞÌá¸ß£¬ËÙ¶ÈºÜÂı
-		if(i>263) break;
-	    }
+		j=(distance<i);	//é‡å 
+		if(g1>gain) {
+			if(i<9) tokp->flgbyte=i+IBASE;
+			else {
+				tokp->flgbyte=MFLG;
+				tokp->len=i-9;
+			}
+			if(i==3 || distance<193) {
+				*tokp->distance=distance-1;
+			} else {
+				distance -= 193;
+				*tokp->distance=(distance>>8) | 0xC0;
+				tokp->distance[1]=distance;
+			}
+			tokp->strend=p1;
+			gain=g1;
+			if(j && g1>20) break; //é‡å é€€å‡ºï¼Œå¦åˆ™ï¼Œå‹ç¼©ç•¥æœ‰æé«˜ï¼Œé€Ÿåº¦å¾ˆæ…¢
+			if(i>263) break;
+		}
 	}
 /*
 if(gain > 0) {
@@ -139,8 +139,8 @@ if(gain > 0) {
 
 static void win_slip(struct comprtok *tokp)
 {
-int i;
-register unsigned short *usp,*udp;
+	int i;
+	register unsigned short *usp,*udp;
 	usp=tokp->head;
 	for(i=0;i<HASH_SIZE;i++,usp++) {
 		if(*usp==NIL) continue;
@@ -155,27 +155,27 @@ register unsigned short *usp,*udp;
 	}
 	tokp->strbegin+=16384;
 }
-/* memzip,Ö÷ÒªµÄÑ¹Ëõ³ÌĞò
- Èë¿Ú²ÎÊı£º
-src£º±»Ñ¹ËõµÄ´®¡£
-srcLen£º´®µÄ×Ö½ÚÊı¡£
-dest£ºÑ¹ËõºóµÄ´®´æ·ÅÓÚ´Ë£¬Æä³¤¶È²»Ğ¡ÓÚsrcLen
-·µ»ØÖµ£ºÑ¹ËõºóµÄ³¤¶È£¬Èç¹û==srcLen£¬Ã»ÓĞÑ¹Ëõ
+/* memzip,ä¸»è¦çš„å‹ç¼©ç¨‹åº
+ å…¥å£å‚æ•°ï¼š
+srcï¼šè¢«å‹ç¼©çš„ä¸²ã€‚
+srcLenï¼šä¸²çš„å­—èŠ‚æ•°ã€‚
+destï¼šå‹ç¼©åçš„ä¸²å­˜æ”¾äºæ­¤ï¼Œå…¶é•¿åº¦ä¸å°äºsrcLen
+è¿”å›å€¼ï¼šå‹ç¼©åçš„é•¿åº¦ï¼Œå¦‚æœ==srcLenï¼Œæ²¡æœ‰å‹ç¼©
 */
 int memzip(char *dest,char *src,int srcLen)
 {
-register unsigned char *p,*pd,*p0,*pe;
-int gain=0,totalgain=0;
-unsigned cur,i;
-struct comprtok comtok;
+	register unsigned char *p,*pd,*p0,*pe;
+	int gain=0,totalgain=0;
+	unsigned cur,i;
+	struct comprtok comtok;
 	if(!src || !dest) return 0;
-    {
-	register unsigned *up;
-	register unsigned num;
-	num=HASH_SIZE>>1;
-	up=(unsigned *)comtok.head;
-	do *up++ = DNIL; while(--num);
-    }
+	{
+		register unsigned *up;
+		register unsigned num;
+		num=HASH_SIZE>>1;
+		up=(unsigned *)comtok.head;
+		do *up++ = DNIL; while(--num);
+	}
 	p=(unsigned char *)src;pd=(unsigned char *)dest;
 	comtok.strbegin=src;
 	comtok.h=HASH(HASH(*p,p[1]),p[2]);
@@ -186,7 +186,7 @@ struct comprtok comtok;
 	pe=(unsigned char *)dest+srcLen;
 	while(p<p0) {
 		if(p<p0-2) comtok.h=HASH(comtok.h,p[2]);
-		if((cur=p-(unsigned char *)comtok.strbegin) > 32504) { //´°¿Ú»¬¶¯16384
+		if((cur=p-(unsigned char *)comtok.strbegin) > 32504) { //çª—å£æ»‘åŠ¨16384
 //fprintf(stderr,"slip cur=%u\n",cur);
 
 			win_slip(&comtok);
@@ -197,16 +197,16 @@ cur,comtok.strbegin-src,srcLen,p-src);
 */
 		}
 		gain=deflate(&comtok,(char *)p,p0-p);
-/* µ±Ç°×Ö·û¼ÓÈëHASH±í */
+/* å½“å‰å­—ç¬¦åŠ å…¥HASHè¡¨ */
 		comtok.prev[cur]=comtok.head[comtok.h];
 		comtok.head[comtok.h]=cur;
-		if(gain>0) {	//Ñ¹Ëõ¡£
-		    p=(unsigned char *)comtok.strend;
-			i=p-(unsigned char *)comtok.strbegin;  //ÄÜ¹»HASHµÄ×îºó×Ö½Ú
-/* Æ¥ÅäÇøÄÚËùÓĞ×Ö·û¶¼Òª¼ÓÈëHASH±í */	
+		if(gain>0) {	//å‹ç¼©ã€‚
+			p=(unsigned char *)comtok.strend;
+			i=p-(unsigned char *)comtok.strbegin;  //èƒ½å¤ŸHASHçš„æœ€åå­—èŠ‚
+/* åŒ¹é…åŒºå†…æ‰€æœ‰å­—ç¬¦éƒ½è¦åŠ å…¥HASHè¡¨ */
 			while(++cur < i) {
 				comtok.h=HASH(comtok.h,
-				    *((unsigned char *)comtok.strbegin+cur+2));
+							  *((unsigned char *)comtok.strbegin+cur+2));
 /*
 if(cur & 0XFFFFC000)
 	fprintf(stderr,"cur=%u\n",cur);
@@ -214,30 +214,30 @@ if(cur & 0XFFFFC000)
 				comtok.prev[cur]=comtok.head[comtok.h];
 				comtok.head[comtok.h]=cur;
 			}
-		    *pd++ = comtok.flgbyte;
-		    if(comtok.flgbyte == MFLG) 	//³¤Æ¥Åä
-			    *pd++ = comtok.len;
-		    *pd++ =*comtok.distance;
-		    if(comtok.flgbyte!=MBASE && *comtok.distance > 191) {
-				*pd++ = comtok.distance[1];	//³¤¾àÀë
-		    }
-		    totalgain += gain;
-		    continue;
+			*pd++ = comtok.flgbyte;
+			if(comtok.flgbyte == MFLG) 	//é•¿åŒ¹é…
+				*pd++ = comtok.len;
+			*pd++ =*comtok.distance;
+			if(comtok.flgbyte!=MBASE && *comtok.distance > 191) {
+				*pd++ = comtok.distance[1];	//é•¿è·ç¦»
+			}
+			totalgain += gain;
+			continue;
 		}
 		if(*p>=ESC && *p <(ESC+8))  {
 			totalgain--;
-			if(pd>pe) //  ·ÀÖ¹Ô½½ç
+			if(pd>pe) //  é˜²æ­¢è¶Šç•Œ
 			{
 				totalgain=-1;
 				break;
 			}
-			*pd++=ESC; //×ªÒå
+			*pd++=ESC; //è½¬ä¹‰
 		}
-		if(pd>pe) {	//·ÀÖ¹Ô½½ç
+		if(pd>pe) {	//é˜²æ­¢è¶Šç•Œ
 			totalgain=-1;
 			break;
 		}
-		*pd++ = *p++; //Ô­ÎÄ¸´ÖÆ
+		*pd++ = *p++; //åŸæ–‡å¤åˆ¶
 	}
 	if(totalgain <=0 && p != p0) {
 		memcpy(dest,src,srcLen);
@@ -246,20 +246,20 @@ if(cur & 0XFFFFC000)
 	return pd-(unsigned char *)dest;
 }
 
-/* Ö÷ÒªµÄ½âÑ¹Ëõ³ÌĞò
-Èë¿Ú²ÎÊı£º
-compr_str£º¾­¹ımemzipÑ¹ËõµÄ×Ö·û´®¡£
-t_len:compr_strµÄ³¤¶È¡£
-buf£º½âÑ¹ºóµÄ´®¡£
-pkg_len:bufµÄ³¤¶È£¬Ó¦¸Ã¾ÍÊÇÑ¹ËõÇ°µÄ³¤¶È¡£
-·µ»ØÖµ£º½âÑ¹ºóµÄ³¤¶È,Ó¦¸ÃµÈÓÚÑ¹ËõÇ°µÄ³¤¶È¡£
--1:³öÏÖ²»Ã÷´íÎó£¬Õâ¸ö´®²»ÊÇmemzipÑ¹ËõµÄ¡£
+/* ä¸»è¦çš„è§£å‹ç¼©ç¨‹åº
+å…¥å£å‚æ•°ï¼š
+compr_strï¼šç»è¿‡memzipå‹ç¼©çš„å­—ç¬¦ä¸²ã€‚
+t_len:compr_strçš„é•¿åº¦ã€‚
+bufï¼šè§£å‹åçš„ä¸²ã€‚
+pkg_len:bufçš„é•¿åº¦ï¼Œåº”è¯¥å°±æ˜¯å‹ç¼©å‰çš„é•¿åº¦ã€‚
+è¿”å›å€¼ï¼šè§£å‹åçš„é•¿åº¦,åº”è¯¥ç­‰äºå‹ç¼©å‰çš„é•¿åº¦ã€‚
+-1:å‡ºç°ä¸æ˜é”™è¯¯ï¼Œè¿™ä¸ªä¸²ä¸æ˜¯memzipå‹ç¼©çš„ã€‚
 */
 int memunzip(char *compr_str,int t_len,char *buf,int pkg_len)
 {
-register unsigned char *p,*p1,*p2,*p0;
-int n;
-int distance;
+	register unsigned char *p,*p1,*p2,*p0;
+	int n;
+	int distance;
 	if(!compr_str || !buf) return 0;
 	if(t_len==pkg_len) {
 		if(compr_str != buf)
@@ -275,50 +275,50 @@ int distance;
 			return pkg_len;
 		}
 		if((p1-(unsigned char *)buf)>=pkg_len) {
-//fprintf(stderr,"³öÏÖ²»Ã÷´íÎó£¬½âÂë³¬³¤%d£¡t_len=%d,possion=%d\n",
+//fprintf(stderr,"å‡ºç°ä¸æ˜é”™è¯¯ï¼Œè§£ç è¶…é•¿%dï¼t_len=%d,possion=%d\n",
 //		p1-buf-pkg_len,t_len,p-(unsigned char *)compr_str);
 			return -1;
 		}
 		switch((unsigned char)*p) {
-		case MBASE:
-		case MBASE+1:
-		case MBASE+2:
-		case MBASE+3:
-		case MBASE+4:
-		case MBASE+5:	//¶ÌÆ¥Åä
-			n=*p-IBASE;
-			p++;
-			if(n != 3) goto get_distance;
-			else { //Èı×Ö½Údistance:=0-255;
-				distance=(*p++ & 255)+1;
-				goto byte3;
-			}
+			case MBASE:
+			case MBASE+1:
+			case MBASE+2:
+			case MBASE+3:
+			case MBASE+4:
+			case MBASE+5:	//çŸ­åŒ¹é…
+				n=*p-IBASE;
+				p++;
+				if(n != 3) goto get_distance;
+				else { //ä¸‰å­—èŠ‚distance:=0-255;
+					distance=(*p++ & 255)+1;
+					goto byte3;
+				}
 
-		case MFLG:	//³¤Æ¥Åä
-			p++;
-			n=(*p&255)+9;
-			p++;
-get_distance:
-			if(*p > 191) {
-				distance= *p&0X3F;
-				distance <<= 8;
+			case MFLG:	//é•¿åŒ¹é…
 				p++;
-				distance += *p&255;
+				n=(*p&255)+9;
 				p++;
-				distance += 193;
-			} else {
-				distance=(*p)+1;
+			get_distance:
+				if(*p > 191) {
+					distance= *p&0X3F;
+					distance <<= 8;
+					p++;
+					distance += *p&255;
+					p++;
+					distance += 193;
+				} else {
+					distance=(*p)+1;
+					p++;
+				}
+			byte3:
+				p2=p1-distance;
+				while(n--) *p1++ = *p2++;
+				break;
+			case ESC:	//è§£é™¤è½¬ä¹‰
 				p++;
-			}
-byte3:
-			p2=p1-distance;
-			while(n--) *p1++ = *p2++;
-			break;
-		case ESC:	//½â³ı×ªÒå
-			p++;
-		default:
-			*p1++ = *p++;
-			break;	
+			default:
+				*p1++ = *p++;
+				break;
 		}
 	}
 	return p1-(unsigned char *)buf;

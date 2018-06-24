@@ -7,8 +7,8 @@
 #include <sccli.h>
 /*****************************************************************
  * for sdbc 4.0
- * SDBC µÄ¿Í»§¶ËÁ¬½ÓºÍÊÍ·Åº¯Êý¡£
- * Á¬½ÓºóÊÕÈ¡·þÎñÆ÷ËÍÀ´µÄÃÜÔ¿¡£
+ * SDBC çš„å®¢æˆ·ç«¯è¿žæŽ¥å’Œé‡Šæ”¾å‡½æ•°ã€‚
+ * è¿žæŽ¥åŽæ”¶å–æœåŠ¡å™¨é€æ¥çš„å¯†é’¥ã€‚
  *****************************************************************/
 
 
@@ -29,46 +29,46 @@ extern u_int family[];
 
 int Net_Connect( T_Connect *conn,void *userdata,u_int *new_family)
 {
-int i=0,n,err,repeat;
-int socket_no;
-char *cp,addr[16];
+	int i=0,n,err,repeat;
+	int socket_no;
+	char *cp,addr[16];
 
-    initconnect(conn);
-    if(new_family) conn->family=new_family;
-    else conn->family=family; 
-    conn->Var=userdata;
-    cp=getenv("CONN_REPEAT");
-    if(cp && *cp) repeat=atoi(cp);
-    else repeat=0;
-    cp=getenv("TCPTIMEOUT");
-    if(cp && isdigit(*cp)) {
-	conn->timeout=atoi(cp);
-    }
-    n=0;
-    do {
-	conn->Socket=socket_no=tcpopen(conn->Host,conn->Service);
-	if(socket_no>=0) break;
-	i=errno;
-	if(i!=ECONNREFUSED&&i!=EHOSTUNREACH) return i>0?-i:i==0?-1:i;
-	if(n++ >= repeat) break;
-	usleep(5000000);
-    } while(1);
-    if(socket_no<0) return socket_no;
-    
-    LocalAddr(socket_no,addr);
-    i=get_clikey(conn); //È¡µÃ¿Í»§ÃÜÔ¿ 
-    if(i>=0){
-        conn->Socket=socket_no;
-    	ShowLog(2,"%s:netconnect %s/%s,OK ",__FUNCTION__,conn->Host,conn->Service);
+	initconnect(conn);
+	if(new_family) conn->family=new_family;
+	else conn->family=family;
+	conn->Var=userdata;
+	cp=getenv("CONN_REPEAT");
+	if(cp && *cp) repeat=atoi(cp);
+	else repeat=0;
+	cp=getenv("TCPTIMEOUT");
+	if(cp && isdigit(*cp)) {
+		conn->timeout=atoi(cp);
+	}
+	n=0;
+	do {
+		conn->Socket=socket_no=tcpopen(conn->Host,conn->Service);
+		if(socket_no>=0) break;
+		i=errno;
+		if(i!=ECONNREFUSED&&i!=EHOSTUNREACH) return i>0?-i:i==0?-1:i;
+		if(n++ >= repeat) break;
+		usleep(5000000);
+	} while(1);
+	if(socket_no<0) return socket_no;
+
+	LocalAddr(socket_no,addr);
+	i=get_clikey(conn); //å–å¾—å®¢æˆ·å¯†é’¥
+	if(i>=0){
+		conn->Socket=socket_no;
+		ShowLog(2,"%s:netconnect %s/%s,OK ",__FUNCTION__,conn->Host,conn->Service);
+		return 0;
+	} else {
+		ShowLog(1,"%s i=%d first recv errno=%d",__FUNCTION__,i,errno);
+		err=errno;
+		close(socket_no); /* in win closesocket();*/
+		errno=err;
+		return err;
+	}
 	return 0;
-    } else {
-	ShowLog(1,"%s i=%d first recv errno=%d",__FUNCTION__,i,errno);
-	err=errno;
-	close(socket_no); /* in win closesocket();*/
-	errno=err;
-	return err;
-    }
-    return 0;
 }
 
 /*******************************************************************/
@@ -78,7 +78,7 @@ char *cp,addr[16];
 /*******************************************************************/
 void disconnect(T_Connect *conn)
 {
-T_NetHead NetHead;
+	T_NetHead NetHead;
 	if(!conn) return;
 	if(conn->Socket>=0) {
 		NetHead.ERRNO1=0;

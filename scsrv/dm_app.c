@@ -15,11 +15,11 @@ typedef struct {
 	int lock;
 	pthread_mutex_t mut;
 	pthread_cond_t cond;
-} cmd_node;	
+} cmd_node;
 
 static int cmd_cmp(void *s,void *d,int len)
 {
-cmd_node *sp,*dp;
+	cmd_node *sp,*dp;
 	sp=(cmd_node *)s;
 	dp=(cmd_node *)d;
 	return strcmp(sp->cmd_name,dp->cmd_name);
@@ -28,22 +28,22 @@ cmd_node *sp,*dp;
 static T_Tree *cmd_tree=NULL;
 
 /******************************************************
- * ¶¯Ì¬Ä£¿éµÄÓ¦ÓÃ·þÎñÈë¿Ú,app²ã
+ * åŠ¨æ€æ¨¡å—çš„åº”ç”¨æœåŠ¡å…¥å£,appå±‚
  * json="{model:"modelname",param:{....}}"
- *        modelÊÇµ÷ÓÃµÄsoÃû×Ö
- *                          paramÊÇÌá½»¸øÄ£¿éµÄÊý¾Ý
+ *        modelæ˜¯è°ƒç”¨çš„soåå­—
+ *                          paramæ˜¯æäº¤ç»™æ¨¡å—çš„æ•°æ®
  ******************************************************/
 JSON_OBJECT dm_app(T_SRV_Var *srvp,JSON_OBJECT json,JSON_OBJECT err_json)
 {
-JSON_OBJECT model_json,result=NULL;
-char msg[2048];
-cmd_node *nodep,node={{0},NULL,NULL,NULL,1,PTHREAD_MUTEX_INITIALIZER,PTHREAD_COND_INITIALIZER};
-T_Tree *trp;
+	JSON_OBJECT model_json,result=NULL;
+	char msg[2048];
+	cmd_node *nodep,node={{0},NULL,NULL,NULL,1,PTHREAD_MUTEX_INITIALIZER,PTHREAD_COND_INITIALIZER};
+	T_Tree *trp;
 
 	model_json=json_object_object_get(json,"model");
 	if(!model_json) {
-		sprintf(msg,"ÇëÇóµÄJSON ¸ñÊ½´í");
-                json_object_array_add(err_json,jerr(100,msg));
+		sprintf(msg,"è¯·æ±‚çš„JSON æ ¼å¼é”™");
+		json_object_array_add(err_json,jerr(100,msg));
 		return NULL;
 	}
 	stptok(json_object_get_string(model_json),node.cmd_name,sizeof(node.cmd_name),NULL);
@@ -56,7 +56,7 @@ T_Tree *trp;
 		envp=getenv("SO_USE");
 		if(envp) sprintf(so_name,"%s/lib%s.so",envp,node.cmd_name);
 		else sprintf(so_name,"lib%s.so",node.cmd_name);
-		
+
 		node.handle = dlopen(so_name, RTLD_NOW);
 		if(node.handle) {
 			dlerror();
@@ -64,7 +64,7 @@ T_Tree *trp;
 			if(!node.cmd) {
 				sprintf(msg,"cmd %s err %s",node.cmd_name,dlerror());
 				ShowLog(1,"%s:%s",__FUNCTION__,msg);
-                		json_object_array_add(err_json,jerr(102,msg));
+				json_object_array_add(err_json,jerr(102,msg));
 			}
 			sprintf(so_name,"_%s",node.cmd_name);
 			*(void **)&node.destruct = dlsym(node.handle, so_name);
@@ -73,38 +73,38 @@ T_Tree *trp;
 			nodep=(cmd_node *)trp->Content;
 		} else {
 			sprintf(msg,"%s:load %s err %s",__FUNCTION__,so_name,dlerror());
-                	json_object_array_add(err_json,jerr(101,msg));
+			json_object_array_add(err_json,jerr(101,msg));
 			ShowLog(1,"%s:%s",__FUNCTION__,msg);
 			node.cmd=NULL;
 			nodep=&node;
 		}
-		
+
 	} else {
 		nodep=(cmd_node *)trp->Content;
 		pthread_mutex_lock(&nodep->mut);
 		nodep->lock++;
 		pthread_mutex_unlock(&nodep->mut);
 	}
-	
+
 	pthread_rwlock_unlock(&dmlock);
 
 	if(nodep->cmd) {
 		result=nodep->cmd(srvp,json_object_object_get(json,"param"),err_json);
 		pthread_mutex_lock(&nodep->mut);
-                nodep->lock--;
-                pthread_mutex_unlock(&nodep->mut);
+		nodep->lock--;
+		pthread_mutex_unlock(&nodep->mut);
 		if(nodep->lock==0) pthread_cond_signal(&nodep->cond);
 	}
 
 	return result;
 }
-//Ð¶ÔØÄ£¿é£¬app²ã
+//å¸è½½æ¨¡å—ï¼Œappå±‚
 int dmmgr_app(T_SRV_Var *srvp,char *model_name,JSON_OBJECT err_json)
 {
-char *p,*envp,so_use[128],so_lib[200],msg[2048];
-int flg=0,ret;
-cmd_node *nodep=NULL;
-T_Tree *trp;
+	char *p,*envp,so_use[128],so_lib[200],msg[2048];
+	int flg=0,ret;
+	cmd_node *nodep=NULL;
+	T_Tree *trp;
 
 	envp=getenv("SO_USE");
 	if(!envp||!*envp) envp=".";
@@ -114,8 +114,8 @@ T_Tree *trp;
 	pthread_rwlock_wrlock(&dmlock);
 	ret=system(msg);
 	if(ret >> 8) {
-		strcat(msg,":ÒÆ¶¯Ô­Ä£¿éÊ§°Ü");
-                json_object_array_add(err_json,jerr(105,msg));
+		strcat(msg,":ç§»åŠ¨åŽŸæ¨¡å—å¤±è´¥");
+		json_object_array_add(err_json,jerr(105,msg));
 		ret=SYSERR;
 		goto err1;
 	}
@@ -130,23 +130,23 @@ T_Tree *trp;
 	sprintf(msg,"cp -f %s %s",so_lib,so_use);
 
 	ret=system(msg);
-	if(ret >> 8) { //Ê§°Ü
-		strcat(msg,":¿½±´Ê§°Ü");
-                json_object_array_add(err_json,jerr(105,msg));
+	if(ret >> 8) { //å¤±è´¥
+		strcat(msg,":æ‹·è´å¤±è´¥");
+		json_object_array_add(err_json,jerr(105,msg));
 		sprintf(msg,"mv -f %s.bak %s",so_use,so_use);
 		system(msg);
 		ret=SYSERR;
-err1:
+		err1:
 		pthread_rwlock_unlock(&dmlock);
 		return ret;
 	}
 	cmd_node node;
 	strcpy(node.cmd_name,model_name);
-	
+
 	trp=BB_Tree_Find(cmd_tree,&node,sizeof(node),cmd_cmp);
 	if(!trp) {
 		sprintf(msg,"no such model[%s]",model_name);
-                json_object_array_add(err_json,jerr(106,msg));
+		json_object_array_add(err_json,jerr(106,msg));
 		ret=-106;
 		goto err1;
 	}
@@ -154,7 +154,7 @@ err1:
 	pthread_mutex_lock(&nodep->mut);
 	while(nodep->lock>0) {
 		pthread_cond_wait(&nodep->cond,&nodep->mut);
-	} 
+	}
 	pthread_mutex_unlock(&nodep->mut);
 	if(nodep->destruct) nodep->destruct(srvp);
 	do {

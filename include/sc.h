@@ -1,7 +1,7 @@
 /*******************************************
  * sc.h: Secure Connect Package
  * 2014.12 by YuliHua for SDBC7.1
- * Ö§³ÖFiberized.IO
+ * æ”¯æŒFiberized.IO
  *******************************************/
 #ifndef HEADPACKLENGTH
 
@@ -17,43 +17,43 @@
 #endif
 
 #define		PARANUM 9
-#define 	PROTO_NUM   para[0]     	/*Ğ­ÒéºÅ:
-					¿Í»§ºô½Ğ·şÎñÆ÷Ê±ÊÇµ÷ÓÃºÅ£¬
-					·şÎñÆ÷·µ»ØÊ±ÊÇÊÂ¼şºÅ£¬1£­65535 */
-#define		ERRNO1	    para[1]     	/*Ö÷´íÎóÂë	*/
-#define		ERRNO2	    para[2]     	/*¸¨Öú´íÎóÂë	*/
-#define		PKG_REC_NUM para[3]      	/*Êı¾İ¼ÇÂ¼Êı	*/
-#define		PKG_LEN	    para[4]        	/*Êı¾İ°ü³¤¶È	*/
-#define		T_LEN	    para[5]   		/* ´«Êä³¤¶È  */
-#define		O_NODE      para[6]      	/*Ô­½áµãµØÖ·*/
-#define		D_NODE	    para[7]		/*Ä¿µÄ½áµãÃèÊö*/
-#define		PKG_CRC	    para[8]		/*Êı¾İ°üCRC */
+#define 	PROTO_NUM   para[0]     	/*åè®®å·:
+					å®¢æˆ·å‘¼å«æœåŠ¡å™¨æ—¶æ˜¯è°ƒç”¨å·ï¼Œ
+					æœåŠ¡å™¨è¿”å›æ—¶æ˜¯äº‹ä»¶å·ï¼Œ1ï¼65535 */
+#define		ERRNO1	    para[1]     	/*ä¸»é”™è¯¯ç 	*/
+#define		ERRNO2	    para[2]     	/*è¾…åŠ©é”™è¯¯ç 	*/
+#define		PKG_REC_NUM para[3]      	/*æ•°æ®è®°å½•æ•°	*/
+#define		PKG_LEN	    para[4]        	/*æ•°æ®åŒ…é•¿åº¦	*/
+#define		T_LEN	    para[5]   		/* ä¼ è¾“é•¿åº¦  */
+#define		O_NODE      para[6]      	/*åŸç»“ç‚¹åœ°å€*/
+#define		D_NODE	    para[7]		/*ç›®çš„ç»“ç‚¹æè¿°*/
+#define		PKG_CRC	    para[8]		/*æ•°æ®åŒ…CRC */
 
-typedef struct {             	/*Ğ­ÒéÍ·	*/
+typedef struct {             	/*åè®®å¤´	*/
 	int	para[PARANUM];
 	char	*data;
 } T_NetHead;
 
 typedef struct S_Connect {
 	int	Socket;			/*socket*/
-	char	Host[81];		/*Ö÷»úÃû»òµØÖ·*/
-	char	Service[21];		/*ĞÅ¿ÚÃû»ò±àºÅ*/
-	u_int   *family;		/* Éí·İÊ¶±ğÃÜÔ¿ */
+	char	Host[81];		/*ä¸»æœºåæˆ–åœ°å€*/
+	char	Service[21];		/*ä¿¡å£åæˆ–ç¼–å·*/
+	u_int   *family;		/* èº«ä»½è¯†åˆ«å¯†é’¥ */
 	INT4	SendLen;
-	char	*SendBuffer;		/*·¢ËÍ»º³åÇø*/
+	char	*SendBuffer;		/*å‘é€ç¼“å†²åŒº*/
 	INT4	RecvLen;
-	char	*RecvBuffer;		/*½ÓÊÜ»º³åÇø*/
-	int	CryptFlg;		/* ¼ÓÃÜ±êÖ¾ */
-	ENIGMA2 t; 			/* ¼ÓÃÜ²ÎÊıÇø */
-	void 	*Var;  			/* ÓÃ»§¶¨ÒåÊı¾İÖ¸Õë Free By user,*/
+	char	*RecvBuffer;		/*æ¥å—ç¼“å†²åŒº*/
+	int	CryptFlg;		/* åŠ å¯†æ ‡å¿— */
+	ENIGMA2 t; 			/* åŠ å¯†å‚æ•°åŒº */
+	void 	*Var;  			/* ç”¨æˆ·å®šä¹‰æ•°æ®æŒ‡é’ˆ Free By user,*/
 	void	(*freevar)(void *); 	/* offer function FreeVar(void *p);*/
 	int	(*only_do)(struct S_Connect *,T_NetHead *);
 	unsigned int 	timeout;	/* for second */
 	unsigned int	MTU;
-	unsigned int 	status;		/* ·şÎñ×´Ì¬,0:ÎŞ×´Ì¬ */
-/* ÊÂ¼ş´¦Àíº¯ÊıµÄµØÖ· */
+	unsigned int 	status;		/* æœåŠ¡çŠ¶æ€,0:æ— çŠ¶æ€ */
+/* äº‹ä»¶å¤„ç†å‡½æ•°çš„åœ°å€ */
 	int	(*Event_proc)(struct S_Connect *conn,int id);
-	unsigned int pos; //Á¬½Ó³ØÓÃ
+	unsigned int pos; //è¿æ¥æ± ç”¨
 } T_Connect;
 
 /* define for T_Connect.CryptFlg*/
@@ -63,13 +63,13 @@ typedef struct S_Connect {
 #define UNDO_ZIP 0X80000000
 
 #define SDBC_BLKSZ 65536
-/* NetHead->ERRNO2,×ª·¢Æ÷±êÖ¾ */
+/* NetHead->ERRNO2,è½¬å‘å™¨æ ‡å¿— */
 #define PACK_CONTINUE 0X80000000
 
-/* ¿Í»§¶ËÍ¨Öª×ª·¢Æ÷£¬¸Ã°ü²»ĞèÒª·şÎñÆ÷»Ø´ğ */
+/* å®¢æˆ·ç«¯é€šçŸ¥è½¬å‘å™¨ï¼Œè¯¥åŒ…ä¸éœ€è¦æœåŠ¡å™¨å›ç­” */
 #define PACK_NOANSER ((PACK_CONTINUE)|1)
 
-/* NetHead->ERRNO2,ÓĞ×´Ì¬·şÎñ±êÖ¾ */
+/* NetHead->ERRNO2,æœ‰çŠ¶æ€æœåŠ¡æ ‡å¿— */
 #define PACK_STATUS 0X80000002
 typedef int (*sdbcfunc)(T_Connect *conn,T_NetHead *head);
 
@@ -89,10 +89,10 @@ INT4 LongAddr(char *p);
 INT4 LocalAddr(int Sock, char szAddr[16]);
 int tcpopen(char *host,char *server);
 int SendNet(int socket,char *buf,int len,int MTU);
-//timout for second 
+//timout for second
 int RecvNet(int s,char *buf,int n,int timeout);
 /*********************************************
- * init the T_Connect 
+ * init the T_Connect
  *********************************************/
 void initconnect(T_Connect *connect);
 

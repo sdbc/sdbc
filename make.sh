@@ -1,50 +1,8 @@
-#rm */*.o
+#!/bin/sh
 
 rm -rf build;
-mkdir build;
+make build;
 cd build;
-cmake ../sccli/;
-make;
+cmake ../;
 
-
-
-#
-#cd string
-#make
-#cd ../conf
-#make
-#cd ../ds
-#make
-#cd ../crypto
-#make
-#cd ../socket
-#make
-#cd ../sccli
-#make
-#cd ../scsrv
-#make
-#
-#if [ -d ../pack ]
-#then
-#cd ../pack
-#make
-#fi
-#
-#if [ -d ../sqli ]
-#then
-#cd ../sqli
-#make
-#fi
-#
-#if [ -d ../dau ]
-#then
-#cd ../dau
-#make
-#fi
-#
-#if [ -d ../sdbc ]
-#then
-#cd ../sdbc
-#make
-#fi
-#
+## libscbase.a

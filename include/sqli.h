@@ -1,6 +1,6 @@
 /*******************************************************
  * Secure Database Connect
- * sqli.h -- SDBC 6.0 for ORACLE 
+ * sqli.h -- SDBC 6.0 for ORACLE
  * 2012.9.13 by ylh
  *******************************************************/
 
@@ -8,7 +8,7 @@
 #define SQLIDEF
 
 #define MAXCONNECT 8
-#define MAXCURSOR MAXCONNECT*16 
+#define MAXCURSOR MAXCONNECT*16
 #define TRANBEGIN 0
 #define TRANCOMMIT 1
 #define TRANROLLBACK 2
@@ -28,12 +28,12 @@ typedef struct S_SQL_Connect {
 	char UID[81];			/*database user ID*/
 	char PWD[81];			/*database user password*/
 	char DBOWN[81];
-  	sqlo_db_handle_t dbh;		/*oracle oci Êı¾İ¿â¾ä±ú*/
+	sqlo_db_handle_t dbh;		/*oracle oci æ•°æ®åº“å¥æŸ„*/
 	char ErrMsg[2048];
 	char SqlState[128];
 	int NativeError;
 	int Errno;
-	unsigned int pos;		/* ÔÚÁ¬½Ó³ØÖĞµÄÎ»ÖÃ */
+	unsigned int pos;		/* åœ¨è¿æ¥æ± ä¸­çš„ä½ç½® */
 } T_SQL_Connect;
 
 #define SQL_Rpc ORA_Rpc
@@ -57,36 +57,36 @@ extern int FreeFullConnectPool();
 extern int SQL_Check_Stmt(char *cmd);
 extern int ___SQL_Transaction__(T_SQL_Connect *SQL_Connect,int flag);
 extern int ___SQL_Select__(T_SQL_Connect *SQL_Connect,char *stmt,
-						char **rec,int recnum);
+						   char **rec,int recnum);
 int db_open1(T_SQL_Connect *SQL_Connect,char *dblabel);
 char *decodeprepare(char *dblabel);
 int ORA_Rpc(T_SQL_Connect *SQL_Connect,char *cmd,char **result);
-//²»Ö§³Ö°ó¶¨±äÁ¿£¬²»ÍÆ¼öÊ¹ÓÃ£¬ÓÃ DAU_insert ´úÌæÖ®   
+//ä¸æ”¯æŒç»‘å®šå˜é‡ï¼Œä¸æ¨èä½¿ç”¨ï¼Œç”¨ DAU_insert ä»£æ›¿ä¹‹
 int insert_db(T_SQL_Connect *SQL_Connect,char *tabname,void *data,T_PkgType *type,char *msg);
 
 /********************************************************************
- * Ìá¹©¶àÏß³Ì»·¾³µÄÁ¬½Ó³Ø²Ù×÷  (pool_new.c)
- * »·¾³±äÁ¿  
- * DBPOOLNUM ¶¨ÒåÊı¾İ¿âÁ¬½Ó³ØÊı,Ã¿¸ö³Ø¿ÉÒÔÁ¬½Ó²»Í¬µÄÊı¾İ¿â»òÓÃ»§£¬È±Ê¡1¸ö  
- * DBLABELn ¶¨ÒåÊı¾İ¿âÁ¬½Ó³ØµÄÊı¾İ¿â±êÇ©£¬n=0~DBPOOLNUM-1¡£  
- * DBPOOLn_NUM ¶¨ÒåÃ¿¸öÊı¾İ¿âÁ¬½Ó³ØµÄÁ¬½ÓÊı £¬ È±Ê¡1¸ö n=0~DBPOOLNUM-1¡£
+ * æä¾›å¤šçº¿ç¨‹ç¯å¢ƒçš„è¿æ¥æ± æ“ä½œ  (pool_new.c)
+ * ç¯å¢ƒå˜é‡
+ * DBPOOLNUM å®šä¹‰æ•°æ®åº“è¿æ¥æ± æ•°,æ¯ä¸ªæ± å¯ä»¥è¿æ¥ä¸åŒçš„æ•°æ®åº“æˆ–ç”¨æˆ·ï¼Œç¼ºçœ1ä¸ª
+ * DBLABELn å®šä¹‰æ•°æ®åº“è¿æ¥æ± çš„æ•°æ®åº“æ ‡ç­¾ï¼Œn=0~DBPOOLNUM-1ã€‚
+ * DBPOOLn_NUM å®šä¹‰æ¯ä¸ªæ•°æ®åº“è¿æ¥æ± çš„è¿æ¥æ•° ï¼Œ ç¼ºçœ1ä¸ª n=0~DBPOOLNUM-1ã€‚
  ********************************************************************/
 
-//ÊÍ·ÅÊı¾İ¿âÁ¬½Ó³Ø  
+//é‡Šæ”¾æ•°æ®åº“è¿æ¥æ± 
 void DB_pool_free(void);
-//³õÊ¼»¯Êı¾İ¿â Á¬½Ó³Ø  
+//åˆå§‹åŒ–æ•°æ®åº“ è¿æ¥æ± 
 int DB_pool_init(void);
-//Á¬½ÓÊı¾İ¿â  Ò»°ã²»Ê¹ÓÃ£¬½»Á¬½Ó³ØÄÚ²¿½â¾ö  
+//è¿æ¥æ•°æ®åº“  ä¸€èˆ¬ä¸ä½¿ç”¨ï¼Œäº¤è¿æ¥æ± å†…éƒ¨è§£å†³
 int connect_db(T_SQL_Connect *SQL_Connect,char *DBLABEL);
-//È¡Êı¾İ¿âÁ¬½Ó  
+//å–æ•°æ®åº“è¿æ¥
 int _get_DB_connect(T_SQL_Connect **SQL_Connect,int poolno,int flg);
-//¹é»¹Êı¾İ¿âÁ¬½Ó  
+//å½’è¿˜æ•°æ®åº“è¿æ¥
 void release_DB_connect(T_SQL_Connect **SQL_Connect,int poolno);
-//Êı¾İ¿â³Ø¼à¿Ø 
+//æ•°æ®åº“æ± ç›‘æ§
 void dbpool_check(void);
 /**
- * ¸ù¾İDBLABELÈ¡Êı¾İ¿â³ØºÅ  
- * Ê§°Ü·µ»Ø-1
+ * æ ¹æ®DBLABELå–æ•°æ®åº“æ± å·
+ * å¤±è´¥è¿”å›-1
  */
 int get_dbpool_no(char *DBLABEL);
 int get_DBpoolnum();

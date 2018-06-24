@@ -13,9 +13,9 @@ extern char * prikey128(char *keybuf,u_int ind[4],u_int *family);
 
 static char * clikey(char *keybuf,u_int *family)
 {
-ENIGMA2 t;
-INT64 i64;
-u_int key[8]; //256bit key
+	ENIGMA2 t;
+	INT64 i64;
+	u_int key[8]; //256bit key
 
 	i64=now_usec();
 	key[0]^=(u_int)i64;
@@ -31,15 +31,15 @@ u_int key[8]; //256bit key
 	memcpy(keybuf,key,sizeof(key));
 	return keybuf;
 }
-//·þÎñÆ÷ÓÃ£¬Óë¿Í»§¶ËÐ­ÉÌÃÜÔ¿¡£ 
+//æœåŠ¡å™¨ç”¨ï¼Œä¸Žå®¢æˆ·ç«¯åå•†å¯†é’¥ã€‚
 int mk_clikey(int socket,ENIGMA2 *tc,u_int *family)
 {
-ENIGMA2 t;
-char buf[100],keybuf[56],cli_k[52],*cp;
-int i,len;
-int crymode=15;
-unsigned short crc,recv_crc;
-char addr[16];
+	ENIGMA2 t;
+	char buf[100],keybuf[56],cli_k[52],*cp;
+	int i,len;
+	int crymode=15;
+	unsigned short crc,recv_crc;
+	char addr[16];
 
 	cp=getenv("CRYPTFLG");
 	if(cp && isdigit(*cp)) crymode=atoi(cp)&0xf;
@@ -60,7 +60,7 @@ char addr[16];
 	crc=gencrc((unsigned char *)buf,24);
 	recv_crc=ntohs(*(short *)(buf+24));
 	if(crc != recv_crc) {
-		ShowLog(1,"%s %s:PKGERR crc´í!",__FUNCTION__,addr);
+		ShowLog(1,"%s %s:PKGERR crcé”™!",__FUNCTION__,addr);
 		return FORMATERR;
 	}
 	buf[24]=0;
@@ -73,9 +73,9 @@ char addr[16];
 	}
 
 	if(crymode & DO_CRYPT) {
-	INT64 tim;
-	u_int ax[4],ay[4],y[4],m[4];
-	int kw;
+		INT64 tim;
+		u_int ax[4],ay[4],y[4],m[4];
+		int kw;
 		tim=now_usec();
 		y[0]^=tim;
 		y[1]^=(tim>>32);
@@ -93,10 +93,10 @@ ShowLog(5,"%s:hex axy=%s",__FUNCTION__,strhex(4,ay,buf));
 
 		prikey128(keybuf,ay,family);
 		enigma2_init(&t,keybuf,0);
-//ÕÒa
+//æ‰¾a
 		kw=family[31&cli_k[17]];
-       		i=family[31&cli_k[16]];
-       		if(!i) i=65537;
+		i=family[31&cli_k[16]];
+		if(!i) i=65537;
 		n2byte(4,ax,cli_k+16);
 		n_zero(4,ax);
 		ax[0]=i;
@@ -111,7 +111,7 @@ ShowLog(5,"%s:ay=%s",__FUNCTION__,buf);
 /*
 cp=buf;
 for(i=0;i<32;i++) {
-	cp+=sprintf(cp,"%02X ",255& *(cli_k+16+i));	
+	cp+=sprintf(cp,"%02X ",255& *(cli_k+16+i));
 }
 ShowLog(5,"%s:clikey=%s",__FUNCTION__,buf);
 */
@@ -125,7 +125,7 @@ ShowLog(5,"%s:clikey=%s",__FUNCTION__,buf);
 	cli_k[49]=crymode;
 	byte_a64(keybuf,cli_k,50);
 	SendNet(socket,keybuf,68,0);
-	
+
 	return crymode;
 }
 

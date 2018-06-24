@@ -1,39 +1,39 @@
-/* ¶ş²æÊ÷Æ½ºâÉ¾³ı 
+/* äºŒå‰æ ‘å¹³è¡¡åˆ é™¤
  2010.1.18 by YLH */
 #include <stdlib.h>
 #include <string.h>
 #include <BB_tree.h>
 static T_Tree *R_rot(T_Tree *tp)
 {
-T_Tree *ttmp;
+	T_Tree *ttmp;
 
-    ttmp=tp->Left;
-    tp->Left=ttmp->Right;
+	ttmp=tp->Left;
+	tp->Left=ttmp->Right;
 	tp->Ldepth=ttmp->Rdepth;
-    ttmp->Right=tp;
+	ttmp->Right=tp;
 	ttmp->Rdepth=MAX(ttmp->Right->Rdepth,ttmp->Right->Ldepth)+1;
-    return ttmp;
+	return ttmp;
 }
 
 static T_Tree *L_rot(T_Tree *tp)
 {
-T_Tree *ttmp;
+	T_Tree *ttmp;
 
-    ttmp=tp->Right;
-    tp->Right=ttmp->Left;
+	ttmp=tp->Right;
+	tp->Right=ttmp->Left;
 	tp->Rdepth=ttmp->Ldepth;
-    ttmp->Left=tp;
+	ttmp->Left=tp;
 	ttmp->Ldepth=MAX(ttmp->Left->Rdepth,ttmp->Left->Ldepth)+1;
-    return ttmp;
+	return ttmp;
 }
 
-static T_Tree *R_blc(T_Tree *tp) //tpÓÒ¸ß 
+static T_Tree *R_blc(T_Tree *tp) //tpå³é«˜
 {
-T_Tree *ttmp,*ftmp=0;
+	T_Tree *ttmp,*ftmp=0;
 	ttmp=tp->Right;
 	if(ttmp->Left) {
 		ftmp=ttmp;
-		ttmp=ttmp->Left; 
+		ttmp=ttmp->Left;
 	}
 	if(ftmp) {
 		ftmp->Left=ttmp->Right;
@@ -52,13 +52,13 @@ T_Tree *ttmp,*ftmp=0;
 	return ttmp;
 }
 
-static T_Tree *L_blc(T_Tree *tp) //tp×ó¸ß 
+static T_Tree *L_blc(T_Tree *tp) //tpå·¦é«˜
 {
-T_Tree *ttmp,*ftmp=0;
+	T_Tree *ttmp,*ftmp=0;
 	ttmp=tp->Left;
 	if(ttmp->Right) {
 		ftmp=ttmp;
-		ttmp=ttmp->Right; 
+		ttmp=ttmp->Right;
 	}
 	if(ftmp) {
 		ftmp->Right=ttmp->Left;
@@ -68,7 +68,7 @@ T_Tree *ttmp,*ftmp=0;
 			ttmp->Left=R_rot(ftmp);
 		}
 		ttmp->Ldepth=MAX(ttmp->Left->Rdepth,ttmp->Left->Ldepth)+1;
-	} 
+	}
 	tp->Left=ttmp->Right;
 	tp->Ldepth=ttmp->Rdepth;
 	ttmp->Right=tp;
@@ -79,45 +79,45 @@ T_Tree *ttmp,*ftmp=0;
 
 static T_Tree *t_r(T_Tree **tp)
 {
-T_Tree *ttmp=0;
-		if(!(*tp)->Right) return *tp;
-		ttmp= t_r(&(*tp)->Right);
-		if(ttmp==(*tp)->Right) { 
-			(*tp)->Right=ttmp->Left;
-			(*tp)->Rdepth=ttmp->Ldepth;
-		} else (*tp)->Rdepth=MAX((*tp)->Right->Rdepth,(*tp)->Right->Ldepth)+1;
-		if(((*tp)->Ldepth - (*tp)->Rdepth) >1) *tp=L_blc(*tp);
+	T_Tree *ttmp=0;
+	if(!(*tp)->Right) return *tp;
+	ttmp= t_r(&(*tp)->Right);
+	if(ttmp==(*tp)->Right) {
+		(*tp)->Right=ttmp->Left;
+		(*tp)->Rdepth=ttmp->Ldepth;
+	} else (*tp)->Rdepth=MAX((*tp)->Right->Rdepth,(*tp)->Right->Ldepth)+1;
+	if(((*tp)->Ldepth - (*tp)->Rdepth) >1) *tp=L_blc(*tp);
 
-		return ttmp;
+	return ttmp;
 }
 
 static T_Tree *t_l(T_Tree **tp)
 {
-T_Tree *ttmp=0;
-		if(!(*tp)->Left) return *tp;
-		ttmp= t_l(&(*tp)->Left);
-		if(ttmp==(*tp)->Left) { 
-			(*tp)->Left=ttmp->Right;
-			(*tp)->Ldepth=ttmp->Rdepth;
-		} else (*tp)->Ldepth=MAX((*tp)->Left->Rdepth,(*tp)->Left->Ldepth)+1;
-		if(((*tp)->Rdepth - (*tp)->Ldepth) >1)  *tp=R_blc(*tp);
+	T_Tree *ttmp=0;
+	if(!(*tp)->Left) return *tp;
+	ttmp= t_l(&(*tp)->Left);
+	if(ttmp==(*tp)->Left) {
+		(*tp)->Left=ttmp->Right;
+		(*tp)->Ldepth=ttmp->Rdepth;
+	} else (*tp)->Ldepth=MAX((*tp)->Left->Rdepth,(*tp)->Left->Ldepth)+1;
+	if(((*tp)->Rdepth - (*tp)->Ldepth) >1)  *tp=R_blc(*tp);
 
-		return ttmp;
+	return ttmp;
 }
-/* É¾³ıµ±Ç°½Úµã£¬·µ»Ø´úÌæ½Úµã */
+/* åˆ é™¤å½“å‰èŠ‚ç‚¹ï¼Œè¿”å›ä»£æ›¿èŠ‚ç‚¹ */
 static T_Tree *t_delete(T_Tree *tp,int (*user_free)(void *content))
 {
-T_Tree *ttmp;
+	T_Tree *ttmp;
 
-/* user_free ·µ»Ø0¼ÌĞø½øĞĞÉ¾³ı£¬·ñÔò²»É¾£¬Ó¦ÓÃÈí¼ş¿ÉÒÔÀûÓÃÕâÒ»µã´¦ÀíÌØ¶¨½Úµã */
+/* user_free è¿”å›0ç»§ç»­è¿›è¡Œåˆ é™¤ï¼Œå¦åˆ™ä¸åˆ ï¼Œåº”ç”¨è½¯ä»¶å¯ä»¥åˆ©ç”¨è¿™ä¸€ç‚¹å¤„ç†ç‰¹å®šèŠ‚ç‚¹ */
 	if(user_free && user_free(tp->Content)) return (T_Tree *)-1;
-	if(!tp->Right) {	//ÓÒ×ÓÊ÷Îª¿Õ
+	if(!tp->Right) {	//å³å­æ ‘ä¸ºç©º
 		ttmp=tp->Left;
-	} else if(!tp->Left) {	//×ó×ÓÊ÷Îª¿Õ
+	} else if(!tp->Left) {	//å·¦å­æ ‘ä¸ºç©º
 		ttmp=tp->Right;
-	} else {	//×óÓÒ×ÓÊ÷¾ù²»¿Õ
+	} else {	//å·¦å³å­æ ‘å‡ä¸ç©º
 		if(tp->Ldepth >= tp->Rdepth) {
-		//Ñ°ÕÒ´úÌæ½Úµã£¬¼´×óº¢×ÓµÄ×îÓÒÏÂ½Úµã 
+			//å¯»æ‰¾ä»£æ›¿èŠ‚ç‚¹ï¼Œå³å·¦å­©å­çš„æœ€å³ä¸‹èŠ‚ç‚¹
 			ttmp=t_r(&tp->Left);
 			if(ttmp != tp->Left) {
 				ttmp->Left=tp->Left;
@@ -126,7 +126,7 @@ T_Tree *ttmp;
 			ttmp->Right=tp->Right;
 			ttmp->Rdepth=tp->Rdepth;
 		} else {
-		//Ñ°ÕÒ´úÌæ½Úµã£¬¼´ÓÒº¢×ÓµÄ×î×óÏÂ½Úµã 
+			//å¯»æ‰¾ä»£æ›¿èŠ‚ç‚¹ï¼Œå³å³å­©å­çš„æœ€å·¦ä¸‹èŠ‚ç‚¹
 			ttmp=t_l(&tp->Right);
 			if(ttmp != tp->Right) {
 				ttmp->Right=tp->Right;
@@ -139,27 +139,27 @@ T_Tree *ttmp;
 	free(tp);
 	return ttmp;
 }
-/*---------------------É¾³ı¼ÇÂ¼±È½Ï---------------------*/
+/*---------------------åˆ é™¤è®°å½•æ¯”è¾ƒ---------------------*/
 static int Tree_Cmp(rec1,rec2,len)
 void *rec1;
 void *rec2;
 int len;
 {
-    int rc;
-    rc=memcmp(rec1,rec2,len);
-    if(rc){
-        if(rc<0)return -2;
-        else return 2;
-    }
-    return 0;
+int rc;
+rc=memcmp(rec1,rec2,len);
+if(rc){
+if(rc<0)return -2;
+else return 2;
+}
+return 0;
 }
 
-/* É¾³ıÖ¸¶¨½Úµã£¬·µ»ØĞÂµÄ¸ù½Úµã,*flg³õÖµ=0,·µ»Ø0Î´É¾³ı¡£·ñÔò±íÊ¾ÔÚµÚ¼¸²ãÉ¾³ı */
+/* åˆ é™¤æŒ‡å®šèŠ‚ç‚¹ï¼Œè¿”å›æ–°çš„æ ¹èŠ‚ç‚¹,*flgåˆå€¼=0,è¿”å›0æœªåˆ é™¤ã€‚å¦åˆ™è¡¨ç¤ºåœ¨ç¬¬å‡ å±‚åˆ é™¤ */
 T_Tree * BB_Tree_Del(T_Tree *tp,void *content_key,int size_key,
-			int (*Comp)(void *node,void *content,int size_content),
-			int (*user_free)(void *content),int *flg)
+					 int (*Comp)(void *node,void *content,int size_content),
+					 int (*user_free)(void *content),int *flg)
 {
-int ret;
+	int ret;
 
 	if(!tp || !flg ||!content_key) {
 		if(flg) *flg=0;
@@ -167,31 +167,31 @@ int ret;
 	}
 	if(Comp) ret=Comp(tp->Content,content_key,size_key);
 	else ret=Tree_Cmp(tp->Content,content_key,size_key);
-	if(!ret) {	//¸ù½ÚµãÓëÖ®ÏàµÈ,Ö±½ÓÉ¾³ı
-		 T_Tree *ttmp=t_delete(tp,user_free);
-		 if(ttmp!=(T_Tree *)-1) {
-		 	tp=ttmp;
-		 	(*flg)=1;
-		 } else *flg=0;
-	} else if(ret>0) {	//±»É¾½ÚµãÔÚ×ó×ÓÊ÷ÉÏ
-		if(!tp->Left) {	//Ã»ÕÒµ½
+	if(!ret) {	//æ ¹èŠ‚ç‚¹ä¸ä¹‹ç›¸ç­‰,ç›´æ¥åˆ é™¤
+		T_Tree *ttmp=t_delete(tp,user_free);
+		if(ttmp!=(T_Tree *)-1) {
+			tp=ttmp;
+			(*flg)=1;
+		} else *flg=0;
+	} else if(ret>0) {	//è¢«åˆ èŠ‚ç‚¹åœ¨å·¦å­æ ‘ä¸Š
+		if(!tp->Left) {	//æ²¡æ‰¾åˆ°
 			*flg=0;
 			return tp;
 		}
 		tp->Left=BB_Tree_Del(tp->Left,content_key,size_key,Comp,user_free,flg);
-		if(*flg > 0) { //È·ÊµÉ¾³ı¹ı 
+		if(*flg > 0) { //ç¡®å®åˆ é™¤è¿‡
 			if(!tp->Left) tp->Ldepth=0;
 			else tp->Ldepth=MAX(tp->Left->Rdepth,tp->Left->Ldepth)+1;
 			if((tp->Rdepth - tp->Ldepth) > 1) tp=R_blc(tp);
 			(*flg)++;
 		}
-	} else {	////±»É¾½ÚµãÔÚÔÚÓÒ×ÓÊ÷ÉÏ
-		if(!tp->Right)  {	//Ã»ÕÒµ½
+	} else {	////è¢«åˆ èŠ‚ç‚¹åœ¨åœ¨å³å­æ ‘ä¸Š
+		if(!tp->Right)  {	//æ²¡æ‰¾åˆ°
 			*flg=0;
 			return tp;
 		}
 		tp->Right=BB_Tree_Del(tp->Right,content_key,size_key,Comp,user_free,flg);
-		if(*flg > 0) { //È·ÊµÉ¾³ı¹ı 
+		if(*flg > 0) { //ç¡®å®åˆ é™¤è¿‡
 			if(!tp->Right) tp->Rdepth=0;
 			else tp->Rdepth=MAX(tp->Right->Rdepth,tp->Right->Ldepth)+1;
 			if((tp->Ldepth - tp->Rdepth) > 1) tp=L_blc(tp);

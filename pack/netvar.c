@@ -7,75 +7,75 @@
 const char NAN_NULL[sizeof(double)]={0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff};
 
 T_PkgType LongType[]={
-	{CH_LONG,sizeof(long),0,0,-1},
-	{-1,0}
+		{CH_LONG,sizeof(long),0,0,-1},
+		{-1,0}
 };
 T_PkgType CharType[]={
-	{CH_CHAR,-1,0,0,-1},
-	{-1,-1}
+		{CH_CHAR,-1,0,0,-1},
+		{-1,-1}
 };
 T_PkgType ByteType[]={
-	{CH_BYTE,-1,0,0,-1},
-	{-1,-1}
+		{CH_BYTE,-1,0,0,-1},
+		{-1,-1}
 };
 T_PkgType DoubleType[]={
-	{CH_DOUBLE,sizeof(double),0,0,-1},
-	{-1,0}
+		{CH_DOUBLE,sizeof(double),0,0,-1},
+		{-1,0}
 };
 T_PkgType FloatType[]={
-	{CH_FLOAT,sizeof(float),0,0,-1},
-	{-1,0}
+		{CH_FLOAT,sizeof(float),0,0,-1},
+		{-1,0}
 };
 T_PkgType IntType[]={
-	{CH_INT,sizeof(int),0,0,-1},
-	{-1,0}
+		{CH_INT,sizeof(int),0,0,-1},
+		{-1,0}
 };
 T_PkgType ShortType[]={
-	{CH_SHORT,sizeof(short),0,0,-1},
-	{-1,0}
+		{CH_SHORT,sizeof(short),0,0,-1},
+		{-1,0}
 };
 T_PkgType TinyType[]={
-	{CH_TINY,1,0,0,-1},
-	{-1,0}
+		{CH_TINY,1,0,0,-1},
+		{-1,0}
 };
 
 int isnull(void * vp,int type)
 {
 	if(!vp) return 1;
 	switch(type&127) {
-	case CH_CHAR:
-		return (!*(char *)vp);
-	case CH_CLOB:
-		return (!*(char **)vp);
-	case CH_TINY:
-		return(*(unsigned char *)vp == TINYNULL);
-	case CH_SHORT:
-		return(*(short *)vp == SHORTNULL);
-	case CH_INT:
-		return(*(int *)vp == INTNULL);
-	case CH_LONG:
-		return(*(long *)vp == LONGNULL);
-	case CH_INT64:
-		return(*(INT64 *)vp == INT64NULL);
-	case CH_DOUBLE:
-	case CH_LDOUBLE:
-		return(!memcmp(NAN_NULL,(char *)vp,sizeof(double)));
-	case CH_FLOAT:
-		return(!memcmp(NAN_NULL,(char *)vp,sizeof(float)));
-	default:
-		return 0;
+		case CH_CHAR:
+			return (!*(char *)vp);
+		case CH_CLOB:
+			return (!*(char **)vp);
+		case CH_TINY:
+			return(*(unsigned char *)vp == TINYNULL);
+		case CH_SHORT:
+			return(*(short *)vp == SHORTNULL);
+		case CH_INT:
+			return(*(int *)vp == INTNULL);
+		case CH_LONG:
+			return(*(long *)vp == LONGNULL);
+		case CH_INT64:
+			return(*(INT64 *)vp == INT64NULL);
+		case CH_DOUBLE:
+		case CH_LDOUBLE:
+			return(!memcmp(NAN_NULL,(char *)vp,sizeof(double)));
+		case CH_FLOAT:
+			return(!memcmp(NAN_NULL,(char *)vp,sizeof(float)));
+		default:
+			return 0;
 	}
 }
 static int cnt_type(register T_PkgType *tp)
 {
-int i;
+	int i;
 	for(i=0;tp[i].type>-1;i++);
 	return i;
 }
 
 void clean_bindtype(T_PkgType *tp,int flg)
 {
-T_PkgType *typ;
+	T_PkgType *typ;
 
 	if(!tp) return;
 	for(typ=tp;typ->type>-1;typ++) {
@@ -83,7 +83,7 @@ T_PkgType *typ;
 	}
 	typ->bindtype &= ~flg;
 }
-//ÕâÐ©½á¹¹ÓÃÀ´²âÊÔ¸÷ÖÖÊý¾ÝµÄ±ß½ç¶ÔÆë¹æÔò£¬²»Òª²Â£¬ÒªÈÃ±àÒëÆ÷×Ô¼ºËµ¡£
+//è¿™äº›ç»“æž„ç”¨æ¥æµ‹è¯•å„ç§æ•°æ®çš„è¾¹ç•Œå¯¹é½è§„åˆ™ï¼Œä¸è¦çŒœï¼Œè¦è®©ç¼–è¯‘å™¨è‡ªå·±è¯´ã€‚
 typedef struct {
 	char a;
 	int b;
@@ -107,9 +107,9 @@ typedef struct {
 
 int set_offset(T_PkgType *pkg_type)
 {
-int i,k,l;
-int ali,dali,lali,llali,ldli;
-int max_align=1;
+	int i,k,l;
+	int ali,dali,lali,llali,ldli;
+	int max_align=1;
 
 	if(!pkg_type) return -1;
 	if(pkg_type->offset>-1) return cnt_type(pkg_type);
@@ -120,39 +120,39 @@ int max_align=1;
 	ldli= M_ST_OFF(dfali,b) - 1;
 	k=0;
 	switch(pkg_type->type &127) {
-	case CH_SHORT:
-		max_align=2;
+		case CH_SHORT:
+			max_align=2;
 			break;
-	case CH_INT:
-		max_align=sizeof(int);
+		case CH_INT:
+			max_align=sizeof(int);
 			break;
-	case CH_LONG:
-		max_align=sizeof(long);
+		case CH_LONG:
+			max_align=sizeof(long);
 			break;
-	case CH_INT64:
-		max_align=llali+1;
+		case CH_INT64:
+			max_align=llali+1;
 			break;
-	case CH_DOUBLE:
-		max_align=(dali+1);
+		case CH_DOUBLE:
+			max_align=(dali+1);
 			break;
-	case CH_LDOUBLE:
-		max_align=sizeof(long double);
+		case CH_LDOUBLE:
+			max_align=sizeof(long double);
 			break;
-	case CH_FLOAT:
-		max_align=sizeof(float);
+		case CH_FLOAT:
+			max_align=sizeof(float);
 			break;
-	case CH_CLOB:
-		max_align=sizeof(char *);
+		case CH_CLOB:
+			max_align=sizeof(char *);
 			break;
-	case CH_STRUCT:
-		l=set_offset((T_PkgType *)pkg_type->format);
-		pkg_type->len=((T_PkgType *)pkg_type->format)[l].offset;
-		l=((T_PkgType *)pkg_type->format)[l].bindtype;
-		max_align=l;
-		break;
-	default:
-		max_align=1;
-		break;
+		case CH_STRUCT:
+			l=set_offset((T_PkgType *)pkg_type->format);
+			pkg_type->len=((T_PkgType *)pkg_type->format)[l].offset;
+			l=((T_PkgType *)pkg_type->format)[l].bindtype;
+			max_align=l;
+			break;
+		default:
+			max_align=1;
+			break;
 	}
 	for(i=0;pkg_type[i].type>-1;i++){
 		if(i>0) pkg_type[i].offset=k;

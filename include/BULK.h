@@ -1,41 +1,41 @@
 /*****************************************
- * BULK.h ORACLE BULK read 
- * SDBCÖÐORACLE³É×é²Ù×÷ËùÐèÊý¾Ý½á¹¹    
- * bindÊ±ÐèÒªµÄ±íÊ¾Æ÷¡¢ÁÐ¼¶×´Ì¬£¬ÁÐ³¤¶È    
- * defineÊ±ÐèÒªµÄ±íÊ¾Æ÷¡¢ÁÐ¼¶×´Ì¬£¬ÁÐ³¤¶È    
- * ÒÔ¼°ÔÚSDBCÖÐ²»ÄÜÓëORACLEÖ±½Ó¶ÔÓ¦µÄÀàÐÍ   
- * ÐèÒª¶îÍâµÄ×Ö·û»º³åÇø  
- * ±¾.hÔÚ#include <DAU.h> Ö®ºóÊ¹ÓÃ    
+ * BULK.h ORACLE BULK read
+ * SDBCä¸­ORACLEæˆç»„æ“ä½œæ‰€éœ€æ•°æ®ç»“æž„
+ * bindæ—¶éœ€è¦çš„è¡¨ç¤ºå™¨ã€åˆ—çº§çŠ¶æ€ï¼Œåˆ—é•¿åº¦
+ * defineæ—¶éœ€è¦çš„è¡¨ç¤ºå™¨ã€åˆ—çº§çŠ¶æ€ï¼Œåˆ—é•¿åº¦
+ * ä»¥åŠåœ¨SDBCä¸­ä¸èƒ½ä¸ŽORACLEç›´æŽ¥å¯¹åº”çš„ç±»åž‹
+ * éœ€è¦é¢å¤–çš„å­—ç¬¦ç¼“å†²åŒº
+ * æœ¬.håœ¨#include <DAU.h> ä¹‹åŽä½¿ç”¨
  *****************************************/
 
 #ifndef BULK_A_COL_LEN
 
 #define BULK_A_COL_LEN 32
 
-typedef struct {	//²ÎÓëbind»òdefineµÄ£¬Ã¿ÁÐÒ»¸ö 
-	char  *name;	//ÁÐÃû  
-	short *ind;	//±íÊ¾Æ÷, malloc(max_rows_of_batch * sizeof(short));
-	short *r_code;	//ÁÐ¼¶×´Ì¬Âë,  ×Ö·ûÁÐÓÃ,      malloc(max_rows_of_batch * sizeof(short));
-	short *r_len;	//·µ»ØµÄÁÐ³¤¶È,define_by_pos ×Ö·û×ûÁÐÓÃ,   malloc(max_rows_of_fetch * sizeof(short));
-	char *a_col; 	//¶îÍâµÄ×Ö·û»º³åÇø malloc(max_rows_of_batch * BULK_A_COL_LEN); 
-} col_bag;			// ÁÐ°ü   
+typedef struct {	//å‚ä¸Žbindæˆ–defineçš„ï¼Œæ¯åˆ—ä¸€ä¸ª
+	char  *name;	//åˆ—å
+	short *ind;	//è¡¨ç¤ºå™¨, malloc(max_rows_of_batch * sizeof(short));
+	short *r_code;	//åˆ—çº§çŠ¶æ€ç ,  å­—ç¬¦åˆ—ç”¨,      malloc(max_rows_of_batch * sizeof(short));
+	short *r_len;	//è¿”å›žçš„åˆ—é•¿åº¦,define_by_pos å­—ç¬¦î ‘åˆ—ç”¨,   malloc(max_rows_of_fetch * sizeof(short));
+	char *a_col; 	//é¢å¤–çš„å­—ç¬¦ç¼“å†²åŒº malloc(max_rows_of_batch * BULK_A_COL_LEN);
+} col_bag;			// åˆ—åŒ…
 
 typedef struct ora_bulk_desc {
 	SRM *srm;			//SRM
-	T_SQL_Connect *SQL_Connect;	//Êý¾Ý¿â¾ä±ú
-	sqlo_stmt_handle_t sth;		//ÓÎ±ê
-	int bind_rows;			//°ó¶¨Ìõ¼þµÄ×î´óÐÐÊý
-	int max_rows_of_fetch;		//Ã¿Åú¶ÁÈ¡µÄ×î´óÐÐÊý
-	int cols;			//²ÎÓëbindµÄÁÐÊý(ÊäÈëÌõ¼þ)
-	int dcols;			//²ÎÓëdefineµÄÁÐÊý(Êä³ö½á¹û)
+	T_SQL_Connect *SQL_Connect;	//æ•°æ®åº“å¥æŸ„
+	sqlo_stmt_handle_t sth;		//æ¸¸æ ‡
+	int bind_rows;			//ç»‘å®šæ¡ä»¶çš„æœ€å¤§è¡Œæ•°
+	int max_rows_of_fetch;		//æ¯æ‰¹è¯»å–çš„æœ€å¤§è¡Œæ•°
+	int cols;			//å‚ä¸Žbindçš„åˆ—æ•°(è¾“å…¥æ¡ä»¶)
+	int dcols;			//å‚ä¸Ždefineçš„åˆ—æ•°(è¾“å‡ºç»“æžœ)
 	col_bag *cb;			//malloc(cols * sizeof(col_bag));
 	col_bag *dcb;			//malloc(dcols * sizeof(col_bag));
-	T_Tree *bind_tree;		//°ó¶¨Ê÷
-	void *recs;			//Êý¾Ý¼ÇÂ¼ 
-	int prows;			//ÀÛ¼ÆÐÐÊý 
-	int rows;			//Êµ¼Ê²Ù×÷µÄÐÐÊý 
-	int reclen;			//¼ÇÂ¼³¤¶È 
-	int pos;			//BULK³ØÊ¹ÓÃ
+	T_Tree *bind_tree;		//ç»‘å®šæ ‘
+	void *recs;			//æ•°æ®è®°å½•
+	int prows;			//ç´¯è®¡è¡Œæ•°
+	int rows;			//å®žé™…æ“ä½œçš„è¡Œæ•°
+	int reclen;			//è®°å½•é•¿åº¦
+	int pos;			//BULKæ± ä½¿ç”¨
 } BULK;
 
 #define BULK_get_DAU(bulkp) (DAU *)((bulkp)->srm)
@@ -44,7 +44,7 @@ typedef struct ora_bulk_desc {
 extern "C" {
 #endif
 
-//BULK_initºó£¬DAU²»¿ÉÊÍ·Å,BULK_free²»ÊÍ·ÅDAU  
+//BULK_initåŽï¼ŒDAUä¸å¯é‡Šæ”¾,BULK_freeä¸é‡Šæ”¾DAU
 void BULK_init(BULK *bulk,DAU *DP,void *recs,int max_rows_of_fetch);
 void BULK_free(BULK *bulk);
 int BULK_prepare(BULK *bulkp,char *stmt,int bind_rows);

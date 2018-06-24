@@ -1,5 +1,5 @@
 /***********************************************
- * Ïß³Ì³Ø·şÎñÆ÷ 
+ * çº¿ç¨‹æ± æœåŠ¡å™¨
  ***********************************************/
 
 #include <sys/select.h>
@@ -26,7 +26,7 @@ typedef struct wqueue {
 	pthread_t tid;
 } Qpool;
 
-//×ÊÔ´Ïß³Ì³Ø
+//èµ„æºçº¿ç¨‹æ± 
 typedef struct {
 	pthread_mutex_t mut;
 	int poolnum;
@@ -36,12 +36,12 @@ typedef struct {
 //mod_sc.c
 extern void wthread_free(WTHREAD *wp);
 
-//µÈ´ı¶ÓÁĞ
+//ç­‰å¾…é˜Ÿåˆ—
 static WTHREAD wpool={PTHREAD_MUTEX_INITIALIZER,0,NULL};
 
 void wpool_free()
 {
-WTHREAD *wp=&wpool;
+	WTHREAD *wp=&wpool;
 	if(wp->QP) {
 		free(wp->QP);
 		wp->QP=NULL;
@@ -53,7 +53,7 @@ WTHREAD *wp=&wpool;
 
 static void wpool_init(WTHREAD *wp,int num)
 {
-int i;
+	int i;
 	if(wp->QP) return;
 	wp->QP=(Qpool *)malloc(num * sizeof(Qpool));
 	if(!wp->QP) {
@@ -68,41 +68,41 @@ int i;
 		pthread_mutex_init(&wp->QP[i].mut,NULL);
 		pthread_cond_init(&wp->QP[i].cond,NULL);
 	}
-	
-        i=pthread_attr_setdetachstate(&wp->attr,PTHREAD_CREATE_DETACHED);
-        if(i) {
-                ShowLog(1,"%s:can't set pthread attr PTHREAD_CREATE_DETACHED:%s",
-			__FUNCTION__,strerror(i));
-        }
-//ÉèÖÃÏß³Ì¶ÑÕ»±£»¤Çø 16K
-        pthread_attr_setguardsize(&wp->attr,(size_t)(1024 * 16));
+
+	i=pthread_attr_setdetachstate(&wp->attr,PTHREAD_CREATE_DETACHED);
+	if(i) {
+		ShowLog(1,"%s:can't set pthread attr PTHREAD_CREATE_DETACHED:%s",
+				__FUNCTION__,strerror(i));
+	}
+//è®¾ç½®çº¿ç¨‹å †æ ˆä¿æŠ¤åŒº 16K
+	pthread_attr_setguardsize(&wp->attr,(size_t)(1024 * 16));
 
 }
 
 static void *wait_sc(void *para)
 {
-int ret,clr_q=0;
-int poolno=(int)(long)para;
-Qpool *qp=&wpool.QP[poolno];
-int TCBno=-1;
-T_Connect *conn=NULL;
-pthread_t tid=pthread_self();
-struct timespec tim;
+	int ret,clr_q=0;
+	int poolno=(int)(long)para;
+	Qpool *qp=&wpool.QP[poolno];
+	int TCBno=-1;
+	T_Connect *conn=NULL;
+	pthread_t tid=pthread_self();
+	struct timespec tim;
 
 	ShowLog(3,"%s:scpool[%d],tid=%lx created!",__FUNCTION__,poolno,tid);
 	while(1) {
-//´ÓµÈ´ı¶ÓÁĞÈ¡Ò»¸öÈÎÎñ
+//ä»ç­‰å¾…é˜Ÿåˆ—å–ä¸€ä¸ªä»»åŠ¡
 		pthread_mutex_lock(&qp->mut);
 		while(0>(TCBno=TCB_get(&qp->queue))) {
-                        gettimeofday((struct timeval *)&tim,0);
-                        tim.tv_sec+=300; //µÈ´ı5·ÖÖÓ
-                        tim.tv_nsec*=1000;
+			gettimeofday((struct timeval *)&tim,0);
+			tim.tv_sec+=300; //ç­‰å¾…5åˆ†é’Ÿ
+			tim.tv_nsec*=1000;
 			clr_q=0;
-                        ret=pthread_cond_timedwait(&qp->cond,&qp->mut,&tim); //Ã»ÓĞÈÎÎñ£¬µÈ´ı
-                        if(ret)  {
-				if(ETIMEDOUT != ret) 
-				    ShowLog(1,"%s:pthread_cond_timedwait ret=%d,err=%d,%s",
-					__FUNCTION__,ret,errno,strerror(errno));
+			ret=pthread_cond_timedwait(&qp->cond,&qp->mut,&tim); //æ²¡æœ‰ä»»åŠ¡ï¼Œç­‰å¾…
+			if(ret)  {
+				if(ETIMEDOUT != ret)
+					ShowLog(1,"%s:pthread_cond_timedwait ret=%d,err=%d,%s",
+							__FUNCTION__,ret,errno,strerror(errno));
 				qp->tid=0;
 				break;
 			}
@@ -112,26 +112,26 @@ struct timespec tim;
 
 		conn=NULL;
 		if(!clr_q) {
-			conn=get_SC_connect(poolno,5); //µÈ´ıµÃµ½Á¬½Ó
+			conn=get_SC_connect(poolno,5); //ç­‰å¾…å¾—åˆ°è¿æ¥
 			if(conn == (T_Connect *)-1) {
-				clr_q=1; //Çå¿Õ¶ÓÁĞ
+				clr_q=1; //æ¸…ç©ºé˜Ÿåˆ—
 				conn=NULL;
 				ShowLog(1,"%s:tid=%lx,get poolno[%d] fault for TCB:%d",
-					__FUNCTION__,tid,poolno,TCBno);
+						__FUNCTION__,tid,poolno,TCBno);
 			} else ShowLog(5,"%s[%d]:TCB:%d got connect!",__FUNCTION__,poolno,TCBno);
 		}
 		ret=bind_sc(TCBno,conn);
 		if(ret<0) {
 			if(conn) release_SC_connect(&conn,poolno);
 			ShowLog(1,"%s:tid=%lx,bad bind connect to application!,TCB:%d,ret=%d",
-				__FUNCTION__,tid,TCBno,ret);
+					__FUNCTION__,tid,TCBno,ret);
 		}
-		ret=TCB_add(NULL,TCBno); //¼ÓÈëµ½Ö÷ÈÎÎñ¶ÓÁĞ
+		ret=TCB_add(NULL,TCBno); //åŠ å…¥åˆ°ä¸»ä»»åŠ¡é˜Ÿåˆ—
 		if(ret==-2) {
 			unbind_sc(TCBno);
 			release_SC_connect(&conn,poolno);
 		}
-if(clr_q) ShowLog(5,"%s[%d]:TCB:%d NULL to ready!,ret=%d",__FUNCTION__,poolno,TCBno,ret);
+		if(clr_q) ShowLog(5,"%s[%d]:TCB:%d NULL to ready!,ret=%d",__FUNCTION__,poolno,TCBno,ret);
 	}
 	ShowLog(3,"%s[%d]:tid=%lx cancel!",__FUNCTION__,poolno,tid);
 	return NULL;
@@ -139,15 +139,15 @@ if(clr_q) ShowLog(5,"%s[%d]:TCB:%d NULL to ready!,ret=%d",__FUNCTION__,poolno,TC
 
 int scpool_MGR(int TCBno,int poolno,T_Connect **connp,int (*call_back)(T_Connect *,T_NetHead *))
 {
-int ret;
-pthread_t *tp;
+	int ret;
+	pthread_t *tp;
 
 	if(TCBno<0) {
 		ShowLog(1,"%s:bad TCB no!",__FUNCTION__);
 		return -1;
 	}
 	ShowLog(3,"%s:get pool[%d],TCB_no=%d,tid:%lx,USEC=%llu",__FUNCTION__,
-		poolno,TCBno,pthread_self(),now_usec());
+			poolno,TCBno,pthread_self(),now_usec());
 	*connp=get_SC_connect(poolno,0);
 	if(*connp == (T_Connect *)-1) {
 		*connp=NULL;
@@ -156,7 +156,7 @@ pthread_t *tp;
 	if(*connp) {
 		if((*connp)->only_do == (sdbcfunc)1) {
 			(*connp)->only_do=call_back;
-			TCB_add(NULL,TCBno); //¼ÓÈëµ½Ö÷ÈÎÎñ¶ÓÁĞ
+			TCB_add(NULL,TCBno); //åŠ å…¥åˆ°ä¸»ä»»åŠ¡é˜Ÿåˆ—
 //ShowLog(5,"%s:tid=%lx,only_do=1,TCB_no=%d",__FUNCTION__,pthread_self(),TCBno);
 			return 1;
 		}
@@ -171,7 +171,7 @@ pthread_t *tp;
 	}
 	if(poolno < 0 || poolno >= wpool.poolnum) {
 		ShowLog(1,"%s:TCB_no=%d bad poolno %d,poolnum=%d",__FUNCTION__,
-			TCBno,poolno,wpool.poolnum);
+				TCBno,poolno,wpool.poolnum);
 		return -1;
 	}
 	pthread_mutex_lock(&wpool.QP[poolno].mut);
@@ -182,7 +182,7 @@ pthread_t *tp;
 //new thread
 	if(*tp==(pthread_t)(TCBno+1)) {
 		pthread_create(&wpool.QP[poolno].tid,&wpool.attr,wait_sc,(void *)(long)poolno);
-	} else pthread_cond_signal(&wpool.QP[poolno].cond); //»½ĞÑ¹¤×÷Ïß³Ì
+	} else pthread_cond_signal(&wpool.QP[poolno].cond); //å”¤é†’å·¥ä½œçº¿ç¨‹
 	return 1;
 }
 

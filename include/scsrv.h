@@ -1,6 +1,6 @@
 /*******************************************************
  * Secure Database Connect
- * SDBC 6.0 for ORACLE 
+ * SDBC 6.0 for ORACLE
  * 2012.9.19 by ylh
  *******************************************************/
 
@@ -10,25 +10,25 @@
 #include <sc.h>
 
 typedef struct {
-   sdbcfunc funcaddr;
-   const char *srvname;
+	sdbcfunc funcaddr;
+	const char *srvname;
 } srvfunc;
 
 typedef struct {
 	struct S_SQL_Connect *SQL_Connect;
 	pthread_t tid;
 	void *var;
-	int poolno; //Ê¹ÓÃµÄÊı¾İ¿âÁ¬½Ó³ØºÅ  
-	int TCB_no; //Ïß³Ì³Ø·şÎñÆ÷ÖĞµÄ»á»°ºÅ
-	int o_timeout;//ÔÚ×´Ì¬·şÎñÖĞ±£´æÔ­À´µÄTIMEOUTÖµ
+	int poolno; //ä½¿ç”¨çš„æ•°æ®åº“è¿æ¥æ± å·
+	int TCB_no; //çº¿ç¨‹æ± æœåŠ¡å™¨ä¸­çš„ä¼šè¯å·
+	int o_timeout;//åœ¨çŠ¶æ€æœåŠ¡ä¸­ä¿å­˜åŸæ¥çš„TIMEOUTå€¼
 } T_SRV_Var;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* ·şÎñÆ÷¶ËÓĞÊÂ¼şÒªÍ¨Öª¿Í»§¶Ë£¬SendPackÇ°,PROTO_NUM=PutEvent(conn,PROTO_NUM);
-   ÊÂÇ°£¬conn->Event_procÒªÖÃÈëÊÂ¼ş´¦Àí³ÌĞò£¬·µ»ØÖµÎªÊÂ¼şºÅ,1-65535¡£
-   ×¢Òâ£ºÊÂ¼ş´¦Àí³ÌĞò²»¿ÉÒÔ¶¯ÓÃÍøÂç×ÊÔ´£¬µ«¿ÉÒÔ¶¯ÓÃÊı¾İ¿â×ÊÔ´ */
+/* æœåŠ¡å™¨ç«¯æœ‰äº‹ä»¶è¦é€šçŸ¥å®¢æˆ·ç«¯ï¼ŒSendPackå‰,PROTO_NUM=PutEvent(conn,PROTO_NUM);
+   äº‹å‰ï¼Œconn->Event_procè¦ç½®å…¥äº‹ä»¶å¤„ç†ç¨‹åºï¼Œè¿”å›å€¼ä¸ºäº‹ä»¶å·,1-65535ã€‚
+   æ³¨æ„ï¼šäº‹ä»¶å¤„ç†ç¨‹åºä¸å¯ä»¥åŠ¨ç”¨ç½‘ç»œèµ„æºï¼Œä½†å¯ä»¥åŠ¨ç”¨æ•°æ®åº“èµ„æº */
 int PutEvent(T_Connect *conn,int Evtno);
 
 /* Server system interface functions */
@@ -42,25 +42,25 @@ extern int filels(T_Connect *connect,T_NetHead *NetHead);
 extern int PutEnv(T_Connect *connect,T_NetHead *NetHead);
 extern int Echo(T_Connect *connect,T_NetHead *NetHead);
 /*************************************************************
- * Process Per Connection  Server 
- * PPC_srv(): server entry poit 
- * cryptflg=0:not crypt,can be DO_CTYPT,or DO_CRYPT+CHECK_CRC 
+ * Process Per Connection  Server
+ * PPC_srv(): server entry poit
+ * cryptflg=0:not crypt,can be DO_CTYPT,or DO_CRYPT+CHECK_CRC
  *************************************************************/
 int PPC_srv( void (*NetInit)(T_Connect *,T_NetHead *),
-	 srvfunc *func, void *userdata);
+			 srvfunc *func, void *userdata);
 extern void setquit (void (*Quit)());
 /***********************************************************
  * TPC_srv:Thread Per Connection  Server
- * Ò»¸ö»ùÓÚ¶àÏß³ÌµÄÁ¬½Ó³Ø·şÎñÆ÷¿ò¼Ü NetMain_r £¬Àı×ÓÔÚ£º
+ * ä¸€ä¸ªåŸºäºå¤šçº¿ç¨‹çš„è¿æ¥æ± æœåŠ¡å™¨æ¡†æ¶ NetMain_r ï¼Œä¾‹å­åœ¨ï¼š
  * ../utility/thread/
  * TPOOL_srv:Thread Pool Server
- * Ò»¸ö»ùÓÚepollµÄÏß³Ì³Ø·şÎñÆ÷¿ò¼Ü TPOOL_srv£¬ÓÃÓÚ¸ßÍÌÍÂÁ¿µÄOLTP´¦Àí £¬Àı×ÓÔÚ£º
+ * ä¸€ä¸ªåŸºäºepollçš„çº¿ç¨‹æ± æœåŠ¡å™¨æ¡†æ¶ TPOOL_srvï¼Œç”¨äºé«˜ååé‡çš„OLTPå¤„ç† ï¼Œä¾‹å­åœ¨ï¼š
  * ../utility/tpool/
- * conn_init:ĞÂÏß³Ì¿ªÊ¼ºó£¬ÇëÄãÔ¤´¦Àí 
- * quit:·şÎñÆ÷ÍË³öº¯Êı
- * poolchk:¶¨ÆÚ¼ì²é³Ø½¡¿µµÄº¯Êı 
- * sizeof_gda:ÓÃ»§ÉÏÏÂÎÄÊı¾İµÄ³¤¶È,ÉÏÏÂÎÄ¿Õ¼äÔÚÏß³ÌÖĞ·ÖÅä  
- * ±ØĞëÌá¹©È«¾Ö·şÎñº¯Êı×é:
+ * conn_init:æ–°çº¿ç¨‹å¼€å§‹åï¼Œè¯·ä½ é¢„å¤„ç†
+ * quit:æœåŠ¡å™¨é€€å‡ºå‡½æ•°
+ * poolchk:å®šæœŸæ£€æŸ¥æ± å¥åº·çš„å‡½æ•°
+ * sizeof_gda:ç”¨æˆ·ä¸Šä¸‹æ–‡æ•°æ®çš„é•¿åº¦,ä¸Šä¸‹æ–‡ç©ºé—´åœ¨çº¿ç¨‹ä¸­åˆ†é…
+ * å¿…é¡»æä¾›å…¨å±€æœåŠ¡å‡½æ•°ç»„:
  * svcfunc Function[];
  ***********************************************************/
 
@@ -82,66 +82,66 @@ int get_TCB_status(int TCB_no);
 T_NetHead *getNetHead(int TCBno);
 /**
  * unset_callback
- * Çå³ıÓÃ»§×Ô¶¨Òå»Øµ÷º¯Êı
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return Ô­»Øµ÷º¯Êı
+ * æ¸…é™¤ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return åŸå›è°ƒå‡½æ•°
  */
 sdbcfunc  unset_callback(int TCB_no);
 
 /**
  * get_callback
- * È¡ÓÃ»§×Ô¶¨Òå»Øµ÷º¯Êış
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return »Øµ÷º¯Êı
+ * å–ç”¨æˆ·è‡ªå®šä¹‰å›è°ƒå‡½æ•°ï¿½
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return å›è°ƒå‡½æ•°
  */
 
 sdbcfunc get_callback(int TCB_no);
 /**
  * get_event_status
- * È¡TCB×´Ì¬
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return TCB×´Ì¬
+ * å–TCBçŠ¶æ€
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return TCBçŠ¶æ€
  */
 
 /**
  * set_event
- * ÓÃ»§×Ô¶¨ÒåÊÂ¼ş
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @param fd ÊÂ¼şfd Ö»Ö§³Ö¶ÁÊÂ¼ş 
- * @param call_back ·¢ÉúÊÂ¼şµÄ»Øµ÷º¯Êı
- * @param timeout fdµÄ³¬Ê±Ãë,Ö»ÔÊĞíÉèÖÃsocket fd 
- * @return ³É¹¦ 0
+ * ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @param fd äº‹ä»¶fd åªæ”¯æŒè¯»äº‹ä»¶
+ * @param call_back å‘ç”Ÿäº‹ä»¶çš„å›è°ƒå‡½æ•°
+ * @param timeout fdçš„è¶…æ—¶ç§’,åªå…è®¸è®¾ç½®socket fd
+ * @return æˆåŠŸ 0
  */
 int set_event(int TCB_no,int fd,sdbcfunc call_back,int timeout);
 /**
  * clr_event
- * Çå³ıÓÃ»§×Ô¶¨ÒåÊÂ¼ş »Øµ÷º¯ÊıÍê³ÉÈÎÎñºóÓ¦Çå³ıÊÂ¼ş¡£
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ³É¹¦ 0
+ * æ¸…é™¤ç”¨æˆ·è‡ªå®šä¹‰äº‹ä»¶ å›è°ƒå‡½æ•°å®Œæˆä»»åŠ¡ååº”æ¸…é™¤äº‹ä»¶ã€‚
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return æˆåŠŸ 0
  */
 int clr_event(int TCB_no);
 /**
  * get_event_fd
- * È¡ÊÂ¼şfd,ÓÃÓÚÔÚ»Øµ÷º¯ÊıÖĞÈ¡µÃÊÂ¼şfd 
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ÊÂ¼şfd
+ * å–äº‹ä»¶fd,ç”¨äºåœ¨å›è°ƒå‡½æ•°ä¸­å–å¾—äº‹ä»¶fd
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return äº‹ä»¶fd
  */
 int get_event_fd(int TCB_no);
 /**
  * get_event_status
- * È¡ÊÂ¼ş×´Ì¬
- * @param TCB_no ¿Í»§ÈÎÎñºÅ
- * @return ÊÂ¼ş×´Ì¬
+ * å–äº‹ä»¶çŠ¶æ€
+ * @param TCB_no å®¢æˆ·ä»»åŠ¡å·
+ * @return äº‹ä»¶çŠ¶æ€
  */
 int get_event_status(int TCB_no);
 
 //clikey.c
-/* Ğ­ÉÌÃÜÔ¿ */
+/* åå•†å¯†é’¥ */
 int mk_clikey(int socket,ENIGMA2 *tc,u_int *family);
 
-/* È¡·şÎñÆ÷µ0·şÎñº¯Êı±í£¬×¢²á³É¹¦ºóÌæ»»0ºÅĞ­Òé * */
+/* å–æœåŠ¡å™¨ï¿½0æœåŠ¡å‡½æ•°è¡¨ï¼Œæ³¨å†ŒæˆåŠŸåæ›¿æ¢0å·åè®® * */
 int get_srvname(T_Connect *conn,T_NetHead *NetHead);
-//¶¯Ì¬Ó¦ÓÃÄ£¿é
+//åŠ¨æ€åº”ç”¨æ¨¡å—
 int dmapp(T_Connect *conn,T_NetHead *head);
 int dmmgr(T_Connect *conn,T_NetHead *head);
 

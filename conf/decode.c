@@ -5,33 +5,33 @@
 #include <crc32.h>
 
 extern char *(*encryptproc)(char *mstr);
-// Ïß³Ì²»°²È«
+// çº¿ç¨‹ä¸å®‰å…¨
 static char keyid[20]="";
 static char *encryptpass(char *mstr)
 {
-ENIGMA2 egm;
-int ret;
-char tmp[41];
-        if(!*keyid) return mstr;
-        ret=a64_byte(tmp,mstr);
+	ENIGMA2 egm;
+	int ret;
+	char tmp[41];
+	if(!*keyid) return mstr;
+	ret=a64_byte(tmp,mstr);
 	enigma2_init(&egm,keyid,0);
 	enigma2_decrypt(&egm,tmp,ret);
-        tmp[ret]=0;
-        strcpy(mstr,tmp);
-        return mstr;
+	tmp[ret]=0;
+	strcpy(mstr,tmp);
+	return mstr;
 }
 
 char *decodeprepare(char *dblabel)
 {
-char *p;
-DWS dw;
-int ret;
+	char *p;
+	DWS dw;
+	int ret;
 /********************************************************************
- * ÓÃ»§¿ÚÁî½âÃÜ×¼±¸
+ * ç”¨æˆ·å£ä»¤è§£å¯†å‡†å¤‡
  ********************************************************************/
 	p=getenv("KEYFILE");
 	if(!p||!*p) {
-		ShowLog(1,"È±ÉÙ»·¾³±äÁ¿ KEYFILE");
+		ShowLog(1,"ç¼ºå°‘ç¯å¢ƒå˜é‡ KEYFILE");
 		ret=-1;
 	} else {
 		ret=initdw(p,&dw);
@@ -48,13 +48,13 @@ int ret;
 		}
 	}
 	if(!ret) {
-unsigned crc;
-char *cp;
+		unsigned crc;
+		char *cp;
 		crc=ssh_crc32((const unsigned char *)p,strlen(p));
 		cp=getdw(crc,&dw);
 		if(!cp) {
 			freedw(&dw);
-			ShowLog(1,"%s:ÎŞĞ§µÄ KEYID %s",__FUNCTION__,p);
+			ShowLog(1,"%s:æ— æ•ˆçš„ KEYID %s",__FUNCTION__,p);
 		} else {
 			strcpy(keyid,cp);
 			encryptproc=encryptpass;

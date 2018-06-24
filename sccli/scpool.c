@@ -1,5 +1,5 @@
 /**************************************************
- * SDBCÁ¬½Ó³Ø¹ÜÀí
+ * SDBCè¿æ¥æ± ç®¡ç†
  **************************************************/
 #include <ctype.h>
 #include <unistd.h>
@@ -17,39 +17,39 @@ static int log_level=0;
 
 int set_SC_loglevel(int new_loglevel)
 {
-int old_level=log_level;
+	int old_level=log_level;
 	log_level=new_loglevel;
 	return old_level;
 }
 
 T_PkgType SCPOOL_tpl[]={
-        {CH_INT,sizeof(int),"d_node",0,-1},
-        {CH_CHAR,17,"DEVID"},
-        {CH_CHAR,256,"LABEL"},
-        {CH_CHAR,17,"UID"},
-        {CH_CHAR,14,"PWD"},
-        {CH_INT,sizeof(int),"NUM"},
-        {CH_INT,sizeof(int),"NEXT_d_node"},
-        {CH_CHAR,81,"HOST"},
-        {CH_CHAR,21,"PORT"},
-        {CH_INT,sizeof(int),"MTU"},
-        {CH_CHAR,172,"family"},
-        {-1,0,0,0}
+		{CH_INT,sizeof(int),"d_node",0,-1},
+		{CH_CHAR,17,"DEVID"},
+		{CH_CHAR,256,"LABEL"},
+		{CH_CHAR,17,"UID"},
+		{CH_CHAR,14,"PWD"},
+		{CH_INT,sizeof(int),"NUM"},
+		{CH_INT,sizeof(int),"NEXT_d_node"},
+		{CH_CHAR,81,"HOST"},
+		{CH_CHAR,21,"PORT"},
+		{CH_INT,sizeof(int),"MTU"},
+		{CH_CHAR,172,"family"},
+		{-1,0,0,0}
 };
 
 extern T_PkgType SCPOOL_tpl[];
 typedef struct {
-        int d_node;
-        char DEVID[17];
-        char LABEL[256];
-        char UID[17];
-        char PWD[14];
-        int NUM;
-        int NEXT_d_node;
-        char HOST[81];
-        char PORT[21];
-        int MTU;
-        char family[172];
+	int d_node;
+	char DEVID[17];
+	char LABEL[256];
+	char UID[17];
+	char PWD[14];
+	int NUM;
+	int NEXT_d_node;
+	char HOST[81];
+	char PORT[21];
+	int MTU;
+	char family[172];
 } SCPOOL_stu;
 
 typedef struct {
@@ -62,11 +62,11 @@ typedef struct {
 	char DBLABEL[81];
 	resource *lnk;
 	int free_q;
-	int weight;  //È¨ÖØ:0-resource_num,-1Ôİ²»¿ÉÓÃ
+	int weight;  //æƒé‡:0-resource_num,-1æš‚ä¸å¯ç”¨
 } path_lnk;
 
-//ÔÚÒ»¸ösc_pathÀïµÄ¸÷·şÎñÆ÷¶¼ÊÇÍ¬ÖÊµÄ£¬¾ßÓĞÏàÍ¬µÄD_NODEºÅ
-//½«ÔÚÍ¬Ò»¸ösc_pathÄÚ½øĞĞ¸ºÔØ¾ùºâ
+//åœ¨ä¸€ä¸ªsc_pathé‡Œçš„å„æœåŠ¡å™¨éƒ½æ˜¯åŒè´¨çš„ï¼Œå…·æœ‰ç›¸åŒçš„D_NODEå·
+//å°†åœ¨åŒä¸€ä¸ªsc_pathå†…è¿›è¡Œè´Ÿè½½å‡è¡¡
 typedef struct {
 	pthread_mutex_t weightLock;
 	pthread_cond_t weightCond;
@@ -78,31 +78,31 @@ typedef struct {
 
 static int SCPOOLNUM=0,ctx_flg=0;
 static sc_path  *scpool=NULL;
-//ÊÍ·ÅÁ¬½Ó³Ø  
+//é‡Šæ”¾è¿æ¥æ± 
 void scpool_free()
 {
-sc_path *scp;
+	sc_path *scp;
 
 	if(!scpool) return;
 	scp=scpool;
 	for(int n=0;n<SCPOOLNUM;n++,scp++) {
-	    if(scp->path) {
-	    path_lnk *pl=scp->path;
-		for(int j=0;j<scp->path_num;j++,pl++) {
-			pthread_cond_destroy(&pl->cond);
-			pthread_mutex_destroy(&pl->mut);
-			if(pl->lnk) {
-	      		resource *rs=pl->lnk;
-				for(int i=0;i<pl->resource_num;i++,rs++) {
-			   	 if(rs->Conn.Socket > -1) {
-					disconnect(&rs->Conn);
-			   	 }
+		if(scp->path) {
+			path_lnk *pl=scp->path;
+			for(int j=0;j<scp->path_num;j++,pl++) {
+				pthread_cond_destroy(&pl->cond);
+				pthread_mutex_destroy(&pl->mut);
+				if(pl->lnk) {
+					resource *rs=pl->lnk;
+					for(int i=0;i<pl->resource_num;i++,rs++) {
+						if(rs->Conn.Socket > -1) {
+							disconnect(&rs->Conn);
+						}
+					}
+					free(pl->lnk);
 				}
-				free(pl->lnk);
 			}
+			free(scp->path);
 		}
-	    	free(scp->path);
-	    }
 	}
 	free(scpool);
 	scpool=NULL;
@@ -110,17 +110,17 @@ sc_path *scp;
 
 static int resource_init(path_lnk *pl,int m)
 {
-sc_path *scp;
-int i;
+	sc_path *scp;
+	int i;
 	scp=&scpool[m];
 	if(0!=(i=pthread_mutex_init(&pl->mut,NULL))) {
 		ShowLog(1,"%s:mutex_init err %s",__FUNCTION__,
-			strerror(i));
+				strerror(i));
 		return -12;
 	}
 	if(0!=(i=pthread_cond_init(&pl->cond,NULL))) {
 		ShowLog(1,"%s:cond init  err %s",__FUNCTION__,
-			strerror(i));
+				strerror(i));
 		return -13;
 	}
 	pl->svc_tbl.srvn=0;
@@ -151,31 +151,31 @@ int i;
 		if(*pl->log.family)
 			str_a64n(32,pl->log.family,pl->family);
 		if(i<pl->resource_num-1) pl->lnk[i].next=i+1;
-                else pl->lnk[i].next=0;
+		else pl->lnk[i].next=0;
 		pl->lnk[i].timestamp=now_usec();
 	}
 	return 0;
 }
-//³õÊ¼»¯Á¬½Ó³Ø  
+//åˆå§‹åŒ–è¿æ¥æ± 
 int scpool_init(int ctx_flag)
 {
-int n,i,j,ret;
-char *p,buf[512],dnode_key[15];
-FILE *fd;
-JSON_OBJECT cfg,json,ajson;
-SCPOOL_stu node;
+	int n,i,j,ret;
+	char *p,buf[512],dnode_key[15];
+	FILE *fd;
+	JSON_OBJECT cfg,json,ajson;
+	SCPOOL_stu node;
 
 	if(scpool) return 0;
 	ctx_flg=ctx_flag;
 	p=getenv("SCPOOLCFG");
 	if(!p||!*p) {
-		ShowLog(1,"%s:È±ÉÙ»·¾³±äÁ¿SCPOOLCFG!",__FUNCTION__);
+		ShowLog(1,"%s:ç¼ºå°‘ç¯å¢ƒå˜é‡SCPOOLCFG!",__FUNCTION__);
 		return -1;
 	}
 	fd=fopen((const char *)p,"r");
 	if(!fd) {
 		ShowLog(1,"%s:CFGFILE %s open err=%d,%s",__FUNCTION__,
-			p,errno,strerror(errno));
+				p,errno,strerror(errno));
 		return -2;
 	}
 	cfg=json_object_new_object();
@@ -217,18 +217,18 @@ SCPOOL_stu node;
 	if(p && isdigit(*p)) log_level=atoi(p);
 
 	ShowLog(5,"cfg=%s,POOLNUM=%d",json_object_to_json_string(cfg),SCPOOLNUM);
-sc_path *scp=scpool;
+	sc_path *scp=scpool;
 	for(n=0;n<SCPOOLNUM;n++,scp++) {
 		scp->path=NULL;
 		if(0!=(i=pthread_mutex_init(&scp->weightLock,NULL))) {
 			ShowLog(1,"%s:mutex_init weight err %s",__FUNCTION__,
-				strerror(i));
+					strerror(i));
 			json_object_put(cfg);
 			return -12;
 		}
 		if(0!=(i=pthread_cond_init(&scp->weightCond,NULL))) {
 			ShowLog(1,"%s:cond init weight err %s",__FUNCTION__,
-				strerror(i));
+					strerror(i));
 			json_object_put(cfg);
 			return -13;
 		}
@@ -263,22 +263,22 @@ sc_path *scp=scpool;
 		}
 		n++;
 		scp++;
-        }
+	}
 	json_object_put(cfg);
 	return SCPOOLNUM;
 }
 
 static int lnk_no(path_lnk *pl,T_Connect *conn)
 {
-int i,e;
-resource *rs=pl->lnk;
+	int i,e;
+	resource *rs=pl->lnk;
 
 	if(!conn) return -1;
 	e=conn->pos&0XFFFF;
-        if(e<pl->resource_num && conn == &pl->lnk[e].Conn) {
-        	return e;
+	if(e<pl->resource_num && conn == &pl->lnk[e].Conn) {
+		return e;
 	}
-        ShowLog(1,"%s:conn not equal pos=%d",__FUNCTION__, e);
+	ShowLog(1,"%s:conn not equal pos=%d",__FUNCTION__, e);
 	e=pl->resource_num;
 	for(i=0;i<e;i++,rs++) {
 		if(conn == &rs->Conn) {
@@ -291,8 +291,8 @@ resource *rs=pl->lnk;
 }
 static int get_lnk_no(path_lnk *pl)
 {
-int i,*ip,*np;
-resource *rs;
+	int i,*ip,*np;
+	resource *rs;
 
 	if(pl->free_q<0) return -1;
 	ip=&pl->free_q;
@@ -305,27 +305,27 @@ resource *rs;
 	if(pl->weight>0) pl->weight--;
 	return i;
 }
-//½«pl[i]¼ÓÈëfree_q
+//å°†pl[i]åŠ å…¥free_q
 static void add_lnk(path_lnk *pl,int i)
 {
-int *np,*ip=&pl->lnk[i].next;
-        if(*ip>=0) {
-ShowLog(5,"%s:Tid=%lx,i=%d,next=%d,ÒÑ¾­ÔÚ¶ÓÁĞÖĞ!",__FUNCTION__,pthread_self(),i,*ip);
+	int *np,*ip=&pl->lnk[i].next;
+	if(*ip>=0) {
+		ShowLog(5,"%s:Tid=%lx,i=%d,next=%d,å·²ç»åœ¨é˜Ÿåˆ—ä¸­!",__FUNCTION__,pthread_self(),i,*ip);
 
-		return;//ÒÑ¾­ÔÚ¶ÓÁĞÖĞ
+		return;//å·²ç»åœ¨é˜Ÿåˆ—ä¸­
 	}
 	np=&pl->free_q;
-        if(*np < 0) {
-                *np=i;
-                *ip=i;
-	} else { //²åÈë¶ÓÍ·  
-	resource *rs=&pl->lnk[*np];
-                *ip=rs->next;
-                rs->next=i;
+	if(*np < 0) {
+		*np=i;
+		*ip=i;
+	} else { //æ’å…¥é˜Ÿå¤´
+		resource *rs=&pl->lnk[*np];
+		*ip=rs->next;
+		rs->next=i;
 		if(pl->lnk[i].Conn.Socket<0) {
-			*np=i;//»µÁ¬½ÓÅÅ¶ÓÎ² 
+			*np=i;//åè¿æ¥æ’é˜Ÿå°¾
 		}
-        }
+	}
 	if(pl->weight>=0) pl->weight++;
 //ShowLog(5,"%s:tid=%lx,weight=%d,next=%d",__FUNCTION__,pthread_self(),pl->weight,*ip);
 }
@@ -333,12 +333,12 @@ ShowLog(5,"%s:Tid=%lx,i=%d,next=%d,ÒÑ¾­ÔÚ¶ÓÁĞÖĞ!",__FUNCTION__,pthread_self(),i,
 extern int usleep (__useconds_t __useconds);
 static int sc_connect(path_lnk *pl,resource *rs)
 {
-int ret=-1;
-T_NetHead Head;
-struct utsname ubuf;
-char finger[256],buf[200],*p;
-log_stu logs;
-sc_path *scp=&scpool[rs->pool_no];
+	int ret=-1;
+	T_NetHead Head;
+	struct utsname ubuf;
+	char finger[256],buf[200],*p;
+	log_stu logs;
+	sc_path *scp=&scpool[rs->pool_no];
 
 	ret=Net_Connect(&rs->Conn,&rs->cli,*pl->log.family?pl->family:NULL);
 	if(ret) {
@@ -347,28 +347,28 @@ sc_path *scp=&scpool[rs->pool_no];
 		return -1;
 	}
 
-        p=getenv("TCPTIMEOUT");
+	p=getenv("TCPTIMEOUT");
 	if(p && isdigit(*p)) {
 		Head.ERRNO2=60*atoi(p);
 		rs->Conn.timeout=Head.ERRNO2>=120?Head.ERRNO2-60:Head.ERRNO2;
-        } else rs->Conn.timeout=Head.ERRNO2=0;
+	} else rs->Conn.timeout=Head.ERRNO2=0;
 
 //login
-        Head.O_NODE=LocalAddr(rs->Conn.Socket,finger);
-        fingerprint(finger);
-        uname(&ubuf);
-        p=buf;
-again_login:
-        p+=sprintf(p,"%s|%s|%s,%s|||",pl->log.DEVID,pl->log.LABEL,
-                ubuf.nodename,finger);
-        rs->Conn.MTU=pl->log.MTU;
-        Head.PROTO_NUM=0;
-        Head.D_NODE=pl->log.NEXT_d_node;
-        Head.ERRNO1=rs->Conn.MTU;
-	if(!ctx_flg) Head.PKG_REC_NUM=-1; //²»ÒªÇóctx_id
+	Head.O_NODE=LocalAddr(rs->Conn.Socket,finger);
+	fingerprint(finger);
+	uname(&ubuf);
+	p=buf;
+	again_login:
+	p+=sprintf(p,"%s|%s|%s,%s|||",pl->log.DEVID,pl->log.LABEL,
+			   ubuf.nodename,finger);
+	rs->Conn.MTU=pl->log.MTU;
+	Head.PROTO_NUM=0;
+	Head.D_NODE=pl->log.NEXT_d_node;
+	Head.ERRNO1=rs->Conn.MTU;
+	if(!ctx_flg) Head.PKG_REC_NUM=-1; //ä¸è¦æ±‚ctx_id
 	else Head.PKG_REC_NUM=rs->cli.ctx_id;
-        Head.data=buf;
-        Head.PKG_LEN=strlen(Head.data);
+	Head.data=buf;
+	Head.PKG_LEN=strlen(Head.data);
 
 	ret=SendPack(&rs->Conn,&Head);
 	ret=RecvPack(&rs->Conn,&Head);
@@ -381,47 +381,47 @@ again_login:
 		return -2;
 	}
 	if(Head.ERRNO1 || Head.ERRNO2) {
-		if(ctx_flg && Head.ERRNO1==-197) { //ctx_idÒÑ¾­³¬Ê±£¬Ê§Ğ§ÁË¡£
-                        rs->cli.ctx_id=0;
-                        goto again_login;
-                }
+		if(ctx_flg && Head.ERRNO1==-197) { //ctx_idå·²ç»è¶…æ—¶ï¼Œå¤±æ•ˆäº†ã€‚
+			rs->cli.ctx_id=0;
+			goto again_login;
+		}
 
 		ShowLog(1,"%s:login error ERRNO1=%d,ERRNO2=%d,%s",__FUNCTION__,
-			Head.ERRNO1,Head.ERRNO2,Head.data);
+				Head.ERRNO1,Head.ERRNO2,Head.data);
 		disconnect(&rs->Conn);
 		stptok(Head.data,rs->cli.ErrMsg,sizeof(rs->cli.ErrMsg),0);
 		rs->cli.Errno=-1;
 		return -3;
 	}
-        memset(&logs,0,sizeof(logs));
-        net_dispack(&logs,Head.data,log_tpl);
-        strcpy(rs->cli.DBOWN,logs.DBOWN);
-        strcpy(rs->cli.UID,logs.DBUSER);
-        if(!ctx_flg && !*pl->DBLABEL) {
+	memset(&logs,0,sizeof(logs));
+	net_dispack(&logs,Head.data,log_tpl);
+	strcpy(rs->cli.DBOWN,logs.DBOWN);
+	strcpy(rs->cli.UID,logs.DBUSER);
+	if(!ctx_flg && !*pl->DBLABEL) {
 		strcpy(pl->DBLABEL,logs.DBLABEL);
 		if(!scp->DBLABEL) scp->DBLABEL=pl->DBLABEL;
 	}
 //session id for end server
 	if(ctx_flg && *logs.DBLABEL) {
 //ShowLog(5,"$s[%d]:DBLABEL=%s",__FUNCTION__,__LINE__,
-                str_a64n(1,logs.DBLABEL,(u_int *)&rs->cli.ctx_id);
-        }
+		str_a64n(1,logs.DBLABEL,(u_int *)&rs->cli.ctx_id);
+	}
 
-//È¡·şÎñÃû
+//å–æœåŠ¡å
 	rs->cli.svc_tbl=&pl->svc_tbl;
 	pthread_mutex_lock(&pl->mut);
 	if(pl->svc_tbl.srvn == 0) {
-reload:
+		reload:
 		pl->svc_tbl.srvn=-1;
 		pthread_mutex_unlock(&pl->mut);
-       		ret=init_svc_no(&rs->Conn);
-        	if(ret) { //È¡·şÎñÃûÊ§°Ü
-                    ShowLog(1,"%s:HOST=%s/%s,init_svc_no error ",__FUNCTION__,
-                        rs->Conn.Host,rs->Conn.Service);
+		ret=init_svc_no(&rs->Conn);
+		if(ret) { //å–æœåŠ¡åå¤±è´¥
+			ShowLog(1,"%s:HOST=%s/%s,init_svc_no error ",__FUNCTION__,
+					rs->Conn.Host,rs->Conn.Service);
 			rs->cli.Errno=-1;
-		    disconnect(&rs->Conn);
+			disconnect(&rs->Conn);
 			return -4;
-       		}
+		}
 	} else {
 		while(pl->svc_tbl.srvn<0) usleep(1000);
 		if(pl->svc_tbl.srvn>0) pl->svc_tbl.usage++;
@@ -432,31 +432,31 @@ reload:
 		*rs->cli.ErrMsg=0;
 	}
 	rs->cli.Errno=ret;
-	
+
 	return 0;
 }
 
-//È¡Á¬½Ó  
-//Á¬½Ó Ïß³ÌËø²»ÄÜ¿çÔ½AIO£¬Ó¦ÓÃÕßÓ¦¸ÃÌá¹©ËûµÄÒÑËø¶¨µÄÏß³ÌËø
-//ÔÚAIO¿ªÊ¼Ç°ÏÈ½âËø£¬Íê³ÉºóÖØĞÂ¼ÓËø
+//å–è¿æ¥
+//è¿æ¥ çº¿ç¨‹é”ä¸èƒ½è·¨è¶ŠAIOï¼Œåº”ç”¨è€…åº”è¯¥æä¾›ä»–çš„å·²é”å®šçš„çº¿ç¨‹é”
+//åœ¨AIOå¼€å§‹å‰å…ˆè§£é”ï¼Œå®Œæˆåé‡æ–°åŠ é”
 static resource * get_SC_resource(path_lnk *pl,int flg,pthread_mutex_t *Lock)
 {
-int ret,i;
-resource *rs;
+	int ret,i;
+	resource *rs;
 
 	if(!pl->lnk) {
-		ShowLog(1,"%s:ÎŞĞ§µÄÁ¬½Ó³Ø",__FUNCTION__);
+		ShowLog(1,"%s:æ— æ•ˆçš„è¿æ¥æ± ",__FUNCTION__);
 		return NULL;
 	}
 	if(0!=pthread_mutex_lock(&pl->mut)) return NULL;
 	while(0>(i=get_lnk_no(pl))) {
 		if(flg) {   //flg !=0,don't wait
-		      pthread_mutex_unlock(&pl->mut);
-		      return NULL;
-	 	}
-	//	if(log_level) ShowLog(log_level,"%s:tid=%lx pool suspend",__FUNCTION__,pthread_self());
-		pthread_cond_wait(&pl->cond,&pl->mut); //Ã»ÓĞ×ÊÔ´£¬µÈ´ı 
-	//	if(log_level) ShowLog(log_level,"%s:tid=%lx pool weakup",__FUNCTION__,pthread_self());
+			pthread_mutex_unlock(&pl->mut);
+			return NULL;
+		}
+		//	if(log_level) ShowLog(log_level,"%s:tid=%lx pool suspend",__FUNCTION__,pthread_self());
+		pthread_cond_wait(&pl->cond,&pl->mut); //æ²¡æœ‰èµ„æºï¼Œç­‰å¾…
+		//	if(log_level) ShowLog(log_level,"%s:tid=%lx pool weakup",__FUNCTION__,pthread_self());
 	}
 	pthread_mutex_unlock(&pl->mut);
 
@@ -464,34 +464,34 @@ resource *rs;
 	rs->next=-1;
 	rs->timestamp=now_usec();
 	if(rs->Conn.Socket<0 || rs->cli.Errno<0) {
-	    if(Lock) pthread_mutex_unlock(Lock); //Ïß³ÌËø²»¿É¿çAIO
-            ret=sc_connect(pl,rs);
-	    if(Lock) pthread_mutex_lock(Lock);
-	    if(ret) {
-		ShowLog(1,"%s:DNODE[%d][%d][%d] Á¬½Ó%s/%s´í:err=%d,%s",
-                            __FUNCTION__,pl->log.d_node,rs->path_no,i,pl->log.HOST,pl->log.PORT,
-                            rs->cli.Errno, rs->cli.ErrMsg);
-		rs->cli.Errno=-1;
-		pthread_mutex_lock(&pl->mut);
-		add_lnk(pl,i);
-		pl->weight=-1;
-		pthread_mutex_unlock(&pl->mut);
-		return (resource *)-1;
-            }
-//»Ö¸´¼ÆÈ¨
+		if(Lock) pthread_mutex_unlock(Lock); //çº¿ç¨‹é”ä¸å¯è·¨AIO
+		ret=sc_connect(pl,rs);
+		if(Lock) pthread_mutex_lock(Lock);
+		if(ret) {
+			ShowLog(1,"%s:DNODE[%d][%d][%d] è¿æ¥%s/%sé”™:err=%d,%s",
+					__FUNCTION__,pl->log.d_node,rs->path_no,i,pl->log.HOST,pl->log.PORT,
+					rs->cli.Errno, rs->cli.ErrMsg);
+			rs->cli.Errno=-1;
+			pthread_mutex_lock(&pl->mut);
+			add_lnk(pl,i);
+			pl->weight=-1;
+			pthread_mutex_unlock(&pl->mut);
+			return (resource *)-1;
+		}
+//æ¢å¤è®¡æƒ
 		pthread_mutex_lock(&pl->mut);
 		if(pl->weight<0){
-		    for(pl->weight=0,ret=0;ret<pl->resource_num;ret++) {
-			if(pl->lnk[ret].next>=0) pl->weight++;
-		    }
+			for(pl->weight=0,ret=0;ret<pl->resource_num;ret++) {
+				if(pl->lnk[ret].next>=0) pl->weight++;
+			}
 		}
 		pthread_mutex_unlock(&pl->mut);
-sc_path *scp=&scpool[rs->pool_no];
-		pthread_cond_signal(&scp->weightCond); //Èç¹ûÓĞµÈ´ıÁ¬½Ó³ØµÄÏß³Ì¾Í»½ĞÑËü 
+		sc_path *scp=&scpool[rs->pool_no];
+		pthread_cond_signal(&scp->weightCond); //å¦‚æœæœ‰ç­‰å¾…è¿æ¥æ± çš„çº¿ç¨‹å°±å”¤é†’å®ƒ
 	}
 
 	if(log_level) ShowLog(log_level,"%s:tid=%lx,DNODE[%d][%d][%d]",__FUNCTION__,
-		pthread_self(),pl->log.d_node,rs->Conn.pos>>16,i);
+						  pthread_self(),pl->log.d_node,rs->Conn.pos>>16,i);
 	rs->cli.Errno=0;
 	*rs->cli.ErrMsg=0;
 	return rs;
@@ -499,7 +499,7 @@ sc_path *scp=&scpool[rs->pool_no];
 
 resource * get_path_resource(int poolno,int path_no,int flg)
 {
-sc_path *scp;
+	sc_path *scp;
 	if(!scpool || poolno<0 || poolno>=SCPOOLNUM) return NULL;
 	scp=&scpool[poolno];
 	if(path_no<0 || path_no>=scp->path_num) return NULL;
@@ -509,93 +509,93 @@ sc_path *scp;
 #include <time.h>
 #ifndef CLOCK_REALTIME
 struct timespec
-  {
-    __time_t tv_sec;            /* Seconds.  */
-    long int tv_nsec;           /* Nanoseconds.  */
-  };
+{
+	__time_t tv_sec;            /* Seconds.  */
+	long int tv_nsec;           /* Nanoseconds.  */
+};
 /* Get current value of clock CLOCK_ID and store it in TP.  */
 extern int clock_gettime (clockid_t __clock_id, struct timespec *__tp) __THROW;
 
 #define CLOCK_REALTIME 0
 #endif
 
-//¸ºÔØ¾ùºâ£¬ÕÒÒ»¸ö¸ºÔØ×îÇáµÄ³Ø
-//flg>0:Ã¦Ê±µÈ´ıflg´Î£¬Ã¿´Î6Ãë,flg=0,²»µÈ´ı,flg=-1ÓÀÔ¶µÈ´ı
-//return£ºNULLÃ»ÓĞ¿ÕÏĞµÄÁ¬½Ó,-1:Á¬½ÓÒÑËğ»µ
+//è´Ÿè½½å‡è¡¡ï¼Œæ‰¾ä¸€ä¸ªè´Ÿè½½æœ€è½»çš„æ± 
+//flg>0:å¿™æ—¶ç­‰å¾…flgæ¬¡ï¼Œæ¯æ¬¡6ç§’,flg=0,ä¸ç­‰å¾…,flg=-1æ°¸è¿œç­‰å¾…
+//returnï¼šNULLæ²¡æœ‰ç©ºé—²çš„è¿æ¥,-1:è¿æ¥å·²æŸå
 resource * get_SC_by_weight(int path_no,int flg)
 {
-int i,max_weight,w,n,m,repeat=flg;
-path_lnk *pl;
-sc_path *scp;
-struct timespec tims;
-resource *rs;
+	int i,max_weight,w,n,m,repeat=flg;
+	path_lnk *pl;
+	sc_path *scp;
+	struct timespec tims;
+	resource *rs;
 
 	if(path_no<0 || path_no>=SCPOOLNUM) return NULL;
-	
+
 	scp=&scpool[path_no];
 	pthread_mutex_lock(&scp->weightLock);
-   do {
-	max_weight=-1,n=-1,m=-1;
-	pl=scp->path;
-	for(i=0;i<scp->path_num;i++,pl++) {
-//ÕÒÈ¨ÖØ×îÖØµÄÄÇ¸ö³Ø
-ShowLog(5,"%s:tid=%lx,DNODE[%d] weight[%d]=%d",__FUNCTION__,pthread_self(),scp->d_node,i,pl->weight);
-		pthread_mutex_lock(&pl->mut);
-		if(pl->weight>0) {
-			w=pl->weight<<9;
-			w/=pl->resource_num;
-			if(w>max_weight) {
-				max_weight=w;
-				n=i;
+	do {
+		max_weight=-1,n=-1,m=-1;
+		pl=scp->path;
+		for(i=0;i<scp->path_num;i++,pl++) {
+//æ‰¾æƒé‡æœ€é‡çš„é‚£ä¸ªæ± 
+			ShowLog(5,"%s:tid=%lx,DNODE[%d] weight[%d]=%d",__FUNCTION__,pthread_self(),scp->d_node,i,pl->weight);
+			pthread_mutex_lock(&pl->mut);
+			if(pl->weight>0) {
+				w=pl->weight<<9;
+				w/=pl->resource_num;
+				if(w>max_weight) {
+					max_weight=w;
+					n=i;
+				}
 			}
+			pthread_mutex_unlock(&pl->mut);
 		}
-		pthread_mutex_unlock(&pl->mut);
-	}
-	if(n>=0) {
-		pl=&scp->path[n];
-		rs=get_SC_resource(pl,1,&scp->weightLock);
-		if(rs && rs != (resource *)-1) {
-			pthread_mutex_unlock(&scp->weightLock); 
-ShowLog(5,"%s:tid=%lx,path[%d] succeed",__FUNCTION__,pthread_self(),n);
-			return rs;
-		}
-		continue;
-	} 
-	if(log_level) ShowLog(log_level,"%s:tid=%lx,pool[%d] n=%d,weight=%d",__FUNCTION__,
-				pthread_self(),path_no,n,max_weight);
-	pl=scp->path;
-int bad=1;
-	for(m=0;m<scp->path_num;m++,pl++) { //²âÒ»±é¹ÊÕÏ³Ø,¿´¿´ÄÜ·ñ»Ö¸´
-		if(pl->weight>=0) {
-			bad=0;
+		if(n>=0) {
+			pl=&scp->path[n];
+			rs=get_SC_resource(pl,1,&scp->weightLock);
+			if(rs && rs != (resource *)-1) {
+				pthread_mutex_unlock(&scp->weightLock);
+				ShowLog(5,"%s:tid=%lx,path[%d] succeed",__FUNCTION__,pthread_self(),n);
+				return rs;
+			}
 			continue;
 		}
-		rs=get_SC_resource(pl,1,&scp->weightLock);
-		if(rs && rs != (resource *)-1) {
-			pthread_mutex_unlock(&scp->weightLock);
-			return rs;
+		if(log_level) ShowLog(log_level,"%s:tid=%lx,pool[%d] n=%d,weight=%d",__FUNCTION__,
+							  pthread_self(),path_no,n,max_weight);
+		pl=scp->path;
+		int bad=1;
+		for(m=0;m<scp->path_num;m++,pl++) { //æµ‹ä¸€éæ•…éšœæ± ,çœ‹çœ‹èƒ½å¦æ¢å¤
+			if(pl->weight>=0) {
+				bad=0;
+				continue;
+			}
+			rs=get_SC_resource(pl,1,&scp->weightLock);
+			if(rs && rs != (resource *)-1) {
+				pthread_mutex_unlock(&scp->weightLock);
+				return rs;
+			}
 		}
-	}
-	if(flg==0) {
-		pthread_mutex_unlock(&scp->weightLock);
-		ShowLog(5,"%s:tid=%lx,POOL %d BUSY!",__FUNCTION__,pthread_self(),path_no);
-		return NULL;
-	} else if(bad || 0==repeat) {
-		pthread_mutex_unlock(&scp->weightLock);
-		ShowLog(5,"%s:tid=%lx,POOL %d BAD=%d!",__FUNCTION__,pthread_self(),path_no,bad);
-		return bad?(resource *)-1:NULL;
-	}
-	clock_gettime(CLOCK_REALTIME, &tims);
-	tims.tv_sec+=6;//ÒòÎª¹é»¹Á¬½Ó²¢²»ËøweightLock£¬¿ÉÄÜ¶ªÊ§ÊÂ¼ş£¬µÈ6Ãë
-	if(pthread_cond_timedwait(&scp->weightCond,&scp->weightLock,(const struct timespec *restrict )&tims )) //ÊµÔÚÃ»ÓĞÁË£¬µÈ
+		if(flg==0) {
+			pthread_mutex_unlock(&scp->weightLock);
+			ShowLog(5,"%s:tid=%lx,POOL %d BUSY!",__FUNCTION__,pthread_self(),path_no);
+			return NULL;
+		} else if(bad || 0==repeat) {
+			pthread_mutex_unlock(&scp->weightLock);
+			ShowLog(5,"%s:tid=%lx,POOL %d BAD=%d!",__FUNCTION__,pthread_self(),path_no,bad);
+			return bad?(resource *)-1:NULL;
+		}
+		clock_gettime(CLOCK_REALTIME, &tims);
+		tims.tv_sec+=6;//å› ä¸ºå½’è¿˜è¿æ¥å¹¶ä¸é”weightLockï¼Œå¯èƒ½ä¸¢å¤±äº‹ä»¶ï¼Œç­‰6ç§’
+		if(pthread_cond_timedwait(&scp->weightCond,&scp->weightLock,(const struct timespec *restrict )&tims )) //å®åœ¨æ²¡æœ‰äº†ï¼Œç­‰
 		repeat--;
-    } while(1);
+	} while(1);
 }
-//flg>0:Ã¦Ê±µÈ´ıflg´Î£¬Ã¿´Î6Ãë,flg=0,²»µÈ´ı,flg=-1ÓÀÔ¶µÈ´ı
-//return£ºNULLÃ»ÓĞ¿ÕÏĞµÄÁ¬½Ó,-1:Á¬½ÓÒÑËğ»µ¡£ÆäËû:·µ»ØÁ¬½Ó
+//flg>0:å¿™æ—¶ç­‰å¾…flgæ¬¡ï¼Œæ¯æ¬¡6ç§’,flg=0,ä¸ç­‰å¾…,flg=-1æ°¸è¿œç­‰å¾…
+//returnï¼šNULLæ²¡æœ‰ç©ºé—²çš„è¿æ¥,-1:è¿æ¥å·²æŸåã€‚å…¶ä»–:è¿”å›è¿æ¥
 T_Connect * get_SC_connect(int path_no,int flg)
 {
-resource *rs=get_SC_by_weight(path_no,flg);
+	resource *rs=get_SC_by_weight(path_no,flg);
 	if(!rs || (long)rs==-1) {
 		if(flg==-1) return NULL;
 		return (T_Connect *)rs;
@@ -603,17 +603,17 @@ resource *rs=get_SC_by_weight(path_no,flg);
 	return &rs->Conn;
 }
 
-//¹é»¹Á¬½Ó  
+//å½’è¿˜è¿æ¥
 void release_SC_connect(T_Connect **Connect,int n)
 {
-int i;
-pthread_t tid=pthread_self();
-path_lnk *pl;
-sc_path *scp;
-resource *rs;
-T_CLI_Var *clip;
+	int i;
+	pthread_t tid=pthread_self();
+	path_lnk *pl;
+	sc_path *scp;
+	resource *rs;
+	T_CLI_Var *clip;
 	if(!Connect || !scpool || n<0 || n>=SCPOOLNUM) {
-		ShowLog(1,"%s:poolno=%d,´íÎóµÄ²ÎÊı",__FUNCTION__,n);
+		ShowLog(1,"%s:poolno=%d,é”™è¯¯çš„å‚æ•°",__FUNCTION__,n);
 		return;
 	}
 	if(!*Connect) {
@@ -634,91 +634,91 @@ T_CLI_Var *clip;
 	i=lnk_no(pl,*Connect);
 	if(i<0) {
 		pthread_mutex_unlock(&pl->mut);
-		ShowLog(1,"%s:ÎŞĞ§µÄÁ¬½Ó³Ø[%d],pos=%d",__FUNCTION__,n,(*Connect)->pos >> 16);
+		ShowLog(1,"%s:æ— æ•ˆçš„è¿æ¥æ± [%d],pos=%d",__FUNCTION__,n,(*Connect)->pos >> 16);
 		return;
 	}
 	rs=&pl->lnk[i];
-  	rs->timestamp=now_usec();
-	if(rs->cli.Errno==-1) {  //Á¬½ÓÊ§Ğ§
+	rs->timestamp=now_usec();
+	if(rs->cli.Errno==-1) {  //è¿æ¥å¤±æ•ˆ
 		ShowLog(1,"%s:scpool[%d][%d][%d] by fail!",__FUNCTION__,n,(*Connect)->pos >> 16,i);
 		disconnect(&rs->Conn);
 //		pl->weight=-1;
-	} 
+	}
 	add_lnk(pl,i);
 	pthread_mutex_unlock(&pl->mut);
-	pthread_cond_signal(&pl->cond); //Èç¹ûÓĞµÈ´ıÁ¬½ÓµÄÏß³Ì¾Í»½ĞÑËü 
-	pthread_cond_signal(&scp->weightCond); //Èç¹ûÓĞµÈ´ıÁ¬½Ó³ØµÄÏß³Ì¾Í»½ĞÑËü 
+	pthread_cond_signal(&pl->cond); //å¦‚æœæœ‰ç­‰å¾…è¿æ¥çš„çº¿ç¨‹å°±å”¤é†’å®ƒ
+	pthread_cond_signal(&scp->weightCond); //å¦‚æœæœ‰ç­‰å¾…è¿æ¥æ± çš„çº¿ç¨‹å°±å”¤é†’å®ƒ
 	clip->Errno=0;
 	*clip->ErrMsg=0;
 	if(log_level) ShowLog(log_level,"%s:tid=%lx,DNODE[%d][%d][%d],weight=%d",__FUNCTION__,
-				tid,pl->log.d_node,(*Connect)->pos>>16,i,pl->weight);
+						  tid,pl->log.d_node,(*Connect)->pos>>16,i,pl->weight);
 	*Connect=NULL;
 }
 
 void release_SC_resource(resource **rsp)
 {
 	if(!rsp || !*rsp) return;
-T_Connect *conn=&(*rsp)->Conn;
+	T_Connect *conn=&(*rsp)->Conn;
 	release_SC_connect(&conn,(*rsp)->pool_no);
 	*rsp=NULL;
 }
 
-//Á¬½Ó³Ø¼à¿Ø 
+//è¿æ¥æ± ç›‘æ§
 void scpool_check()
 {
-int n,j,i,num;
-path_lnk *pl;
-sc_path *scp;
-resource *rs;
-INT64 now;
-char buf[40];
+	int n,j,i,num;
+	path_lnk *pl;
+	sc_path *scp;
+	resource *rs;
+	INT64 now;
+	char buf[40];
 
-        if(!scpool) return;
-        now=now_usec();
+	if(!scpool) return;
+	now=now_usec();
 
 	scp=scpool;
-        for(n=0;n<SCPOOLNUM;n++,pl++,scp++) {
-            pl=scp->path;
-	    for(j=0;j<scp->path_num;j++,pl++) {
-                if(!pl->lnk) continue;
-                rs=pl->lnk;
-                num=pl->resource_num;
-                pthread_mutex_lock(&pl->mut);
-                for(i=0;i<num;i++,rs++) {
-		   if(rs->next >= 0) {
-                        if(rs->Conn.Socket>-1 && (now-rs->timestamp)>299000000) {
-//¿ÕÏĞÊ±¼äÌ«³¤ÁË     
+	for(n=0;n<SCPOOLNUM;n++,pl++,scp++) {
+		pl=scp->path;
+		for(j=0;j<scp->path_num;j++,pl++) {
+			if(!pl->lnk) continue;
+			rs=pl->lnk;
+			num=pl->resource_num;
+			pthread_mutex_lock(&pl->mut);
+			for(i=0;i<num;i++,rs++) {
+				if(rs->next >= 0) {
+					if(rs->Conn.Socket>-1 && (now-rs->timestamp)>299000000) {
+//ç©ºé—²æ—¶é—´å¤ªé•¿äº†
 //ShowLog(log_level,"%s:scpool[%d][%d][%d],Socket=%d,to free",__FUNCTION__,n,j,i,rs->Conn.Socket);
-                                disconnect(&rs->Conn);//
-                                if(log_level)
-                                        ShowLog(log_level,"%s:Close SCpool[%d][%d][%d],since %s",__FUNCTION__,
-                                        	n,j,i,rusecstrfmt(buf,rs->timestamp,YEAR_TO_USEC));
-                        }
-                   } else {
-			int k=(now-rs->timestamp)/1000000;
-			if(rs->timeout_deal && rs->Conn.timeout>0 && k>rs->Conn.timeout) { //³¬Ê±
-                		pthread_mutex_unlock(&pl->mut);
-				rs->timeout_deal(rs);
-                		pthread_mutex_lock(&pl->mut);
-				if(log_level) ShowLog(log_level,"%s:scpool[%d][%d][%d],since %s,timeout=%d,k=%d",
-                                        __FUNCTION__,n,j,i,
-                                        rusecstrfmt(buf,rs->timestamp,YEAR_TO_USEC),
-					rs->Conn.timeout,k);
+						disconnect(&rs->Conn);//
+						if(log_level)
+							ShowLog(log_level,"%s:Close SCpool[%d][%d][%d],since %s",__FUNCTION__,
+									n,j,i,rusecstrfmt(buf,rs->timestamp,YEAR_TO_USEC));
+					}
+				} else {
+					int k=(now-rs->timestamp)/1000000;
+					if(rs->timeout_deal && rs->Conn.timeout>0 && k>rs->Conn.timeout) { //è¶…æ—¶
+						pthread_mutex_unlock(&pl->mut);
+						rs->timeout_deal(rs);
+						pthread_mutex_lock(&pl->mut);
+						if(log_level) ShowLog(log_level,"%s:scpool[%d][%d][%d],since %s,timeout=%d,k=%d",
+											  __FUNCTION__,n,j,i,
+											  rusecstrfmt(buf,rs->timestamp,YEAR_TO_USEC),
+											  rs->Conn.timeout,k);
+					}
+				}
 			}
-		   }
+			pthread_mutex_unlock(&pl->mut);
 		}
-                pthread_mutex_unlock(&pl->mut);
-	    }
-        }
+	}
 }
 
 /**
- * ¸ù¾İd_nodeÈ¡Á¬½Ó³ØºÅ  
- * Ê§°Ü·µ»Ø-1
+ * æ ¹æ®d_nodeå–è¿æ¥æ± å·
+ * å¤±è´¥è¿”å›-1
  */
 int get_scpool_no(int d_node)
 {
-int n;
+	int n;
 	if(!scpool) return -1;
 	for(n=0;n<SCPOOLNUM;n++) {
 		if(scpool[n].d_node==d_node) return n;
@@ -739,7 +739,7 @@ int getPathNum(int poolno)
 
 int get_total_conn_num(int poolno)
 {
-int i,total=0;
+	int i,total=0;
 
 	if(!scpool || poolno<0 || poolno>=SCPOOLNUM) return -1;
 	for(i=0;i<scpool[poolno].path_num;i++) {
@@ -753,7 +753,7 @@ char *get_SC_DBLABEL(int poolno)
 	if(!scpool || ctx_flg) return NULL;
 	if(poolno<0 || poolno>=SCPOOLNUM) return NULL;
 	if(!scpool[poolno].DBLABEL) {
-	T_Connect *conn=get_SC_connect(poolno,0);
+		T_Connect *conn=get_SC_connect(poolno,0);
 		release_SC_connect(&conn,poolno);
 	}
 	return scpool[poolno].DBLABEL;

@@ -6,16 +6,16 @@ void s_output(char *str,FILE *fd);
 /* getls: client */
 int getls(T_Connect *conn,T_NetHead *NetHead,char *path,FILE *outfile)
 {
-int ret;
+	int ret;
 	NetHead->data=path;
 	NetHead->PKG_LEN=strlen(NetHead->data)+1;
 	NetHead->ERRNO1=0;
 	NetHead->ERRNO2=0;
 	NetHead->PROTO_NUM=get_srv_no(conn->Var,"filels");
-        if(NetHead->PROTO_NUM==1) {
-                ShowLog(1,"%s:·þÎñ²»´æÔÚ",__FUNCTION__);
-                return FORMATERR;
-        }
+	if(NetHead->PROTO_NUM==1) {
+		ShowLog(1,"%s:æœåŠ¡ä¸å­˜åœ¨",__FUNCTION__);
+		return FORMATERR;
+	}
 
 	ret=SendPack(conn,NetHead);
 	for(;;) {
@@ -23,7 +23,7 @@ int ret;
 		if(ret|| NetHead->ERRNO1 || NetHead->ERRNO2) {
 			if(NetHead->ERRNO2==100) break;
 			fprintf(stderr,"getls recv ret=%d,err1=%d,err2=%d\n",
-				ret,NetHead->ERRNO1,NetHead->ERRNO2);
+					ret,NetHead->ERRNO1,NetHead->ERRNO2);
 			return -1;
 		}
 		s_output(NetHead->data,outfile);
@@ -32,8 +32,8 @@ int ret;
 }
 void s_output(char *str,FILE *fd)
 {
-char buf[1024];
-char *p;
+	char buf[1024];
+	char *p;
 	for(p=str;*(p=stptok(p,buf,sizeof(buf)," "));p++) {
 		fprintf(fd,"%s\n",buf);
 	}
@@ -41,10 +41,10 @@ char *p;
 
 int s_getfile(T_Connect *conn,FILE *inputfile)
 {
-char buf[2048];
-int ret,i;
-char sflnm[256],dflnm[256];
-char *p,*p1;
+	char buf[2048];
+	int ret,i;
+	char sflnm[256],dflnm[256];
+	char *p,*p1;
 	*sflnm=0;
 	*dflnm=0;
 	while(!ferror(inputfile)) {
@@ -62,7 +62,7 @@ char *p,*p1;
 		else if(dflnm[(i=strlen(dflnm))-1]=='/') {
 			strcat(dflnm,p);
 		} else if(isdir(dflnm)>0) {
-				sprintf(dflnm+ret,"/%s",p);
+			sprintf(dflnm+ret,"/%s",p);
 		} else ;
 		ret=N_Get_File(conn,dflnm,sflnm);
 		if(ret && ret!=100) {
@@ -76,8 +76,8 @@ char *p,*p1;
 
 int m_getfile(T_Connect *conn,T_NetHead *NetHead,char *path)
 {
-int ret;
-FILE *tmpfd;
+	int ret;
+	FILE *tmpfd;
 	tmpfd=tmpfile();
 	if(!tmpfd) {
 		fprintf(stderr,"create tmpfile err %d\n",errno);

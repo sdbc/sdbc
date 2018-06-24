@@ -14,19 +14,19 @@
 #define MAXINTERFACES 8
 
 /*
-ÔÚlinuxÏÂ£¬ÅĞ¶ÏÍø¿¨×´Ì¬
+åœ¨linuxä¸‹ï¼Œåˆ¤æ–­ç½‘å¡çŠ¶æ€
 ioctl(sockfd, SIOCGIFFLAGS, &ifr);
 return ((ifr.ifr_flags & IFF_UP) && (ifr.ifr_flags & IFF_RUNNING));
-¿ÉÒÔ¿´¿´Õâ¸öÄ¿Â¼£¬¾ÍÖªµÀÓĞ¶àÉÙÍø¿¨
+å¯ä»¥çœ‹çœ‹è¿™ä¸ªç›®å½•ï¼Œå°±çŸ¥é“æœ‰å¤šå°‘ç½‘å¡
 /sys/class/net/
 
 */
 int get_mac(char* out)
 {
-char *mac;
-register int fd,intrface;
-struct ifreq buf[MAXINTERFACES];
-struct ifconf ifc;
+	char *mac;
+	register int fd,intrface;
+	struct ifreq buf[MAXINTERFACES];
+	struct ifconf ifc;
 
 	*out=0;
 	mac=out;
@@ -41,16 +41,16 @@ struct ifconf ifc;
 		close(fd);
 		return -2;
 	}
-	// »ñÈ¡¶Ë¿ÚĞÅÏ¢
+	// è·å–ç«¯å£ä¿¡æ¯
 	intrface = ifc.ifc_len/sizeof(struct ifreq);
-	// ¸ù¾İ¶Ë¿ÚĞÅÏ¢»ñÈ¡Éè±¸IPºÍMACµØÖ·
+	// æ ¹æ®ç«¯å£ä¿¡æ¯è·å–è®¾å¤‡IPå’ŒMACåœ°å€
 	while(intrface-- > 0 )
 	{
- 		if(!strcmp(buf[intrface].ifr_name,"lo")) {
+		if(!strcmp(buf[intrface].ifr_name,"lo")) {
 			continue;
 		}
 /*
-		// »ñÈ¡Éè±¸Ãû³Æ
+		// è·å–è®¾å¤‡åç§°
 		if(!(ioctl(fd,SIOCGIFFLAGS,(char *)&buf[intrface])))
 		{
 			if(buf[intrface].ifr_flags & IFF_PROMISC)
@@ -62,18 +62,18 @@ struct ifconf ifc;
 			continue;
 		}
 */
-		// »ñÈ¡MACµØÖ·
+		// è·å–MACåœ°å€
 		if(ioctl(fd,SIOCGIFHWADDR,(char *)&buf[intrface]))
 		{
 			continue;
 		}
 		mac+=sprintf(mac,"%02X:%02X:%02X:%02X:%02X:%02X;",
-			(unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
-			(unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
-			(unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],
-			(unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
-			(unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
-			(unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
+					 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[0],
+					 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[1],
+					 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[2],
+					 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[3],
+					 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[4],
+					 (unsigned char)buf[intrface].ifr_hwaddr.sa_data[5]);
 	}
 	close(fd);
 	return 0;

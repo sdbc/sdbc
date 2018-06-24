@@ -21,28 +21,28 @@ T_YIELD get_yield()
 
 T_YIELD set_yield(T_YIELD new_yield)
 {
-T_YIELD oldyield=yield;
+	T_YIELD oldyield=yield;
 	yield=new_yield;
 	return oldyield;
 }
 
-//timeout for second 
+//timeout for second
 int RecvNet(int socket,char *buf,int n,int timeout)
 {
-int bcount=0,br,ret;
-int i,repeat=0;
-int fflag=-1;
+	int bcount=0,br,ret;
+	int i,repeat=0;
+	int fflag=-1;
 
 	if(socket<0) return SYSERR;
 	if(!buf && n<0) return 0;
 	if(yield) {
 		fflag=fcntl(socket,F_GETFL,0);
-		if(fflag!=-1) fcntl(socket,F_SETFL,fflag|O_ASYNC|O_NONBLOCK); //Òì²½²Ù×÷
+		if(fflag!=-1) fcntl(socket,F_SETFL,fflag|O_ASYNC|O_NONBLOCK); //å¼‚æ­¥æ“ä½œ
 	} else if(timeout>0) {
 		struct timeval tmout;
 		tmout.tv_sec=timeout;
-       		tmout.tv_usec=0;
-       		ret=setsockopt(socket,SOL_SOCKET,SO_RCVTIMEO,(char *)&tmout,sizeof(tmout));
+		tmout.tv_usec=0;
+		ret=setsockopt(socket,SOL_SOCKET,SO_RCVTIMEO,(char *)&tmout,sizeof(tmout));
 		if(ret) ShowLog(1,"%s:setsockopt errno=%d,%s",__FUNCTION__,errno,strerror(errno));
 	}
 
@@ -58,29 +58,29 @@ int fflag=-1;
 		}
 		if(fflag==-1 && errno==EAGAIN) return TIMEOUTERR;
 		if(br<=0 && errno && errno != EAGAIN){
-		    if(errno!=ECONNRESET)
-			ShowLog(1,"%s:br=%d,err=%d,%s",__FUNCTION__,br,errno,strerror(errno));
-		    break;
+			if(errno!=ECONNRESET)
+				ShowLog(1,"%s:br=%d,err=%d,%s",__FUNCTION__,br,errno,strerror(errno));
+			break;
 		}
-		if(bcount < n && fflag!=-1) { //ÇĞ»»ÈÎÎñ
+		if(bcount < n && fflag!=-1) { //åˆ‡æ¢ä»»åŠ¡
 			if(repeat++>3) return -errno;
 /*
 yield:
-1.ÕÒµ½µ±Ç°Ïß³ÌµÄcontext¡£ÕÒ²»µ½·µ»Ø-1£»(ºóĞøÈÎÎñÒÔÍ¬²½×èÈûÍê³É£©
-2.°ÑÊÂ¼şÌá½»¸øepoll£¬×÷ÎªresumeµÄÌõ¼ş¡£
-3.swapcontext£¬¹ÒÆğÕâ¸öÈÎÎñ£¬Ïß³Ì»Øµ½epoll_wait£¬¿ÉÒÔÎª±ğÈË·şÎñÁË¡£
-4.Ò»µ©Õâ¸öÈÎÎñµÄÊÂ¼ş·¢ÉúÁË£¬Á¢¼´ÓÉepoll_wait¼¤»îÒ»¸öÏß³Ì£¬×¥È¡ÏàÓ¦µÄcontext£¬Ê¹ÓÃsetcontext£¬»Ö¸´ÈÎÎñÏÖ³¡£¬·µ»Ø0.
-ºóĞøµÄ¶¯×÷¾ÍÊÇ¼ÌĞøNONBLOCKµÄIO¡£Ö±ÖÁÍê³É·µ»Ø¡£
+1.æ‰¾åˆ°å½“å‰çº¿ç¨‹çš„contextã€‚æ‰¾ä¸åˆ°è¿”å›-1ï¼›(åç»­ä»»åŠ¡ä»¥åŒæ­¥é˜»å¡å®Œæˆï¼‰
+2.æŠŠäº‹ä»¶æäº¤ç»™epollï¼Œä½œä¸ºresumeçš„æ¡ä»¶ã€‚
+3.swapcontextï¼ŒæŒ‚èµ·è¿™ä¸ªä»»åŠ¡ï¼Œçº¿ç¨‹å›åˆ°epoll_waitï¼Œå¯ä»¥ä¸ºåˆ«äººæœåŠ¡äº†ã€‚
+4.ä¸€æ—¦è¿™ä¸ªä»»åŠ¡çš„äº‹ä»¶å‘ç”Ÿäº†ï¼Œç«‹å³ç”±epoll_waitæ¿€æ´»ä¸€ä¸ªçº¿ç¨‹ï¼ŒæŠ“å–ç›¸åº”çš„contextï¼Œä½¿ç”¨setcontextï¼Œæ¢å¤ä»»åŠ¡ç°åœºï¼Œè¿”å›0.
+åç»­çš„åŠ¨ä½œå°±æ˜¯ç»§ç»­NONBLOCKçš„IOã€‚ç›´è‡³å®Œæˆè¿”å›ã€‚
 */
-ShowLog(5,"%s:tid=%lx,socket=%d,yield to schedle bcount=%d/%d",__FUNCTION__,pthread_self(),socket,bcount,n);
+			ShowLog(5,"%s:tid=%lx,socket=%d,yield to schedle bcount=%d/%d",__FUNCTION__,pthread_self(),socket,bcount,n);
 			i=yield(socket,0,timeout);
 			if(i<0) {
-			  if(timeout>0) {
-				struct timeval tmout;
-				tmout.tv_sec=timeout;
-        			tmout.tv_usec=0;
-        			ret=setsockopt(socket,SOL_SOCKET,SO_RCVTIMEO,(char *)&tmout,sizeof(tmout));
-			  }
+				if(timeout>0) {
+					struct timeval tmout;
+					tmout.tv_sec=timeout;
+					tmout.tv_usec=0;
+					ret=setsockopt(socket,SOL_SOCKET,SO_RCVTIMEO,(char *)&tmout,sizeof(tmout));
+				}
 				fcntl(socket,F_SETFL,fflag);
 				fflag=-1;
 				if(i==TIMEOUTERR) return i;
@@ -93,15 +93,15 @@ ShowLog(5,"%s:tid=%lx,socket=%d,yield to schedle bcount=%d/%d",__FUNCTION__,pthr
 
 int SendNet(int socket,char *buf,int n,int MTU)
 {
-int bcount,bw;
-int sz,i=0;
-int fflag=-1;
-size_t SendSize;
+	int bcount,bw;
+	int sz,i=0;
+	int fflag=-1;
+	size_t SendSize;
 
 	if(socket<0) return SYSERR;
 	if(yield) {
 		fflag=fcntl(socket,F_GETFL,0);
-		if(fflag != -1) fcntl(socket,F_SETFL,fflag|O_NONBLOCK); //Òì²½²Ù×÷
+		if(fflag != -1) fcntl(socket,F_SETFL,fflag|O_NONBLOCK); //å¼‚æ­¥æ“ä½œ
 	}
 	bcount=0;
 	bw=0;
@@ -117,13 +117,13 @@ size_t SendSize;
 			ShowLog(1,"%s:err=%d,%s",__FUNCTION__,errno,strerror(errno));
 			break;
 		}
-		if(bw < sz && fflag != -1) { //ÇĞ»»ÈÎÎñ
+		if(bw < sz && fflag != -1) { //åˆ‡æ¢ä»»åŠ¡
 //ShowLog(5,"%s:tid=%lx,socket=%d,yield bw=%d/%d",__FUNCTION__,pthread_self(),socket,bw,sz);
-		    i=yield(socket,1,0); 
-		    if(i<0) {
-			fcntl(socket,F_SETFL,fflag);
-			fflag = -1;
-		    }
+			i=yield(socket,1,0);
+			if(i<0) {
+				fcntl(socket,F_SETFL,fflag);
+				fflag = -1;
+			}
 		}
 	}
 	if(fflag != -1)  fcntl(socket,F_SETFL,fflag);

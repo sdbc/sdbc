@@ -1,5 +1,5 @@
 /*********************************************************
- * DAUµÄC++½Ó¿Ú
+ * DAUçš„C++æ¥å£
  *********************************************************/
 
 #ifndef DAUDEF
@@ -8,240 +8,240 @@
 #include <DAU_json.h>
 
 class SdbcDAO {
-	protected:
-		DAU dau;
-	public:
-//¹¹Ôìº¯ÊıºÍÎö¹¹º¯Êı
-//¿ÕÄ£°å
+protected:
+	DAU dau;
+public:
+//æ„é€ å‡½æ•°å’Œææ„å‡½æ•°
+//ç©ºæ¨¡æ¿
 	SdbcDAO(void)
-        {
-            DAU_init(&dau,NULL,NULL,NULL,NULL);
-        }
+	{
+		DAU_init(&dau,NULL,NULL,NULL,NULL);
+	}
 
-//´ÓÊı¾İ¿â»ñÈ¡Ä£°å
+//ä»æ•°æ®åº“è·å–æ¨¡æ¿
 	SdbcDAO(T_SQL_Connect *SQL_Connect,char *tabname)
-        {
-            int ret;
+	{
+		int ret;
 
-            ret=DAU_mk(&dau,SQL_Connect,tabname);
-            if(ret<0) {
-                throw Showid;
-            }
-        }
-//Ê¹ÓÃ¾²Ì¬Ä£°å£¬²¢´ÓÄ£°å»ñÈ¡±íÃû
+		ret=DAU_mk(&dau,SQL_Connect,tabname);
+		if(ret<0) {
+			throw Showid;
+		}
+	}
+//ä½¿ç”¨é™æ€æ¨¡æ¿ï¼Œå¹¶ä»æ¨¡æ¿è·å–è¡¨å
 	SdbcDAO(T_SQL_Connect *SQL_Connect,void *rec,T_PkgType *tpl)
-        {
-            init(SQL_Connect,NULL,rec,tpl);
-        }
+	{
+		init(SQL_Connect,NULL,rec,tpl);
+	}
 
-//ÓÃ±íÃûÈ¡´úÄ£°åÀïµÄ±íÃû
+//ç”¨è¡¨åå–ä»£æ¨¡æ¿é‡Œçš„è¡¨å
 	SdbcDAO(T_SQL_Connect *SQL_Connect,char *tabname,void *rec,T_PkgType *tpl)
 	{
-            int ret;
-            ret=init(SQL_Connect,tabname,rec,tpl);
-            if(ret<0) {
-                throw Showid;
-	    }
+		int ret;
+		ret=init(SQL_Connect,tabname,rec,tpl);
+		if(ret<0) {
+			throw Showid;
+		}
 	}
-//¶ÔÒÑ´æÔÚµÄ¶ÔÏóÖØĞÂ³õÊ¼»¯
+//å¯¹å·²å­˜åœ¨çš„å¯¹è±¡é‡æ–°åˆå§‹åŒ–
 	int  init(T_SQL_Connect *SQL_Connect,char *tabname,void *rec,T_PkgType *tpl)
 	{
-	 	DAU_init(&dau,SQL_Connect,tabname,rec,tpl);
+		DAU_init(&dau,SQL_Connect,tabname,rec,tpl);
 	}
 
 	void Data_init(void)
 	{
-            if(dau.srm.tp) data_init(dau.srm.rec,dau.srm.tp);
+		if(dau.srm.tp) data_init(dau.srm.rec,dau.srm.tp);
 	}
 
-//Îö¹¹º¯Êı
+//ææ„å‡½æ•°
 	~SdbcDAO(void)
-        {
-            DAU_free(&dau);
-        }
+	{
+		DAU_free(&dau);
+	}
 
-//beanº¯Êı
+//beanå‡½æ•°
 	DAU *getDAU()
 	{
-	 return &dau;
+		return &dau;
 	}
 
 	T_SQL_Connect *getSqlConnect(void)
 	{
-	 return dau.SQL_Connect;
+		return dau.SQL_Connect;
 	}
 
 	T_PkgType *getTemplate()
 	{
-	 return dau.srm.tp;
+		return dau.srm.tp;
 	}
 
 	T_PkgType *getTemplate(const char *key)
 	{
-	int n;
-           n=index_col(dau.srm.colidx,abs(dau.srm.Aflg),key,dau.srm.tp);
-           if(n<0) return NULL;
-           return &dau.srm.tp[n];
+		int n;
+		n=index_col(dau.srm.colidx,abs(dau.srm.Aflg),key,dau.srm.tp);
+		if(n<0) return NULL;
+		return &dau.srm.tp[n];
 	}
 
 	int getTplNo(const char *colName)
 	{
-	 return index_col(dau.srm.colidx,abs(dau.srm.Aflg),colName,dau.srm.tp);
+		return index_col(dau.srm.colidx,abs(dau.srm.Aflg),colName,dau.srm.tp);
 	}
 
 	int getColNum(void)
 	{
-	 return abs(dau.srm.Aflg);
+		return abs(dau.srm.Aflg);
 	}
 
 	int getRecSize(void)
 	{
-	 if(!dau.srm.tp) return -1; 
-	 return dau.srm.tp[abs(dau.srm.Aflg)].offset;
+		if(!dau.srm.tp) return -1;
+		return dau.srm.tp[abs(dau.srm.Aflg)].offset;
 	}
 
 	void *getRec(void)
 	{
-	 return dau.srm.rec;
+		return dau.srm.rec;
 	}
 
 	void *getRec(char *colname)
 	{
-	 return DAU_getP_by_key(&dau,colname);
+		return DAU_getP_by_key(&dau,colname);
 	}
 
 	void *getRec(int col_no)
 	{
-	 return DAU_getP_by_index(&dau,col_no);
+		return DAU_getP_by_index(&dau,col_no);
 	}
 
 	void setHint(const char *hint)
 	{
-	 dau.srm.hint=hint;
+		dau.srm.hint=hint;
 	}
 
 	void setBefor(const char *befor)
 	{
-	 dau.srm.befor=befor;
+		dau.srm.befor=befor;
 	}
 
-//²Ù×÷º¯Êı
+//æ“ä½œå‡½æ•°
 	int select(char *stmt)
 	{
-	  return DAU_select(&dau,stmt,0);
+		return DAU_select(&dau,stmt,0);
 	}
 
 	int select(char *stmt,int recnum)
 	{
-	  return DAU_select(&dau,stmt,recnum);
+		return DAU_select(&dau,stmt,recnum);
 	}
 
 	int nextRow(void)
 	{
-	  return DAU_next(&dau);
+		return DAU_next(&dau);
 	}
 
 	int prepare(char *stmt)
 	{
-	  return DAU_prepare(&dau,stmt);
+		return DAU_prepare(&dau,stmt);
 	}
 
 	int insert(char *stmt)
 	{
-	  return DAU_insert(&dau,stmt);
+		return DAU_insert(&dau,stmt);
 	}
 
 	int update(char *stmt)
 	{
-	  return DAU_update(&dau,stmt);
+		return DAU_update(&dau,stmt);
 	}
 
 	int Delete(char *stmt)
 	{
-	  return DAU_delete(&dau,stmt);
+		return DAU_delete(&dau,stmt);
 	}
 
 	int exec(char *stmt)
 	{
-	  return DAU_exec(&dau,stmt);
+		return DAU_exec(&dau,stmt);
 	}
 
-//ÉèÖÃÑ¡ÔñµÄÁĞÊä³ö
+//è®¾ç½®é€‰æ‹©çš„åˆ—è¾“å‡º
 	int selectCol(const char *choose)
 	{
-	char stmt[10240];
-	int ret=DAU_except_col(&dau,stmt,choose);
-    		if(ret<=0) return ret;
+		char stmt[10240];
+		int ret=DAU_except_col(&dau,stmt,choose);
+		if(ret<=0) return ret;
 		DAU_setBind(&dau,NOSELECT,stmt);
 	}
 
 	int distinctCol(const char *choose)
 	{
-	  dau.srm.hint="DISTINCT";
-	  return selectCol(choose);
+		dau.srm.hint="DISTINCT";
+		return selectCol(choose);
 	}
 
-//¶ÔÑ¡ÔñµÄÁĞ¹¹½¨updateÓï¾ä£¬Èç¹ûchooseÎª¿Õ£¬È«²¿ÁĞ ,·µ»ØÎ²²¿
+//å¯¹é€‰æ‹©çš„åˆ—æ„å»ºupdateè¯­å¥ï¼Œå¦‚æœchooseä¸ºç©ºï¼Œå…¨éƒ¨åˆ— ,è¿”å›å°¾éƒ¨
 	char *mkUpdateByCol(const char *choose,char *stmt)
 	{
-	  return DAU_mk_upd_col(&dau,choose,stmt);
+		return DAU_mk_upd_col(&dau,choose,stmt);
 	}
 
 	int setBind(int bindtype,const char *choose)
 	{
-	  return DAU_setBind(&dau,bindtype,choose);
+		return DAU_setBind(&dau,bindtype,choose);
 	}
 
 	int exceptCol(char *buf,char *choose)
 	{
-	  return DAU_except_col(&dau,buf,choose);
+		return DAU_except_col(&dau,buf,choose);
 	}
 
-//´òÓ¡ÉÏÊö²Ù×÷µÄ°ó¶¨±äÁ¿Öµ
+//æ‰“å°ä¸Šè¿°æ“ä½œçš„ç»‘å®šå˜é‡å€¼
 	int printBind(char *buf)
 	{
-	  return DAU_print_bind(&dau,buf);
+		return DAU_print_bind(&dau,buf);
 	}
 
-//ĞòÁĞ»¯/·´ĞòÁĞ»¯
+//åºåˆ—åŒ–/ååºåˆ—åŒ–
 	int pack(char *buf)
 	{
-	  return DAU_pack(&dau,buf);
+		return DAU_pack(&dau,buf);
 	}
 
 	int pack(char *buf,char delimit)
 	{
-	  return DAU_pkg_pack(&dau,buf,delimit);
+		return DAU_pkg_pack(&dau,buf,delimit);
 	}
 
 	int unpack(char *buf)
 	{
-	  return DAU_dispack(&dau,buf);
+		return DAU_dispack(&dau,buf);
 	}
 
 	int unpack(char *buf,char delimit)
 	{
-	  return DAU_pkg_dispack(&dau,buf,delimit);
+		return DAU_pkg_dispack(&dau,buf,delimit);
 	}
 
 	int getOne(char *buf,T_PkgType *tpl)
 	{
-	  return get_one_str(buf,dau.srm.rec,tpl,0);
+		return get_one_str(buf,dau.srm.rec,tpl,0);
 	}
 
 	int getOne(char *buf,const char *col_name)
 	{
-	  return getOne(buf,getTemplate(col_name));
+		return getOne(buf,getTemplate(col_name));
 	}
 
 	int putOne(char *buf,T_PkgType *tpl)
 	{
-	  return put_str_one(dau.srm.rec,buf,tpl,0);
+		return put_str_one(dau.srm.rec,buf,tpl,0);
 	}
 
 	int putOne(char *buf,const char *col_name)
 	{
-	  return putOne(buf,getTemplate(col_name));
+		return putOne(buf,getTemplate(col_name));
 	}
 
 #ifdef DAU_JSON

@@ -1,7 +1,7 @@
 /************************************************************
- * N_get_tpl:´Ó·şÎñÆ÷È¡µÃ±íÄ£°å
- * tabnames="±íÃû1,±íÃû2,,"
- * ·µ»ØJSON¶ÔÏó:{±íÃû:[Ä£°å],±íÃû:[Ä£°å],...}
+ * N_get_tpl:ä»æœåŠ¡å™¨å–å¾—è¡¨æ¨¡æ¿
+ * tabnames="è¡¨å1,è¡¨å2,,"
+ * è¿”å›JSONå¯¹è±¡:{è¡¨å:[æ¨¡æ¿],è¡¨å:[æ¨¡æ¿],...}
  * **********************************************************/
 
 #include <arpa/inet.h>
@@ -11,10 +11,10 @@
 
 JSON_OBJECT N_get_tpl(T_Connect *conn,char *tabnames,int num)
 {
-T_NetHead Head;
-T_CLI_Var *clip;
-int ret;
-JSON_OBJECT json;
+	T_NetHead Head;
+	T_CLI_Var *clip;
+	int ret;
+	JSON_OBJECT json;
 
 	if(!conn) return NULL;
 	clip=(T_CLI_Var *)conn->Var;
@@ -42,7 +42,7 @@ JSON_OBJECT json;
 	}
 	ret=RecvPack(conn,&Head);
 	if(ret) {
-	char buf[512];
+		char buf[512];
 		json=json_object_new_object();
 		sprintf(buf,"RecvPack err=%d,%s",errno,strerror(errno));
 		add_string_to_json(json,"error",buf);

@@ -1,38 +1,38 @@
 /*****************************************
- * OAD.h ORACLE Array Describe 
- * SDBCÖĞORACLE³É×é²Ù×÷ËùĞèÊı¾İ½á¹¹    
- * bindÊ±ĞèÒªµÄ±íÊ¾Æ÷¡¢ÁĞ¼¶×´Ì¬£¬ÁĞ³¤¶È    
- * ÒÔ¼°ÔÚSDBCÖĞ²»ÄÜÓëORACLEÖ±½Ó¶ÔÓ¦µÄÀàĞÍ   
- * ĞèÒª¶îÍâµÄ×Ö·û»º³åÇø  
- * ±¾.hÔÚ#include <DAU.h> Ö®ºóÊ¹ÓÃ    
+ * OAD.h ORACLE Array Describe
+ * SDBCä¸­ORACLEæˆç»„æ“ä½œæ‰€éœ€æ•°æ®ç»“æ„
+ * bindæ—¶éœ€è¦çš„è¡¨ç¤ºå™¨ã€åˆ—çº§çŠ¶æ€ï¼Œåˆ—é•¿åº¦
+ * ä»¥åŠåœ¨SDBCä¸­ä¸èƒ½ä¸ORACLEç›´æ¥å¯¹åº”çš„ç±»å‹
+ * éœ€è¦é¢å¤–çš„å­—ç¬¦ç¼“å†²åŒº
+ * æœ¬.håœ¨#include <DAU.h> ä¹‹åä½¿ç”¨
  *****************************************/
 
 #ifndef A_COL_LEN
 
 #define A_COL_LEN 32
 
-typedef struct {	//²ÎÓëbindµÄ£¬Ã¿ÁĞÒ»¸ö 
-	char  *name;	//ÁĞÃû  
-	short *ind;		//±íÊ¾Æ÷, malloc(max_rows_of_batch * sizeof(short));
-	short *r_code;	//ÁĞ¼¶×´Ì¬Âë,  ×Ö·ûÁĞÓÃ,      malloc(max_rows_of_batch * sizeof(short));
-	short *r_len;	//·µ»ØµÄÁĞ³¤¶È,define_by_pos ×Ö·û×ûÁĞÓÃ,   malloc(max_rows_of_batch * sizeof(short));
-	char *a_col; 	//¶îÍâµÄ×Ö·û»º³åÇø malloc(max_rows_of_batch * A_COL_LEN); 
-} col_bag;			// ÁĞ°ü   
+typedef struct {	//å‚ä¸bindçš„ï¼Œæ¯åˆ—ä¸€ä¸ª
+	char  *name;	//åˆ—å
+	short *ind;		//è¡¨ç¤ºå™¨, malloc(max_rows_of_batch * sizeof(short));
+	short *r_code;	//åˆ—çº§çŠ¶æ€ç ,  å­—ç¬¦åˆ—ç”¨,      malloc(max_rows_of_batch * sizeof(short));
+	short *r_len;	//è¿”å›çš„åˆ—é•¿åº¦,define_by_pos å­—ç¬¦î ‘åˆ—ç”¨,   malloc(max_rows_of_batch * sizeof(short));
+	char *a_col; 	//é¢å¤–çš„å­—ç¬¦ç¼“å†²åŒº malloc(max_rows_of_batch * A_COL_LEN);
+} col_bag;			// åˆ—åŒ…
 
 typedef struct ora_array_desc {
 	SRM *srm;			//SRM
-	T_SQL_Connect *SQL_Connect;	//Êı¾İ¿â¾ä±ú
-	sqlo_stmt_handle_t sth;		//ÓÎ±ê
-	int max_rows_of_batch;		//Ã¿Åú×î´óĞĞÊı
-	int cols;			//²ÎÓëbindµÄÁĞÊı
+	T_SQL_Connect *SQL_Connect;	//æ•°æ®åº“å¥æŸ„
+	sqlo_stmt_handle_t sth;		//æ¸¸æ ‡
+	int max_rows_of_batch;		//æ¯æ‰¹æœ€å¤§è¡Œæ•°
+	int cols;			//å‚ä¸bindçš„åˆ—æ•°
 	col_bag *cb;			//malloc(cols * sizeof(col_bag));
-	T_Tree *bind_tree;		//°ó¶¨Ê÷
-	void *recs;			//Êı¾İ¼ÇÂ¼ 
-	int begin;			//execÊ±µÄÆğÊ¼ĞĞºÅ 
-	int rows;			//Êµ¼Ê²Ù×÷µÄĞĞÊı 
-	int reclen;			//¼ÇÂ¼³¤¶È 
-	int a_col_flg;			//¶îÍâÁĞ²Ù×÷ 
-	unsigned int pos;		//OAD³ØÊ¹ÓÃ
+	T_Tree *bind_tree;		//ç»‘å®šæ ‘
+	void *recs;			//æ•°æ®è®°å½•
+	int begin;			//execæ—¶çš„èµ·å§‹è¡Œå·
+	int rows;			//å®é™…æ“ä½œçš„è¡Œæ•°
+	int reclen;			//è®°å½•é•¿åº¦
+	int a_col_flg;			//é¢å¤–åˆ—æ“ä½œ
+	unsigned int pos;		//OADæ± ä½¿ç”¨
 } OAD;
 
 #define OAD_get_DAU(oadp) (DAU *)((oadp)->srm)
@@ -41,7 +41,7 @@ typedef struct ora_array_desc {
 extern "C" {
 #endif
 
-//OAD_initºó£¬DAU²»¿ÉÊÍ·Å,OAD_free²»ÊÍ·ÅDAU  
+//OAD_initåï¼ŒDAUä¸å¯é‡Šæ”¾,OAD_freeä¸é‡Šæ”¾DAU
 void OAD_init(OAD *oad,DAU *DP,void *recs,int max_rows_of_batch);
 void OAD_free(OAD *oad);
 int OAD_mk_ins(OAD *oad,char *stmt);

@@ -18,53 +18,53 @@ typedef struct B_Tree T_Tree;
 extern "C" {
 #endif
 /*********************************************************************
- * BB_Tree_Add:½«ÄÚÈİ¼Óµ½Ê÷
- * ²ÎÊı£º
- * sp:¸ù½Úµã£¬content:½ÚµãÄÚÈİ£¬¿ÉÒÔÊÇÈÎºÎÊı¾İ½á¹¹
- * len:contentµÄ³¤¶È,Cmp_rec:¼ÇÂ¼±È½ÏÆ÷£¬sp_content>contentÊ±·µ»Ø>0,
- * <Ê±·µ»Ø<0,=Ê±·µ»Ø0£¬user_add_tree²åÈë½ÚµãÊ±ÖØÂëºóµÄ´¦Àí³ÌĞòa
- * ·µ»ØĞÂµÄ¸ù½Úµã 
+ * BB_Tree_Add:å°†å†…å®¹åŠ åˆ°æ ‘
+ * å‚æ•°ï¼š
+ * sp:æ ¹èŠ‚ç‚¹ï¼Œcontent:èŠ‚ç‚¹å†…å®¹ï¼Œå¯ä»¥æ˜¯ä»»ä½•æ•°æ®ç»“æ„
+ * len:contentçš„é•¿åº¦,Cmp_rec:è®°å½•æ¯”è¾ƒå™¨ï¼Œsp_content>contentæ—¶è¿”å›>0,
+ * <æ—¶è¿”å›<0,=æ—¶è¿”å›0ï¼Œuser_add_treeæ’å…¥èŠ‚ç‚¹æ—¶é‡ç åçš„å¤„ç†ç¨‹åºa
+ * è¿”å›æ–°çš„æ ¹èŠ‚ç‚¹
  ************************************************************************/
-T_Tree * BB_Tree_Add( T_Tree *sp,void *content,int len, 
-		int (*Cmp_rec)(void *sp_content,void *content,int len),
-		int (*user_add_tree)(T_Tree *sp,void *content,int len));
+T_Tree * BB_Tree_Add( T_Tree *sp,void *content,int len,
+					  int (*Cmp_rec)(void *sp_content,void *content,int len),
+					  int (*user_add_tree)(T_Tree *sp,void *content,int len));
 /* BB_Tree_Scan: proc(): if return 0  continue sacn ; else break scan  */
 int BB_Tree_Scan(T_Tree *sp, int (*proc)(void *content));
 void BB_Tree_Free(T_Tree **sp,void (*user_free)(void *val));
-//·µ»Ø=keyµÄ½Úµã
+//è¿”å›=keyçš„èŠ‚ç‚¹
 T_Tree * BB_Tree_Find(T_Tree *sp,void *content_key,int len,
-		int (*Cmp_rec)(void *sp_content,void *content_key,int len));
-//·µ»Ø>keyµÄ½Úµã
+					  int (*Cmp_rec)(void *sp_content,void *content_key,int len));
+//è¿”å›>keyçš„èŠ‚ç‚¹
 T_Tree * BB_Tree_GT(T_Tree *sp,void *content_key,int len,
-		int (*Cmp_rec)(void *s1,void *s2,int len));
-//·µ»Ø>=keyµÄ½Úµã
+					int (*Cmp_rec)(void *s1,void *s2,int len));
+//è¿”å›>=keyçš„èŠ‚ç‚¹
 T_Tree * BB_Tree_GTEQ(T_Tree *sp,void *content_key,int len,
-		int (*Cmp_rec)(void *s1,void *s2,int len));
-//·µ»Ø<keyµÄ½Úµã
+					  int (*Cmp_rec)(void *s1,void *s2,int len));
+//è¿”å›<keyçš„èŠ‚ç‚¹
 T_Tree * BB_Tree_LT(T_Tree *sp,void *content_key,int len,
-		int (*Cmp_rec)(void *s1,void *s2,int len));
-//·µ»Ø<=keyµÄ½Úµã
+					int (*Cmp_rec)(void *s1,void *s2,int len));
+//è¿”å›<=keyçš„èŠ‚ç‚¹
 T_Tree * BB_Tree_LTEQ(T_Tree *sp,void *content_key,int len,
-		int (*Cmp_rec)(void *s1,void *s2,int len));
+					  int (*Cmp_rec)(void *s1,void *s2,int len));
 #ifndef MAX
 #define MAX(a,b) (((a)>(b))?a:b)
 #endif
 
-/* É¾³ıÖ¸¶¨½Úµã£¬·µ»ØĞÂµÄ¸ù½Úµã,*flg³õÖµ=0,·µ»Ø0Î´É¾³ı¡£·ñÔò±íÊ¾ÔÚµÚ¼¸²ãÉ¾³ı ,
-   tp¸ù½Úµã,content_key²éÕÒ¼üÖµ,size_key,content_keyµÄ³¤¶È,Comp±È½ÏÆ÷£¬
-   user_freeÓÃ»§µÄ½ÚµãÄÚÈİÉ¾³ıº¯Êı,·µ»Ø0É¾³ı³É¹¦,·µ»Ø·Ç0½Úµã½«²»±»É¾³ı.
-   ·µ»ØÖµ:ĞÂµÄ¸ù½Úµã */
+/* åˆ é™¤æŒ‡å®šèŠ‚ç‚¹ï¼Œè¿”å›æ–°çš„æ ¹èŠ‚ç‚¹,*flgåˆå€¼=0,è¿”å›0æœªåˆ é™¤ã€‚å¦åˆ™è¡¨ç¤ºåœ¨ç¬¬å‡ å±‚åˆ é™¤ ,
+   tpæ ¹èŠ‚ç‚¹,content_keyæŸ¥æ‰¾é”®å€¼,size_key,content_keyçš„é•¿åº¦,Compæ¯”è¾ƒå™¨ï¼Œ
+   user_freeç”¨æˆ·çš„èŠ‚ç‚¹å†…å®¹åˆ é™¤å‡½æ•°,è¿”å›0åˆ é™¤æˆåŠŸ,è¿”å›é0èŠ‚ç‚¹å°†ä¸è¢«åˆ é™¤.
+   è¿”å›å€¼:æ–°çš„æ ¹èŠ‚ç‚¹ */
 
 T_Tree * BB_Tree_Del(T_Tree *tp,void *content_key,int size_key,
-            int (*Comp)(void *node,void *content,int size_content),
-            int (*user_free)(void *content),int *flg);
+					 int (*Comp)(void *node,void *content,int size_content),
+					 int (*user_free)(void *content),int *flg);
 T_Tree * BB_Tree_MAX(T_Tree *sp);
 T_Tree * BB_Tree_MIN(T_Tree *sp);
-//btÎª¸ù½áµãµÄÖ¸Õë£¬·µ»ØÖµÎªbtµÄ½ÚµãÊı*/
-// contextÎªÓ¦ÓÃÌá¹©µÄÉÏÏÂÎÄÊı¾İ£¬ÓÉcounterÊ¹ÓÃ
-//counterÓÉÓ¦ÓÃÌá¹©£¬ÅĞ¶ÏÊÇ·ñ·ûºÏ¼ÆÊıÌõ¼ş£¬²»·ûºÏ·µ»Ø0.
+//btä¸ºæ ¹ç»“ç‚¹çš„æŒ‡é’ˆï¼Œè¿”å›å€¼ä¸ºbtçš„èŠ‚ç‚¹æ•°*/
+// contextä¸ºåº”ç”¨æä¾›çš„ä¸Šä¸‹æ–‡æ•°æ®ï¼Œç”±counterä½¿ç”¨
+//counterç”±åº”ç”¨æä¾›ï¼Œåˆ¤æ–­æ˜¯å¦ç¬¦åˆè®¡æ•°æ¡ä»¶ï¼Œä¸ç¬¦åˆè¿”å›0.
 int BB_Tree_Count(T_Tree *  bt,void *context,
-	int (*counter)(T_Tree *bt,void *context));
+				  int (*counter)(T_Tree *bt,void *context));
 
 #ifdef __cplusplus
 }

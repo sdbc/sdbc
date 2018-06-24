@@ -1,4 +1,4 @@
-/* ttree.c ²âÊÔÆ½ºâ¶ş²æÊ÷ */
+/* ttree.c æµ‹è¯•å¹³è¡¡äºŒå‰æ ‘ */
 #include <stdio.h>
 #include <BB_tree.h>
 
@@ -8,42 +8,42 @@ void *rec2;
 int len;
 {
 int *ip1,*ip2;
-	ip1=(int *)rec1;
-	ip2=(int *)rec2;
-	if(*ip1 > *ip2) return 2;
-	else if(*ip1 < *ip2) return -2;
-    return 0;
+ip1=(int *)rec1;
+ip2=(int *)rec2;
+if(*ip1 > *ip2) return 2;
+else if(*ip1 < *ip2) return -2;
+return 0;
 }
 
 void BB_Tree_print(T_Tree *sp)
 {
-int *ip;
+	int *ip;
 
-    if(!sp)return ;
-    if(sp->Left){
-        BB_Tree_print(sp->Left);
-    }
+	if(!sp)return ;
+	if(sp->Left){
+		BB_Tree_print(sp->Left);
+	}
 	ip=(int *)sp->Content;
 	printf("content=%d,\t\tL=%d\tR=%d\n",*ip,sp->Ldepth,sp->Rdepth);
-    if(sp->Right)
-      BB_Tree_print(sp->Right);
-    return ;
+	if(sp->Right)
+		BB_Tree_print(sp->Right);
+	return ;
 }
 
 int main()
 {
-int num,ret;
-T_Tree *root=0;
-char buf[10];
+	int num,ret;
+	T_Tree *root=0;
+	char buf[10];
 
-	printf("ÊäÈënum£¬q½áÊø:\n");
+	printf("è¾“å…¥numï¼Œqç»“æŸ:\n");
 	while((ret=scanf("%d",&num))==1) {
 		root=BB_Tree_Add(root,&num,sizeof(num),Tree_Cmp,0);
 	}
 	BB_Tree_print(root);
 	fgets(buf,sizeof(buf),stdin);
 	while(!ferror(stdin) && root) {
-		printf("ÊäÈëÉ¾³ıµÄ½ÚµãºÅ£º\n");
+		printf("è¾“å…¥åˆ é™¤çš„èŠ‚ç‚¹å·ï¼š\n");
 		ret=scanf("%d",&num);
 		if(ret != 1) break;
 		root=BB_Tree_Del(root,&num,sizeof(num),Tree_Cmp,0,&ret);

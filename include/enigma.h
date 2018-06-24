@@ -1,9 +1,9 @@
 /*************************************************
- * Ò»¸öENIGMAÃÜÂë»úËã·¨
- * Ò»¸ö×ªÂÖ£¬Ò»¸ö·´ÉäÂÖ
- * 256¸öµãÎ»,¿É½øĞĞ×Ö½ÚµÄ¶ş½øÖÆ¼ÓÃÜ/½âÃÜ
- * Âë¿Õ¼ä:256! ¡Á 255 ¡Á 253 ....... ¡Á3     
- * Ö÷ÒªÓÃÓÚÍ¨ĞÅÏµÍ³¼ÓÃÜ
+ * ä¸€ä¸ªENIGMAå¯†ç æœºç®—æ³•
+ * ä¸€ä¸ªè½¬è½®ï¼Œä¸€ä¸ªåå°„è½®
+ * 256ä¸ªç‚¹ä½,å¯è¿›è¡Œå­—èŠ‚çš„äºŒè¿›åˆ¶åŠ å¯†/è§£å¯†
+ * ç ç©ºé—´:256! Ã— 255 Ã— 253 ....... Ã—3
+ * ä¸»è¦ç”¨äºé€šä¿¡ç³»ç»ŸåŠ å¯†
  *************************************************/
 #include <sys/types.h>
 #ifndef ENIGMA_H
@@ -21,22 +21,22 @@ typedef struct {
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* ¸Ä½øµÄ ENIGMA ³ÌĞò ĞòÁĞ³¤¶È£º64K */
-void enigma_init(ENIGMA t,const char *bin_key,int len);		//³õÊ¼»¯
-void enigma(ENIGMA t,char *buf,int len);			//¼ÓÃÜ/½âÃÜ
-//·è¿ñĞı×ªµÄ×ªÂÖ»ú£¬ÍêÈ«ÆÁ±ÎÁËÁĞ±íÌØÕ÷£¬²»´æÔÚÖÜÆÚĞÔ
-void enigma_encrypt(ENIGMA t,char *string,int len);		//¼ÓÃÜ
-void enigma_decrypt(ENIGMA t,char *string,int len);		//½âÃÜ 
+/* æ”¹è¿›çš„ ENIGMA ç¨‹åº åºåˆ—é•¿åº¦ï¼š64K */
+void enigma_init(ENIGMA t,const char *bin_key,int len);		//åˆå§‹åŒ–
+void enigma(ENIGMA t,char *buf,int len);			//åŠ å¯†/è§£å¯†
+//ç–¯ç‹‚æ—‹è½¬çš„è½¬è½®æœºï¼Œå®Œå…¨å±è”½äº†åˆ—è¡¨ç‰¹å¾ï¼Œä¸å­˜åœ¨å‘¨æœŸæ€§
+void enigma_encrypt(ENIGMA t,char *string,int len);		//åŠ å¯†
+void enigma_decrypt(ENIGMA t,char *string,int len);		//è§£å¯†
 
-/* ¼ÓÃÜºóÈÅÂë£¬ÓÃÓÚÅäºÏ¶àÖÖ¼ÓÃÜÊÖ¶Î */
+/* åŠ å¯†åæ‰°ç ï¼Œç”¨äºé…åˆå¤šç§åŠ å¯†æ‰‹æ®µ */
 void enigma_rev(ENIGMA t,char *buf,int len);
-/* ½âÈÅºó½âÃÜ£¬ÓÃÓÚ½âÃÜ */
+/* è§£æ‰°åè§£å¯†ï¼Œç”¨äºè§£å¯† */
 void rev_enigma(ENIGMA t,char *buf,int len);
 
-/* ¼ÓÇ¿µÄENIGMA³ÌĞò£¬ÍêÈ«Ïû³ıÁËÃÜÎÄÓëÏàËÆÃ÷ÎÄµÄ¶ÔÓ¦¹ØÏµ */
-void enigma2_init(ENIGMA2 *ep,const char *bin_key,int len);	//³õÊ¼»¯
-void enigma2_encrypt(ENIGMA2 *ep,char *buf,int len);		//¼ÓÃÜ
-void enigma2_decrypt(ENIGMA2 *ep,char *buf,int len);		//½âÃÜ 
+/* åŠ å¼ºçš„ENIGMAç¨‹åºï¼Œå®Œå…¨æ¶ˆé™¤äº†å¯†æ–‡ä¸ç›¸ä¼¼æ˜æ–‡çš„å¯¹åº”å…³ç³» */
+void enigma2_init(ENIGMA2 *ep,const char *bin_key,int len);	//åˆå§‹åŒ–
+void enigma2_encrypt(ENIGMA2 *ep,char *buf,int len);		//åŠ å¯†
+void enigma2_decrypt(ENIGMA2 *ep,char *buf,int len);		//è§£å¯†
 
 #ifdef __cplusplus
 }

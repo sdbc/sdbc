@@ -4,7 +4,7 @@
 
 static void tp_cp(T_PkgType * dest,T_PkgType * src,int i)
 {
-T_PkgType *tp;
+	T_PkgType *tp;
 
 	tp=&src[i];
 	dest->type=tp->type;
@@ -20,47 +20,47 @@ T_PkgType *tp;
 
 int patt_copy_col(T_PkgType * dest,T_PkgType * src,const char *choose,char *idxcol)
 {
-int i,num;
-T_PkgType *tp,*dp;
-char buf[100];
-const char *cp;
-int colnum;
+	int i,num;
+	T_PkgType *tp,*dp;
+	char buf[100];
+	const char *cp;
+	int colnum;
 
 	if(!src || !dest) return 0;
 	tp=src;
 	dp=dest;
-	if(!choose||!*choose) {		// Ã»ÓĞÑ¡Ôñ£¬È«²¿¼ÓÈë
-	    for(i=0;tp[i].type>=0;i++,dp++) {
+	if(!choose||!*choose) {		// æ²¡æœ‰é€‰æ‹©ï¼Œå…¨éƒ¨åŠ å…¥
+		for(i=0;tp[i].type>=0;i++,dp++) {
+			tp_cp(dp,tp,i);
+		}
 		tp_cp(dp,tp,i);
-	    }
-	    tp_cp(dp,tp,i);
-	    return i;
+		return i;
 	}
 	num=0;
 	cp=choose;
 	colnum=set_offset(src);
 	do {
-	char *p;
+		char *p;
 		*buf=0;
-		cp=stptok(skipblk((char *)cp),buf,sizeof(buf),",|");	//¿ÉÒÔÓÃµÄ·Ö¸ô·û
+		cp=stptok(skipblk((char *)cp),buf,sizeof(buf),",|");	//å¯ä»¥ç”¨çš„åˆ†éš”ç¬¦
 		p=buf;
 		TRIM(p);
 		if(!*p) continue;
-		if(isdigit(*p)) {	//Êı×ÖÑ¡Ôñ£¬×Ö¶ÎºÅ·¶Î§
-		int ret,beg,end;
+		if(isdigit(*p)) {	//æ•°å­—é€‰æ‹©ï¼Œå­—æ®µå·èŒƒå›´
+			int ret,beg,end;
 			end=beg=-1;
 			ret=sscanf(buf,"%d - %d",&beg,&end);
 			if(!ret) continue;
 			if(ret==1) end=beg;
 			if(end<beg) end=beg;
 			for(ret=beg;ret<=end;ret++,dp++) {
-	    			tp_cp(dp,tp,ret);
+				tp_cp(dp,tp,ret);
 				num++;
 			}
-		} else {		//×ÖÄ¸£¬×Ö¶ÎÃû
+		} else {		//å­—æ¯ï¼Œå­—æ®µå
 			i=index_col(idxcol,colnum,p,src);
 			if(src[i].type<0) continue;
-	    		tp_cp(dp,tp,i);
+			tp_cp(dp,tp,i);
 			dp++;
 			num++;
 		}

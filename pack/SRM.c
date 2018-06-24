@@ -4,8 +4,8 @@
 
 T_PkgType *patt_dup(T_PkgType *tp)
 {
-int n=set_offset(tp);
-T_PkgType *new_tp;
+	int n=set_offset(tp);
+	T_PkgType *new_tp;
 
 	new_tp=(T_PkgType *)malloc(sizeof(T_PkgType) * (n+1));
 	if(!new_tp) return NULL;
@@ -22,7 +22,7 @@ void SRM_init(SRM *srmp,void *record,T_PkgType *tp)
 	srmp->rec=record;
 	srmp->tp=NULL;
 	if(tp) {
-		srmp->tp=patt_dup(tp); //ÎªÁËÏß³Ì°²È«
+		srmp->tp=patt_dup(tp); //ä¸ºäº†çº¿ç¨‹å®‰å…¨
 		if(!srmp->tp) return;
 		srmp->Aflg=-set_offset(srmp->tp);
 		srmp->result=0;
@@ -37,7 +37,7 @@ void SRM_init(SRM *srmp,void *record,T_PkgType *tp)
 
 static char * addown_to_name(char *buf,char *DBOWN,const char *name)
 {
-char *p,*p1,*p2;
+	char *p,*p1,*p2;
 
 	p=buf;
 	p1=(char *)name;
@@ -59,7 +59,7 @@ char *p,*p1,*p2;
 
 void set_dbo(char *buf,char *DBOWN)
 {
-char *p;
+	char *p;
 	p=buf;
 	while(0!=(p=strcasestr(p,pre_tabname))) {
 		if(*DBOWN) {
@@ -73,16 +73,16 @@ char *p;
 
 int SRM_mk_select(SRM *srmp,char *DBOWN,char *where)
 {
-register char *p,*p1;
-char *whp=0;
+	register char *p,*p1;
+	char *whp=0;
 
 	if(!where) return -1;
-	if(*where && (toupper(*where)=='S' && toupper(where[1])=='E')) return 0; //Èç¹ûÊÇselect,²»×÷´¦Àí
+	if(*where && (toupper(*where)=='S' && toupper(where[1])=='E')) return 0; //å¦‚æžœæ˜¯select,ä¸ä½œå¤„ç†
 	if(!srmp->tp) return FORMATERR;
 	if(*where) {
-                whp=strdup(where);
-                if(!whp) {
-                  return MEMERR;
+		whp=strdup(where);
+		if(!whp) {
+			return MEMERR;
 		}
 	}
 	p=where;
@@ -104,13 +104,13 @@ char *whp=0;
 	}
 	p+=strlen(p);
 	p=stpcpy(p," FROM ");
-		
+
 	p1=stptok(srmp->tabname,0,0," ,.");
-	if(!*p1) {			//¼òµ¥±íÃû 
-	      	if(DBOWN && *DBOWN) {
-       			p=stpcpy(p, DBOWN);
-				*p++='.';
-				*p=0;
+	if(!*p1) {			//ç®€å•è¡¨å
+		if(DBOWN && *DBOWN) {
+			p=stpcpy(p, DBOWN);
+			*p++='.';
+			*p=0;
 		}
 		p=stpcpy(p,srmp->tabname);
 		*p++=' ';
@@ -126,10 +126,10 @@ char *whp=0;
 	}
 	return 0;
 }
-// Éú³É°ë¸ö update Óï¾ä 
+// ç”ŸæˆåŠä¸ª update è¯­å¥
 char * SRM_mk_update(SRM *srmp,char *DBOWN,char *where)
 {
-register char *p;
+	register char *p;
 
 	p=where;
 	if(srmp->befor) {
@@ -155,49 +155,49 @@ register char *p;
 	return p;
 }
 
-/* ¶ÔÑ¡ÔñµÄÁÐ¹¹½¨updateÓï¾ä£¬Èç¹ûchooseÎª¿Õ£¬È«²¿ÁÐ ,·µ»ØÎ²²¿ */
+/* å¯¹é€‰æ‹©çš„åˆ—æž„å»ºupdateè¯­å¥ï¼Œå¦‚æžœchooseä¸ºç©ºï¼Œå…¨éƒ¨åˆ— ,è¿”å›žå°¾éƒ¨ */
 char * SRM_mk_upd_col(SRM *srmp,char *DBOWN,const char *choose,char *stmt)
 {
-char *p,*p1;
-char col_name[49];
-T_PkgType *tp;
+	char *p,*p1;
+	char col_name[49];
+	T_PkgType *tp;
 
-    if(!srmp||!stmt) {
-        return stmt;
-    }
-    p=SRM_mk_update(srmp,DBOWN,stmt);
-    p=stpcpy(p,"SET ");
-    p1=(char *)choose;
-    if(p1 && *p1) do {
-	if(!*p1) break;
-        p1=stptok(skipblk(p1),col_name,sizeof(col_name),",|");
-	*p++ = '$';
-	p=stpcpy(stpcpy(stpcpy(p,col_name),"=:"),col_name);
-	*p++ = ',';
-    } while (*p1++);
-	else  for(tp=srmp->tp;tp->type>=0;tp++) {
-		if(tp->type==CH_CLOB || tp->bindtype & NOINS) continue;
-		p1=(char *)tp->name;
-		p=stpcpy(stpcpy(strtcpy(p,&p1,' '),"=:"),plain_name(tp->name));
-		*p++ = ',';
+	if(!srmp||!stmt) {
+		return stmt;
 	}
+	p=SRM_mk_update(srmp,DBOWN,stmt);
+	p=stpcpy(p,"SET ");
+	p1=(char *)choose;
+	if(p1 && *p1) do {
+			if(!*p1) break;
+			p1=stptok(skipblk(p1),col_name,sizeof(col_name),",|");
+			*p++ = '$';
+			p=stpcpy(stpcpy(stpcpy(p,col_name),"=:"),col_name);
+			*p++ = ',';
+		} while (*p1++);
+	else  for(tp=srmp->tp;tp->type>=0;tp++) {
+			if(tp->type==CH_CLOB || tp->bindtype & NOINS) continue;
+			p1=(char *)tp->name;
+			p=stpcpy(stpcpy(strtcpy(p,&p1,' '),"=:"),plain_name(tp->name));
+			*p++ = ',';
+		}
 	*p=0;
-    p[-1]=' ';
-    return p;
+	p[-1]=' ';
+	return p;
 }
 
 int SRM_mk_delete(SRM *srmp,char *DBOWN,char *where)
 {
-register char *p,*whp;
+	register char *p,*whp;
 
 	whp=0;
-	if(*where && (toupper(*where)=='D')) return 0;//Èç¹ûÊÇdelete,²»×÷´¦Àí
-        if(*where) {
-          	whp=strdup(where);
-          	if(!whp) {
-           		return MEMERR;
-            	}
-        }
+	if(*where && (toupper(*where)=='D')) return 0;//å¦‚æžœæ˜¯delete,ä¸ä½œå¤„ç†
+	if(*where) {
+		whp=strdup(where);
+		if(!whp) {
+			return MEMERR;
+		}
+	}
 	p=where;
 	if(srmp->befor) {
 		p=stpcpy(p,srmp->befor);
@@ -219,15 +219,15 @@ register char *p,*whp;
 	*p++ = ' ';
 	*p=0;
 	if(whp) {
-         	p=stpcpy(p,whp);
-           	free(whp);
+		p=stpcpy(p,whp);
+		free(whp);
 	}
 	return 0;
 }
 
 void PatternFree(SRM *srmp)
 {
-int i;
+	int i;
 	if(srmp->Aflg<=0) {
 		srmp->Aflg=0;
 		srmp->pks=0;

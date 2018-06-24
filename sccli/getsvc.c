@@ -1,12 +1,12 @@
 /********************************************
- * ¿ìËÙ²éÕÒÄ£°å£¬ÀûÓÃhashËã·¨
+ * å¿«é€ŸæŸ¥æ‰¾æ¨¡æ¿ï¼Œåˆ©ç”¨hashç®—æ³•
  *******************************************/
 #include <sccli.h>
 
 T_PkgType slist_tpl[]={
-	{CH_INT,sizeof(int),0,0,-1},
-	{CH_CHAR,49,0,0},
-	{-1,0,0,0}
+		{CH_INT,sizeof(int),0,0,-1},
+		{CH_CHAR,49,0,0},
+		{-1,0,0,0}
 };
 
 typedef struct {
@@ -22,22 +22,22 @@ typedef struct {
 
 static int hash_name(const char *name,int mod)
 {
-register unsigned int hashval=0;
+	register unsigned int hashval=0;
 	if(!mod) return -1;
-	while(*name) hashval += *(unsigned char *)name++; 
+	while(*name) hashval += *(unsigned char *)name++;
 	return (int)(hashval%mod);
 }
-//²úÉúË÷Òı 
+//äº§ç”Ÿç´¢å¼•
 static char *mk_srv_hash(srv_list slist[],int coln)
 {
-int i,hashnum;
-srvhs *colp;
-int *lp;
-char *p;
+	int i,hashnum;
+	srvhs *colp;
+	int *lp;
+	char *p;
 	colp=(srvhs *)malloc(coln * sizeof(srvhs));
 	if(!colp) return NULL;
 
-srvhs *top,stack[coln];
+	srvhs *top,stack[coln];
 
 	top=stack;
 	for(i=0;i<coln;i++) {
@@ -46,23 +46,23 @@ srvhs *top,stack[coln];
 	}
 	for(i=0;i<coln;i++) {
 		p=slist[i].srv_name;
-	    	hashnum=hash_name(p,coln);
+		hashnum=hash_name(p,coln);
 //ShowLog(5,"%s:name[%d]=%s,hashnum=%d\n",__FUNCTION__,i,p,hashnum);
-	    if(colp[hashnum].colno==-1) {	//Ã»ÓĞÉ¢ÁĞ³åÍ» 
-		colp[hashnum].name=p;
-		colp[hashnum].colno=i;
-	    } else {				//ÓĞÉ¢ÁĞ³åÍ»£¬´æ´¢³åÍ»Á´
-		top->name=p;
-		top->colno=i;
-		top->link=hashnum;
-		top++;
-	    }
+		if(colp[hashnum].colno==-1) {	//æ²¡æœ‰æ•£åˆ—å†²çª
+			colp[hashnum].name=p;
+			colp[hashnum].colno=i;
+		} else {				//æœ‰æ•£åˆ—å†²çªï¼Œå­˜å‚¨å†²çªé“¾
+			top->name=p;
+			top->colno=i;
+			top->link=hashnum;
+			top++;
+		}
 	}
-	if(top != stack) { //ÓĞÉ¢ÁĞ³åÍ»£¬¹¹½¨³åÍ»Á´ 
+	if(top != stack) { //æœ‰æ•£åˆ—å†²çªï¼Œæ„å»ºå†²çªé“¾
 		for(i=0;i<coln;i++) {
 			if(colp[i].colno != -1) continue;
 			top--;
-//ÕÒµ½Ë÷Òı±íÀïµÄ¿ÕÏî 
+//æ‰¾åˆ°ç´¢å¼•è¡¨é‡Œçš„ç©ºé¡¹
 			colp[i].name=top->name;
 			colp[i].colno=top->colno;
 			for(lp=&colp[top->link].link;*lp != -1;lp=&colp[*lp].link)
@@ -73,26 +73,26 @@ srvhs *top,stack[coln];
 
 	return (char *)colp;
 }
-//²éÕÒ·şÎñºÅ£¬ÎŞ´Ë·şÎñ·µ»Ø1,=echo() 
+//æŸ¥æ‰¾æœåŠ¡å·ï¼Œæ— æ­¤æœåŠ¡è¿”å›1,=echo()
 int get_srv_no(T_CLI_Var *clip,const char *key)
 {
-register srvhs *cp;
-svc_table *svcp;
+	register srvhs *cp;
+	svc_table *svcp;
 	if(!clip || !clip->svc_tbl) return 1;
 	svcp=clip->svc_tbl;
 	if(svcp->srvn<1) return 1;
-srvhs *colp=((srvhs *)(svcp->srv_hash));
+	srvhs *colp=((srvhs *)(svcp->srv_hash));
 	for(cp=colp+hash_name(key,svcp->srvn);
-	   strcmp(cp->name,key); cp=colp+cp->link) {
+		strcmp(cp->name,key); cp=colp+cp->link) {
 		if(cp->link==-1) return 1;
-	} 
+	}
 	return ((srv_list *)svcp->srvlist)[cp->colno].srv_no;
 }
-//ÊÍ·Å·şÎñÃûÏà¹ØÊı¾İ 
+//é‡Šæ”¾æœåŠ¡åç›¸å…³æ•°æ®
 void free_srv_list(T_CLI_Var *clip)
 {
 	if(!clip || !clip->svc_tbl) return;
-	
+
 	if(clip->svc_tbl->usage>0) clip->svc_tbl->usage--;
 	else {
 		if(clip->svc_tbl->srvlist) {
@@ -110,21 +110,21 @@ void free_srv_list(T_CLI_Var *clip)
 }
 
 /*******************************************************
- * È¡µÃ·şÎñÆ÷¶Ë·şÎñÃûÁĞ±í
- * ·şÎñÆ÷¶ËµÄ0ºÅº¯Êı±ØĞëÊÇµÇÂ¼ÈÏÖ¤º¯Êı¡£µÇÂ¼ÈÏÖ¤Íê³Éºó£¬
- * ±ØĞë°Ñ0ºÅº¯ÊıÖµ»»³É get_srvname();
- * 1ºÅº¯Êı±ØĞëÊÇecho()
- * conn->freevarÖ¸Ïòfree_srv_list,Èç¹ûĞèÒªÆäËûÉÆºó²Ù×÷
- * Ó¦ÖØÖÃ£¬µ«×îºóÓ¦²¹×öfree_srv_list(T_CLI_Var *);
+ * å–å¾—æœåŠ¡å™¨ç«¯æœåŠ¡ååˆ—è¡¨
+ * æœåŠ¡å™¨ç«¯çš„0å·å‡½æ•°å¿…é¡»æ˜¯ç™»å½•è®¤è¯å‡½æ•°ã€‚ç™»å½•è®¤è¯å®Œæˆåï¼Œ
+ * å¿…é¡»æŠŠ0å·å‡½æ•°å€¼æ¢æˆ get_srvname();
+ * 1å·å‡½æ•°å¿…é¡»æ˜¯echo()
+ * conn->freevaræŒ‡å‘free_srv_list,å¦‚æœéœ€è¦å…¶ä»–å–„åæ“ä½œ
+ * åº”é‡ç½®ï¼Œä½†æœ€ååº”è¡¥åšfree_srv_list(T_CLI_Var *);
  *******************************************************/
 int init_svc_no(T_Connect *conn)
 {
-T_CLI_Var *clip;
-T_NetHead head;
-int ret,i;
-char *p;
-srv_list *lp;
-svc_table *svcp;
+	T_CLI_Var *clip;
+	T_NetHead head;
+	int ret,i;
+	char *p;
+	srv_list *lp;
+	svc_table *svcp;
 
 	if(!conn || !conn->Var) return -1;
 	clip=(T_CLI_Var *)conn->Var;
@@ -165,7 +165,7 @@ svc_table *svcp;
 	}
 	lp=(srv_list *)svcp->srvlist;
 	p=head.data;
-ShowLog(5,"%s:srvn=%d,data=%s",__FUNCTION__,svcp->srvn,p);
+	ShowLog(5,"%s:srvn=%d,data=%s",__FUNCTION__,svcp->srvn,p);
 	for(i=0;i<svcp->srvn&&*p;i++) {
 		p+=net_dispack(lp,p,slist_tpl);
 //ShowLog(5,"src_no=%d,srv_name=%s",lp->srv_no,lp->srv_name);

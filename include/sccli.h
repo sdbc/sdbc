@@ -1,6 +1,6 @@
 /*******************************************************
  * Secure Database Connect
- * SDBC 7.0 for ORACLE 
+ * SDBC 7.0 for ORACLE
  * 2012.09.15 by ylh
  *******************************************************/
 
@@ -25,9 +25,9 @@
 #endif
 typedef struct {
 	int usage;
-	int srvn;		/* ·şÎñ¸öÊı */
-	char *srvlist;          /* ·şÎñÃûÁĞ±í */
-	char *srv_hash;		/* ·şÎñÃûË÷Òı */
+	int srvn;		/* æœåŠ¡ä¸ªæ•° */
+	char *srvlist;          /* æœåŠ¡ååˆ—è¡¨ */
+	char *srv_hash;		/* æœåŠ¡åç´¢å¼• */
 } svc_table;
 
 typedef struct {
@@ -49,13 +49,13 @@ typedef struct {
 extern "C" {
 #endif
 
- /* used by client */
+/* used by client */
 extern void Init_CLI_Var(T_CLI_Var *CLI_Var);
 int Net_Connect( T_Connect *conn,void *userdata,u_int *new_family);
 
-/* Èç¹û¿Í»§¶ËÒª´¦ÀíÊÂ¼ş,ÊÕµ½·şÎñÆ÷Ó¦´ğºó£¬·şÎñÆ÷µÄÊÂ¼şºÅ·ÅÔÚ PROTO_NUMÀï,1-65535
- * ,Ó¦¼ÇÂ¼PROTO_NUM,ÔÚ±¾´Î»á»°È«²¿Íê³Éºó µ÷ÓÃEventCatch(conn,PROTO_NUM),
- * ÊÂÇ°£¬conn->Event_procÒªÖÃÈëÊÂ¼ş²¶»ñ³ÌĞò£¬ÊÂ¼ş²¶»ñ³ÌĞò¿ÉÒÔ¶¯ÓÃÍøÂç×ÊÔ´¡£
+/* å¦‚æœå®¢æˆ·ç«¯è¦å¤„ç†äº‹ä»¶,æ”¶åˆ°æœåŠ¡å™¨åº”ç­”åï¼ŒæœåŠ¡å™¨çš„äº‹ä»¶å·æ”¾åœ¨ PROTO_NUMé‡Œ,1-65535
+ * ,åº”è®°å½•PROTO_NUM,åœ¨æœ¬æ¬¡ä¼šè¯å…¨éƒ¨å®Œæˆå è°ƒç”¨EventCatch(conn,PROTO_NUM),
+ * äº‹å‰ï¼Œconn->Event_procè¦ç½®å…¥äº‹ä»¶æ•è·ç¨‹åºï¼Œäº‹ä»¶æ•è·ç¨‹åºå¯ä»¥åŠ¨ç”¨ç½‘ç»œèµ„æºã€‚
 */
 int EventCatch(T_Connect *conn,int Evtno);
 extern int N_Rexec(T_Connect *connect, char *cmd, int (*input)(char *), void (*output)(char *));
@@ -69,41 +69,41 @@ extern int N_PutEnv(T_Connect *connect,char *env);
 
 /* Client database functions */
 int N_SQL_Prepare(T_Connect *conn,char *stmt,T_SqlDa *sqlda);
-/* Fetch() recnum:½øÈëÊ±Ã¿´ÎFetchµÄ¼ÇÂ¼Êı,0=È«²¿¼ÇÂ¼,·µ»ØÊµ¼ÊµÃµ½µÄ¼ÇÂ¼Êı,NativeError:ÁĞÊı */
+/* Fetch() recnum:è¿›å…¥æ—¶æ¯æ¬¡Fetchçš„è®°å½•æ•°,0=å…¨éƒ¨è®°å½•,è¿”å›å®é™…å¾—åˆ°çš„è®°å½•æ•°,NativeError:åˆ—æ•° */
 extern int N_SQL_Fetch(T_Connect *,int curno,char **result,int recnum);
-/* Select() recnum:½øÈëÊ±Ï£ÍûÈ¡µÃµÄ¼ÇÂ¼Êı,0=È«²¿¼ÇÂ¼,·µ»ØÊµ¼ÊµÃµ½µÄ¼ÇÂ¼Êı,NativeError:ÁĞÊı */
+/* Select() recnum:è¿›å…¥æ—¶å¸Œæœ›å–å¾—çš„è®°å½•æ•°,0=å…¨éƒ¨è®°å½•,è¿”å›å®é™…å¾—åˆ°çš„è®°å½•æ•°,NativeError:åˆ—æ•° */
 int N_SQL_Select(T_Connect *,char *cmd,char **data,int recnum);
 extern int N_SQL_Close_RefCursor(T_Connect *connect,int ref_cursor);
 int N_SQL_Close(T_Connect *conn,T_SqlDa *sqlda);
 extern int N_SQL_Exec(T_Connect *conn,char * cmd);
-/* st_lvs:×´Ì¬¼¶±ğ£¬ÓĞ¼¸¸öÓÎ±êÀàĞÍ¾ÍĞ´¼¸ */
+/* st_lvs:çŠ¶æ€çº§åˆ«ï¼Œæœ‰å‡ ä¸ªæ¸¸æ ‡ç±»å‹å°±å†™å‡  */
 extern int N_SQL_RPC(T_Connect *connect,char *stmt,char **data,int *ncols,int st_lvs);
 extern int N_SQL_EndTran(T_Connect *connect,int TranFlag);
 extern int N_insert_db(T_Connect *conn,char *tabname,void *data,T_PkgType *tp);
 extern int getls(T_Connect *conn,T_NetHead *NetHead,char *path,FILE *outfile);
 
-//²éÕÒ·şÎñºÅ£¬ÎŞ´Ë·şÎñ·µ»Ø1,=echo() 
-// key=·şÎñÃû£¬·µ»Ø·şÎñºÅ 
+//æŸ¥æ‰¾æœåŠ¡å·ï¼Œæ— æ­¤æœåŠ¡è¿”å›1,=echo()
+// key=æœåŠ¡åï¼Œè¿”å›æœåŠ¡å·
 int get_srv_no(T_CLI_Var *clip,const char *key);
-//ÊÍ·Å·şÎñÃûÏà¹ØÊı¾İ 
+//é‡Šæ”¾æœåŠ¡åç›¸å…³æ•°æ®
 void free_srv_list(T_CLI_Var *clip);
 /*******************************************************
- * È¡µÃ·şÎñÆ÷¶Ë·şÎñÃûÁĞ±í
- * ·şÎñÆ÷¶ËµÄ0ºÅº¯Êı±ØĞëÊÇµÇÂ¼ÈÏÖ¤º¯Êı¡£µÇÂ¼ÈÏÖ¤Íê³Éºó£¬
- * ±ØĞë°Ñ0ºÅº¯ÊıÖµ»»³É  
+ * å–å¾—æœåŠ¡å™¨ç«¯æœåŠ¡ååˆ—è¡¨
+ * æœåŠ¡å™¨ç«¯çš„0å·å‡½æ•°å¿…é¡»æ˜¯ç™»å½•è®¤è¯å‡½æ•°ã€‚ç™»å½•è®¤è¯å®Œæˆåï¼Œ
+ * å¿…é¡»æŠŠ0å·å‡½æ•°å€¼æ¢æˆ
  *      get_srvname();
- * 1ºÅº¯Êı±ØĞëÊÇ 
- *   echo(); 
- * conn->freevarÖ¸Ïòfree_srv_list,Èç¹ûĞèÒªÆäËûÉÆºó²Ù×÷
- * Ó¦ÖØÖÃ£¬µ«×îºóÓ¦²¹×ö   
+ * 1å·å‡½æ•°å¿…é¡»æ˜¯
+ *   echo();
+ * conn->freevaræŒ‡å‘free_srv_list,å¦‚æœéœ€è¦å…¶ä»–å–„åæ“ä½œ
+ * åº”é‡ç½®ï¼Œä½†æœ€ååº”è¡¥åš
  * free_srv_list(T_CLI_Var *);
- * ³É¹¦·µ»Ø0£¬Ê§°Ü-1£»
+ * æˆåŠŸè¿”å›0ï¼Œå¤±è´¥-1ï¼›
  *******************************************************/
 int init_svc_no(T_Connect *conn);
 /************************************************************
- * N_get_tpl:´Ó·şÎñÆ÷È¡µÃ±íÄ£°å
- * tabnames="±íÃû1,±íÃû2,,"
- * ·µ»ØJSON¶ÔÏó:{±íÃû:[Ä£°å],±íÃû:[Ä£°å],...}
+ * N_get_tpl:ä»æœåŠ¡å™¨å–å¾—è¡¨æ¨¡æ¿
+ * tabnames="è¡¨å1,è¡¨å2,,"
+ * è¿”å›JSONå¯¹è±¡:{è¡¨å:[æ¨¡æ¿],è¡¨å:[æ¨¡æ¿],...}
  * **********************************************************/
 JSON_OBJECT N_get_tpl(T_Connect *conn,char *tabnames,int num);
 

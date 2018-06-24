@@ -6,13 +6,13 @@ static int cmp_str(void * t,void * s,int len)
 {
 	return strcmp((char *)t,(char *)s);
 }
-/* ´ÓÄ£°åÖĞÑ¡È¡³ıÈ¥exceptÖ®ÍâµÄÁĞÃû */
+/* ä»æ¨¡æ¿ä¸­é€‰å–é™¤å»exceptä¹‹å¤–çš„åˆ—å */
 int except_col(char *buf,T_PkgType *tp,const char *except)
 {
-int num=0;
-T_Tree *t=0;
-T_PkgType *typ;
-char *p,*name,*saveptr;
+	int num=0;
+	T_Tree *t=0;
+	T_PkgType *typ;
+	char *p,*name,*saveptr;
 	if(!buf || !tp) return 0;
 	if(except && *except) {
 		strcpy(buf,except);

@@ -1,9 +1,9 @@
 /************************************************
- * SDBC µÄºËĞÄ´«Êä³ÌĞò¡£Í¨ĞÅ°ü·Ö³É°üÍ·ºÍ°üÌå,
- * °üÍ·ÊÇ9¸öÕûÊı£¬±»±ä»»Îª48×Ö½ÚµÄ¶¨³¤Í·¡£
- * °üÌåÊÇÈÎÒâ³¤¶ÈµÄ×Ö½ÚÁ÷£¬Ö»ÊÜ×ÊÔ´ÏŞÖÆ¡£
- * ´«ÊäËùĞèµÄÄÚ´æÊÇÄÚ²¿·ÖÅäºÍ¹ÜÀíµÄ¡£
- * °üÍ·ºÍ´«Êä¿ØÖÆ¿éµÄÄÚÈİÊÇÏòÓÃ»§¿ª·ÅµÄ¡£
+ * SDBC çš„æ ¸å¿ƒä¼ è¾“ç¨‹åºã€‚é€šä¿¡åŒ…åˆ†æˆåŒ…å¤´å’ŒåŒ…ä½“,
+ * åŒ…å¤´æ˜¯9ä¸ªæ•´æ•°ï¼Œè¢«å˜æ¢ä¸º48å­—èŠ‚çš„å®šé•¿å¤´ã€‚
+ * åŒ…ä½“æ˜¯ä»»æ„é•¿åº¦çš„å­—èŠ‚æµï¼Œåªå—èµ„æºé™åˆ¶ã€‚
+ * ä¼ è¾“æ‰€éœ€çš„å†…å­˜æ˜¯å†…éƒ¨åˆ†é…å’Œç®¡ç†çš„ã€‚
+ * åŒ…å¤´å’Œä¼ è¾“æ§åˆ¶å—çš„å†…å®¹æ˜¯å‘ç”¨æˆ·å¼€æ”¾çš„ã€‚
  ************************************************/
 
 //#include <malloc.h>
@@ -20,48 +20,48 @@ static void showpack(int level,char *str,int i);
 static int pack_encode(char *string,int length,T_Connect *conn)
 {
 	switch(conn->CryptFlg & DO_CRYPT) {
-	case 1:
-		enigma(conn->t.t,string,length);
-		break;
-	case 2:
-		enigma_encrypt(conn->t.r,string,length);
-		break;
-	case 3:
-		enigma2_encrypt(&conn->t,string,length);
-		break;
-	default:
-		break;
+		case 1:
+			enigma(conn->t.t,string,length);
+			break;
+		case 2:
+			enigma_encrypt(conn->t.r,string,length);
+			break;
+		case 3:
+			enigma2_encrypt(&conn->t,string,length);
+			break;
+		default:
+			break;
 	}
 	return 0;
 }
 static int pack_decode(char *string,int length,T_Connect *conn)
 {
 	switch(conn->CryptFlg & DO_CRYPT) {
-	case 1:
-		enigma(conn->t.t,string,length);
-		break;
-	case 2:
-		enigma_decrypt(conn->t.r,string,length);
-		break;
-	case 3:
-		enigma2_decrypt(&conn->t,string,length);
-		break;
-	default:
-		break;
+		case 1:
+			enigma(conn->t.t,string,length);
+			break;
+		case 2:
+			enigma_decrypt(conn->t.r,string,length);
+			break;
+		case 3:
+			enigma2_decrypt(&conn->t,string,length);
+			break;
+		default:
+			break;
 	}
 	return 0;
 }
 
 static int chknum(u_int *para,u_int init)
 {
-int i,old,sum,*ip;
-        ip=(int *)para;
-        old=*ip;
-        *ip &= 0xFFFF;
+	int i,old,sum,*ip;
+	ip=(int *)para;
+	old=*ip;
+	*ip &= 0xFFFF;
 	sum=(int)init;
-        for(i=0;i<PARANUM;i++) {
+	for(i=0;i<PARANUM;i++) {
 		sum += *ip++;
-        }
+	}
 	*para |= sum << 16;
 	return old;
 }
@@ -77,8 +77,8 @@ static int NetHeadPack(char *buf,T_NetHead *nethead,u_int init)
 }
 static int NetHeadDispack(T_NetHead *nethead,char *buf,u_int init)
 {
-char *p;
-int old;
+	char *p;
+	int old;
 	if(!buf)return POINTERR;
 	if(isspace(*buf)) {
 		return FORMATERR;
@@ -99,19 +99,19 @@ int old;
 
 int quick_send_pkg(T_Connect *connect,T_NetHead *nethead)
 {
-int i,ch;
-char *p=NULL;
+	int i,ch;
+	char *p=NULL;
 
 	if(nethead->PKG_LEN){
 		p=connect->SendBuffer+HEADPACKLENGTH;
-	   	pack_encode(p,nethead->T_LEN,connect);
+		pack_encode(p,nethead->T_LEN,connect);
 		nethead->PKG_CRC=ssh_crc32((const unsigned char *)p, nethead->T_LEN);
 		ch=*p;
 	}
 	i=NetHeadPack(connect->SendBuffer,nethead,connect->family[29]);
 	if(p) *p=ch;
 	i=SendNet(connect->Socket,connect->SendBuffer,
-			HEADPACKLENGTH+nethead->T_LEN,connect->MTU);
+			  HEADPACKLENGTH+nethead->T_LEN,connect->MTU);
 //ShowLog(5,"SendPack:SendbBuffer=%s,i=%d,CRC=%08X",
 //	connect->SendBuffer,i,nethead->PKG_CRC);
 	if(connect->SendLen>32768) {
@@ -125,10 +125,10 @@ char *p=NULL;
 
 int SendPack(T_Connect *connect,T_NetHead *nethead)
 {
-int i,len;
-char *p=NULL;
+	int i,len;
+	char *p=NULL;
 
-//ÊÍ·Å½ÓÊÕbuf
+//é‡Šæ”¾æ¥æ”¶buf
 	if(connect->RecvLen > 32768) {
 		if(connect->RecvBuffer) free(connect->RecvBuffer);
 		connect->RecvBuffer=0;
@@ -137,13 +137,13 @@ char *p=NULL;
 
 	len=(connect->CryptFlg&UNDO_ZIP)?nethead->T_LEN:nethead->PKG_LEN;
 	i=connect->SendLen-len;
-        if(i<(100+HEADPACKLENGTH)||i>SDBC_BLKSZ) {
-                connect->SendLen=len+400+HEADPACKLENGTH;
-	        if(!connect->SendBuffer)
+	if(i<(100+HEADPACKLENGTH)||i>SDBC_BLKSZ) {
+		connect->SendLen=len+400+HEADPACKLENGTH;
+		if(!connect->SendBuffer)
 			connect->SendBuffer=malloc((size_t)connect->SendLen);
-                else connect->SendBuffer=realloc((char *)connect->SendBuffer,
-					(size_t)connect->SendLen);
-        }
+		else connect->SendBuffer=realloc((char *)connect->SendBuffer,
+										 (size_t)connect->SendLen);
+	}
 	if(!connect->SendBuffer) {
 		connect->SendLen=0;
 		return MEMERR;
@@ -168,10 +168,10 @@ char *p=NULL;
 
 int RecvPack(T_Connect *connect,T_NetHead *nethead)
 {
-char headbuf[HEADPACKLENGTH+1],addr[16];
-int i,n;
-u_int crc;
-char *zbuf;
+	char headbuf[HEADPACKLENGTH+1],addr[16];
+	int i,n;
+	u_int crc;
+	char *zbuf;
 
 	n_zero(PARANUM,nethead->para);
 	nethead->data=0;
@@ -181,7 +181,7 @@ char *zbuf;
 	if(i<HEADPACKLENGTH){
 		if(i==TIMEOUTERR) {
 			ShowLog(1,"%s:head TIMEOUT %d second's",__FUNCTION__,
-				connect->timeout);
+					connect->timeout);
 			return i;
 		}
 		ShowLog(1,"RecvPack Head LENERR i=%d,err=%d,%s",i,errno,strerror(errno));
@@ -222,7 +222,7 @@ char *zbuf;
 		}
 		if(zbuf!=connect->RecvBuffer) free(zbuf);
 		ShowLog(1,"%s,Recv Body T_LEN=%d i=%d,errno=%d",__FUNCTION__,
-					nethead->T_LEN,i,errno);
+				nethead->T_LEN,i,errno);
 		free(connect->RecvBuffer);
 		connect->RecvBuffer=0;
 		connect->RecvLen=0;
@@ -231,10 +231,10 @@ char *zbuf;
 	crc=ssh_crc32((const unsigned char *)zbuf, nethead->T_LEN);
 	if((connect->CryptFlg & CHECK_CRC) && (crc != nethead->PKG_CRC)) {
 		ShowLog(1,"RecvPack:PKG_CRC=%08X,crc=%08X,PKG_LEN=%d,T_LEN=%d,head=%s",
-			nethead->PKG_CRC,crc,nethead->PKG_LEN,nethead->T_LEN,headbuf);
-			return CRCERR;
+				nethead->PKG_CRC,crc,nethead->PKG_LEN,nethead->T_LEN,headbuf);
+		return CRCERR;
 	}
-        pack_decode(zbuf, nethead->T_LEN,connect);
+	pack_decode(zbuf, nethead->T_LEN,connect);
 	if(zbuf != connect->RecvBuffer) {
 		if(nethead->T_LEN<9 || nethead->PKG_LEN != qlz_size_decompressed(zbuf)) {
 			ShowLog(1,"unzip error T_LEN=%d,ADDR=%s",nethead->T_LEN, addr);
@@ -243,11 +243,11 @@ char *zbuf;
 		i=qlz_decompress(zbuf,connect->RecvBuffer);
 		free(zbuf);
 		if(i!=nethead->PKG_LEN) {
-		    ShowLog(1,"RecvPack:PKG_LEN=%d,T_LEN=%d,unzip_size=%d",
-			nethead->PKG_LEN,nethead->T_LEN,i);
+			ShowLog(1,"RecvPack:PKG_LEN=%d,T_LEN=%d,unzip_size=%d",
+					nethead->PKG_LEN,nethead->T_LEN,i);
 			return LENGERR;
 		}
-	} 
+	}
 	connect->RecvBuffer[nethead->PKG_LEN]=0;
 	nethead->data=connect->RecvBuffer;
 	return 0;
@@ -255,49 +255,49 @@ char *zbuf;
 
 void initconnect(T_Connect *connect)
 {
-    connect->SendBuffer=0;
-    connect->RecvBuffer=0;
-    connect->SendLen=0;
-    connect->RecvLen=0;
-    connect->Var=0;
-    connect->freevar=0;
-    connect->Socket=-1;
-    connect->CryptFlg=0;
-    connect->only_do=0;
-    connect->timeout=0;
-    connect->Event_proc=0;
-    connect->MTU=0;
-    connect->status=0;
+	connect->SendBuffer=0;
+	connect->RecvBuffer=0;
+	connect->SendLen=0;
+	connect->RecvLen=0;
+	connect->Var=0;
+	connect->freevar=0;
+	connect->Socket=-1;
+	connect->CryptFlg=0;
+	connect->only_do=0;
+	connect->timeout=0;
+	connect->Event_proc=0;
+	connect->MTU=0;
+	connect->status=0;
 }
 extern void FreeVar(void *);
 void freeconnect(T_Connect *conn)
 {
-	
-    if(conn->Var) {
-    	if(conn->freevar) {conn->freevar(conn->Var);}
-	else FreeVar(conn->Var);
+
+	if(conn->Var) {
+		if(conn->freevar) {conn->freevar(conn->Var);}
+		else FreeVar(conn->Var);
+		conn->Var=NULL;
+	}
+	if(conn->Socket > -1) close(conn->Socket);
+	conn->Socket=-1;
+	memset(&conn->t,0,sizeof(conn->t));
+	if(conn->SendBuffer) {
+		free(conn->SendBuffer);
+	}
+	conn->SendBuffer=0;
+	conn->SendLen=0;
+	if(conn->RecvBuffer) {
+		free(conn->RecvBuffer);
+	}
+	conn->RecvBuffer=0;
+	conn->RecvLen=0;
 	conn->Var=NULL;
-    }
-    if(conn->Socket > -1) close(conn->Socket);
-    conn->Socket=-1;
-    memset(&conn->t,0,sizeof(conn->t));
-    if(conn->SendBuffer) {
-	free(conn->SendBuffer);
-    }
-    conn->SendBuffer=0;
-    conn->SendLen=0;
-    if(conn->RecvBuffer) {
-	free(conn->RecvBuffer);
-    }
-    conn->RecvBuffer=0;
-    conn->RecvLen=0;
-    conn->Var=NULL;
-    conn->status=0;
+	conn->status=0;
 }
 static void showpack(int lever,char *str,int i)
 {
-int j,k;
-char errbuf[512];
+	int j,k;
+	char errbuf[512];
 	while(i>64) {
 		i-=64;
 		k=0;

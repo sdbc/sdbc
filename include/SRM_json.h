@@ -10,12 +10,12 @@ extern "C" {
 
 JSON_OBJECT SRM_toJSON(SRM *srmp,JSON_OBJECT json,const char *choose);
 int SRM_fromJSON(SRM *srmp,JSON_OBJECT json);
-/* 将src中的同名成员拷贝到desc,格式自动转换 */
+/* 灏唖rc涓殑鍚屽悕鎴愬憳鎷疯礉鍒癲esc,鏍煎紡鑷姩杞崲 */
 int SRM_copy(SRM *desc,SRM *src,const char *choose);
 
-//根据JSON模板构建srm,成功返回0
+//鏍规嵁JSON妯℃澘鏋勫缓srm,鎴愬姛杩斿洖0
 int SRM_tpl(SRM *srmp,JSON_OBJECT tpl_json);
-//从模板库构建srm,成功返回0
+//浠庢ā鏉垮簱鏋勫缓srm,鎴愬姛杩斿洖0
 int SRM_mk(SRM *srmp,const char *tabname);
 
 #ifdef __cplusplus

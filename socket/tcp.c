@@ -11,27 +11,27 @@
 #define MIN(a,b) ((a)<(b))?(a):(b)
 #endif
 
-//timeout for second 
+//timeout for second
 int RecvNet(int s,char *buf,int n,int timeout,int TCB_no)
 {
-int bcount,br,ret,num=0;
-struct timeval tmout;
+	int bcount,br,ret,num=0;
+	struct timeval tmout;
 
 	if(!buf) return 0;
 	tmout.tv_sec=timeout;
-        tmout.tv_usec=0;
-        ret=setsockopt(s,SOL_SOCKET,SO_RCVTIMEO,(char *)&tmout,sizeof(tmout));
+	tmout.tv_usec=0;
+	ret=setsockopt(s,SOL_SOCKET,SO_RCVTIMEO,(char *)&tmout,sizeof(tmout));
 	if(ret) {
-                ShowLog(5,"%s:setsockopt err=%d,%s",__FUNCTION__,
-                                errno,strerror(errno));
-        }
+		ShowLog(5,"%s:setsockopt err=%d,%s",__FUNCTION__,
+				errno,strerror(errno));
+	}
 
 	*buf=0;
 	if(n<=0) return 0;
 	bcount=0;
 	br=0;
 
-/* 为防止防火墙切断长期空闲的连接，对方可能定时发来心跳字符0x00,将其丢弃
+/* 涓洪槻姝㈤槻鐏鍒囨柇闀挎湡绌洪棽鐨勮繛鎺ワ紝瀵规柟鍙兘瀹氭椂鍙戞潵蹇冭烦瀛楃0x00,灏嗗叾涓㈠純
 	do {
 		br=read(s,buf,1);
 		if(br<0) return -1;
@@ -51,8 +51,8 @@ struct timeval tmout;
 		}
 		if(errno==EAGAIN) return TIMEOUTERR;
 		if(br<0){
-		    if(errno!=ECONNRESET) ShowLog(1,"%s:br=%d,err=%d,%s",__FUNCTION__,br,errno,strerror(errno));
-		    return SYSERR;
+			if(errno!=ECONNRESET) ShowLog(1,"%s:br=%d,err=%d,%s",__FUNCTION__,br,errno,strerror(errno));
+			return SYSERR;
 		}
 //ShowLog(5,"RecvNet:read br=0,errno=%d,%s",errno,strerror(errno));
 		if(!br) {
@@ -70,10 +70,10 @@ struct timeval tmout;
 
 int SendNet(int socket,char *buf,int n,int MTU,int TCB_no)
 {
-int bcount,br;
+	int bcount,br;
 
-int sz,i;
-socklen_t SendSize=0;
+	int sz,i;
+	socklen_t SendSize=0;
 //socklen_t len = sizeof(SendSize);
 
 	bcount=0;
@@ -93,7 +93,7 @@ socklen_t SendSize=0;
 			continue;
 		}
 		if(br<0){
-		    return -1;
+			return -1;
 		}
 		if(!br){
 			return bcount;

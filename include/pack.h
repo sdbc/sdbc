@@ -1,6 +1,6 @@
 /*******************************************************
  * Secure Database Connect
- * SDBC 7.0 for ORACLE 
+ * SDBC 7.0 for ORACLE
  * 2012.9.19 by ylh
  *******************************************************/
 
@@ -27,8 +27,8 @@ extern const char NAN_NULL[sizeof(double)];
 
 #define DOUBLENULL (*(double *)NAN_NULL)
 #define FLOATNULL (*(float *)NAN_NULL)
-#define SHORTNULL (short)(1<<(8*sizeof(short)-1)) 
-#define INTNULL   (int)(1<<(8*sizeof(int)-1)) 
+#define SHORTNULL (short)(1<<(8*sizeof(short)-1))
+#define INTNULL   (int)(1<<(8*sizeof(int)-1))
 #define LONGNULL  (1L<<(8*sizeof(long)-1))
 #define INT64NULL  ((INT64)1<<(8*sizeof(INT64)-1))
 #define TINYNULL  0X80
@@ -37,8 +37,8 @@ extern const char NAN_NULL[sizeof(double)];
 /*****************************************************
  * define extend data type for net_pack()
  *****************************************************/
-#define CH_DATE		(CH_CHAR|0x80) 
-#define CH_CNUM		(CH_CHAR|0x100) 
+#define CH_DATE		(CH_CHAR|0x80)
+#define CH_CNUM		(CH_CHAR|0x100)
 #define CH_JUL  	(CH_INT4|0X80)
 #define CH_MINUTS	(CH_INT4|0x100)
 #define CH_TIME		(CH_INT64|0x80)
@@ -58,17 +58,17 @@ extern const char YEAR_TO_DAY[];
 extern const char YEAR_TO_MIN[];
 extern const char YEAR_TO_SEC[];
 extern const char YEAR_TO_USEC[];
-//Õâ¸ö¾ÍÊÇËùÎ½µÄ¡°Ä£°å¡±ÁË£¬ËüÊ¹ÎÒÃÇÄÜ¹»"¿´"µ½Î´Öª½á¹¹µÄÄÚÈİ¡£
+//è¿™ä¸ªå°±æ˜¯æ‰€è°“çš„â€œæ¨¡æ¿â€äº†ï¼Œå®ƒä½¿æˆ‘ä»¬èƒ½å¤Ÿ"çœ‹"åˆ°æœªçŸ¥ç»“æ„çš„å†…å®¹ã€‚
 typedef struct {
-	    INT4 type;
-	    INT4 len; // in byte
-	    const char *name;
-	    const char *format;
-	    INT4 offset;
-	    int bindtype; //default=0
+	INT4 type;
+	INT4 len; // in byte
+	const char *name;
+	const char *format;
+	INT4 offset;
+	int bindtype; //default=0
 } T_PkgType;
 
-//T_PkgType µÄÄ£°å
+//T_PkgType çš„æ¨¡æ¿
 extern T_PkgType tpl_tpl[];
 
 // for bindtype
@@ -80,7 +80,7 @@ extern T_PkgType tpl_tpl[];
 #define VAR
 #else
 #ifdef __cplusplus
-#define VAR extern "C" 
+#define VAR extern "C"
 #else
 #define VAR extern
 #endif
@@ -99,18 +99,18 @@ VAR T_PkgType FloatType[];
 
 extern T_PkgType SqlVarType[];/* in net_pack.c*/
 typedef struct {
-    char  sqlname[49];
-    int sqltype;
-    int sqllen;
-    char  sqlformat[49];
+	char  sqlname[49];
+	int sqltype;
+	int sqllen;
+	char  sqlformat[49];
 } T_SqlVar;
 
 extern T_PkgType SqlDaType[]; /* in pack.c */
 
 typedef struct {
-    int  cursor_no;
-    int cols;
-    T_SqlVar *sqlvar;
+	int  cursor_no;
+	int cols;
+	T_SqlVar *sqlvar;
 } T_SqlDa;
 
 #ifdef __cplusplus
@@ -129,17 +129,17 @@ int isnull(void *vp,int type);
  * values:  'aaa','bbb','',123,null
  **************************************************************/
 extern char *mkvalues(char *values,char *str, T_PkgType *tp);
-/* Ö±½Ó´Ó½á¹¹ÖĞÉú³ÉValues
+/* ç›´æ¥ä»ç»“æ„ä¸­ç”ŸæˆValues
 */
 
 extern char *mk_values(char *values,void  *data, T_PkgType *tp);
-/* Éú³ÉÒ»¸övALUESÏî£¬×¢Òâ£¬typÊÇÄ£°åÖĞµÄÒ»¸öµ¥Ïî ·µ»ØvalueµÄÎ²²¿ */
+/* ç”Ÿæˆä¸€ä¸ªvALUESé¡¹ï¼Œæ³¨æ„ï¼Œtypæ˜¯æ¨¡æ¿ä¸­çš„ä¸€ä¸ªå•é¡¹ è¿”å›valueçš„å°¾éƒ¨ */
 extern char *mkvalue(char *value,char *data,T_PkgType *typ);
 
 /*******************************************************
- * Ä£°æ¿½±´£¬chooseÊÇÑ¡Ôñ·û£¬Èç¹ûÎª¿Õ£¬È«¿½±´
- * choose:"0-3,6-11",°´ÁĞºÅÑ¡Ôñ¡£"devid,flag"°´ÁĞÃûÑ¡Ôñ
- * dest±ØĞë¾ßÓĞ×ã¹»µÄ¿Õ¼ä
+ * æ¨¡ç‰ˆæ‹·è´ï¼Œchooseæ˜¯é€‰æ‹©ç¬¦ï¼Œå¦‚æœä¸ºç©ºï¼Œå…¨æ‹·è´
+ * choose:"0-3,6-11",æŒ‰åˆ—å·é€‰æ‹©ã€‚"devid,flag"æŒ‰åˆ—åé€‰æ‹©
+ * destå¿…é¡»å…·æœ‰è¶³å¤Ÿçš„ç©ºé—´
  *******************************************************/
 int patt_copy_col(T_PkgType * dest,T_PkgType * src,const char *choose,char *colidx);
 #define patt_copy(dest,src,choose) patt_copy_col((dest),(src),(choose),0)
@@ -164,7 +164,7 @@ extern char *mkfield(char *field, T_PkgType *tp,const char *tabname);
  * returned str="SET(..,..,..)=(SELECT ..,..,.. FROM DUAL)"
  *************************************************************/
 extern char *mkupdate(char *str, char *data,T_PkgType *tp);
-/* Ö±½Ó´Ó½á¹¹ÖĞÉú³É Update
+/* ç›´æ¥ä»ç»“æ„ä¸­ç”Ÿæˆ Update
 */
 extern char *mk_update(char *str,void  *data,T_PkgType *tp);
 
@@ -181,7 +181,7 @@ extern int get_one_str(char *str,void *data,T_PkgType *pkg_type,char dlmt);
 extern int put_str_one(void *data,char *str,T_PkgType *pkg_type,char dlmt);
 #define put_one(data,str,pkg_type,i,dlmt) put_str_one((data),(str),&(pkg_type)[(i)],(dlmt))
 /*******************************************
- * ÕÒ±ğÃû
+ * æ‰¾åˆ«å
  *******************************************/
 extern const char *plain_name(const char *name);
 extern int pkg_getnum(const char *key,T_PkgType *tpl);
@@ -194,14 +194,14 @@ extern int putitem_idx(void *stu,char *buf,T_PkgType *tpl,const char *key,const 
 #define putitem(stu,buf,tpl,key) getitem_idx((stu),(buf),(tpl),(key),0,0)
 extern int data_init(void *data,T_PkgType *type);
 extern char *mk_col_idx(T_PkgType *tpl);
-/* Ë«Ğ´srcÖĞµÄµ¥ÒıºÅ ·µ»ØÎ²²¿ */
+/* åŒå†™srcä¸­çš„å•å¼•å· è¿”å›å°¾éƒ¨ */
 char * ext_copy(char *dest,const char *src);
-/* ÅĞ¶Ï¸ñÊ½Óï¾äÊÇ·ñtimestamp ÀàĞÍ */
+/* åˆ¤æ–­æ ¼å¼è¯­å¥æ˜¯å¦timestamp ç±»å‹ */
 char * is_timestamp(const char *format);
 extern int index_col(const char *idx,int colnum,const char *key,T_PkgType *tp);
-/* ´ÓÄ£°åÖĞÑ¡È¡³ıÈ¥exceptÖ®ÍâµÄÁĞÃû->buf,·µ»ØÁĞÊı */
+/* ä»æ¨¡æ¿ä¸­é€‰å–é™¤å»exceptä¹‹å¤–çš„åˆ—å->buf,è¿”å›åˆ—æ•° */
 int except_col(char *buf,T_PkgType *tp,const char *except);
-/* Çå³ıÄ£°åÖĞµÄ°ó¶¨±êÖ¾£¬flg=NOINS or RETURNING or NOSELECT */
+/* æ¸…é™¤æ¨¡æ¿ä¸­çš„ç»‘å®šæ ‡å¿—ï¼Œflg=NOINS or RETURNING or NOSELECT */
 #define ALL_BINDTYPE -1
 void clean_bindtype(T_PkgType *tp,int flg);
 int set_bindtype_idx(T_PkgType *tp,int bindtype,const char *choose,int cols,char *idx);
@@ -209,8 +209,8 @@ int set_bindtype_idx(T_PkgType *tp,int bindtype,const char *choose,int cols,char
 #ifdef __cplusplus
 }
 #endif
-/* set_bindtype():ÉèÖÃÄ£°åÖĞµÄbindtype,chooseÊÇÁĞÃûÁĞ±í,NULLÈ«²¿ÁĞ¡£
-   bindtype¿ÉÒÔÊÇ0,NOSELECT,NOINSERT,NOSELECT|NOINSERT....
+/* set_bindtype():è®¾ç½®æ¨¡æ¿ä¸­çš„bindtype,chooseæ˜¯åˆ—ååˆ—è¡¨,NULLå…¨éƒ¨åˆ—ã€‚
+   bindtypeå¯ä»¥æ˜¯0,NOSELECT,NOINSERT,NOSELECT|NOINSERT....
 */
 #define set_bindtype(tp,bindtype,choose) set_bindtype_idx((tp),(bindtype),(choose),0,NULL)
 

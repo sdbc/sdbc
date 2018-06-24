@@ -1,5 +1,5 @@
 /********************************************************
- * Binary_search.h,Í¨ÓÃ¶þ·Ö·¨²éÕÒ³ÌÐò
+ * Binary_search.h,é€šç”¨äºŒåˆ†æ³•æŸ¥æ‰¾ç¨‹åº
  ********************************************************/
 #ifndef BINARY_SEARCH
 #define BINARY_SEARCH
@@ -7,21 +7,21 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-//·µ»ØÊý×éµÄÏÂ±ê£¬-1Ã»ÕÒµ½
-int Binary_EQUAL(void *key,		//²éÕÒ¼üÖµ£¬ÀàÐÍÓëdataÏàÍ¬
-		  void *data,		//ÅÅÐòµÄÊý¾ÝÊý×é£¬ÀàÐÍÓÉÓ¦ÓÃ×Ô¶¨Òå
-		  int data_count,	//Êý×éµÄ´óÐ¡
-//±È½Ïº¯Êý¡£Èç¹ûÊý×éÊÇÔöÐòÅÅÁÐ,·µ»Ødata[n]-*key£¬·ñÔò·µ»Ø*key-data[n]¡£
-		  int (*compare)(void *key,void *data,int n));
-//GT,LTµÈ´ó¡¢Ð¡Ö¸µÄÊý×éË³ÐòµÄ´ó¡¢Ð¡£¬×¢Òâ·´ÐòµÄÊý×é
+//è¿”å›žæ•°ç»„çš„ä¸‹æ ‡ï¼Œ-1æ²¡æ‰¾åˆ°
+int Binary_EQUAL(void *key,		//æŸ¥æ‰¾é”®å€¼ï¼Œç±»åž‹ä¸Ždataç›¸åŒ
+				 void *data,		//æŽ’åºçš„æ•°æ®æ•°ç»„ï¼Œç±»åž‹ç”±åº”ç”¨è‡ªå®šä¹‰
+				 int data_count,	//æ•°ç»„çš„å¤§å°
+//æ¯”è¾ƒå‡½æ•°ã€‚å¦‚æžœæ•°ç»„æ˜¯å¢žåºæŽ’åˆ—,è¿”å›ždata[n]-*keyï¼Œå¦åˆ™è¿”å›ž*key-data[n]ã€‚
+				 int (*compare)(void *key,void *data,int n));
+//GT,LTç­‰å¤§ã€å°æŒ‡çš„æ•°ç»„é¡ºåºçš„å¤§ã€å°ï¼Œæ³¨æ„ååºçš„æ•°ç»„
 int Binary_GT(void *key,void *data,int data_count,int (*compare)(void *key,void *data,int n));
 int Binary_GTEQ(void *key,void *data,int data_count,int (*compare)(void *key,void *data,int n));
 int Binary_LT(void *key,void *data,int data_count,int (*compare)(void *key,void *data,int n));
 int Binary_LTEQ(void *key,void *data,int data_count,int (*compare)(void *key,void *data,int n));
-//ÒÔÏÂÊÊÓÃÓÚ´øÖØ¸´ÖµµÄÓÐÐòÊý×é
-//=keyµÄµÚÒ»¸öÔªËØµÄÏÂ±ê£¬-1=Ã»ÕÒµ½,×¢Òâ£ºÓëSTL²»Í¬
+//ä»¥ä¸‹é€‚ç”¨äºŽå¸¦é‡å¤å€¼çš„æœ‰åºæ•°ç»„
+//=keyçš„ç¬¬ä¸€ä¸ªå…ƒç´ çš„ä¸‹æ ‡ï¼Œ-1=æ²¡æ‰¾åˆ°,æ³¨æ„ï¼šä¸ŽSTLä¸åŒ
 int lowerBound(void *key,void *data,int data_count,int (*compare)(void *key,void *data,int n));
-//>keyµÄµÚÒ»¸öÔªËØµÄÏÂ±ê£¬-1=Ã»ÕÒµ½ ÕâÑù¿ÉÒÔ×éºÏ³ö¸÷ÖÖ²éÑ¯Ìõ¼þÈç£º>,>=,<,<=.
+//>keyçš„ç¬¬ä¸€ä¸ªå…ƒç´ çš„ä¸‹æ ‡ï¼Œ-1=æ²¡æ‰¾åˆ° è¿™æ ·å¯ä»¥ç»„åˆå‡ºå„ç§æŸ¥è¯¢æ¡ä»¶å¦‚ï¼š>,>=,<,<=.
 int upperBound(void *key,void *data,int data_count,int (*compare)(void *key,void *data,int n));
 
 #ifdef __cplusplus

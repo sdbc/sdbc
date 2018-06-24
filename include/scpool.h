@@ -1,5 +1,5 @@
-//  SDBC 7.3 ÈıÎ¬Á¬½Ó³Ø
-//  Ö§³Ö½»Ò×Â·ÓÉ¡¢¸ºÔØ¾ùºâ/Èİ´í¡¢×ÔÓúÊ½Á¬½Ó³Ø
+//  SDBC 7.3 ä¸‰ç»´è¿æ¥æ± 
+//  æ”¯æŒäº¤æ˜“è·¯ç”±ã€è´Ÿè½½å‡è¡¡/å®¹é”™ã€è‡ªæ„ˆå¼è¿æ¥æ± 
 #ifndef SCPOOL
 #define SCPOOL
 
@@ -28,8 +28,8 @@ void scpool_check(void);
 resource * get_path_resource(int poolno,int path_no,int flg);
 int getPathNum(int poolno);
 
-//flg>0:Ã¦Ê±µÈ´ıflg´Î£¬Ã¿´Î6Ãë,flg=0,²»µÈ´ı,flg=-1ÓÀÔ¶µÈ´ı
-//return£ºNULLÃ»ÓĞ¿ÕÏĞµÄÁ¬½Ó,-1:Á¬½ÓÒÑËğ»µ,ÆäËû:·µ»ØÁ¬½Ó
+//flg>0:å¿™æ—¶ç­‰å¾…flgæ¬¡ï¼Œæ¯æ¬¡6ç§’,flg=0,ä¸ç­‰å¾…,flg=-1æ°¸è¿œç­‰å¾…
+//returnï¼šNULLæ²¡æœ‰ç©ºé—²çš„è¿æ¥,-1:è¿æ¥å·²æŸå,å…¶ä»–:è¿”å›è¿æ¥
 T_Connect * get_SC_connect(int poolno,int flg);
 
 void release_SC_connect(T_Connect **Connect,int poolno);
@@ -51,4 +51,4 @@ int unbind_sc(int TCBno);
 }
 #endif
 
-#endif 
+#endif

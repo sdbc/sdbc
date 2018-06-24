@@ -2,18 +2,18 @@
 #define MULTI_HASH
 
 /**
- * ²úÉú ¿ÉÒÔÖØ¸´¼üÖµµÄ¾²Ì¬hash±í
- * Ô­Êı¾İ±ØĞëÊÇÊı×é£¬ÖØ¸´¼üÖµ±ØĞëÅÅÔÚÒ»Æğ
- * hashÒ»µ©½¨Á¢£¬Ô­Êı¾İ²»ÄÜÔö¡¢É¾¡¢¸Ä£¬·ñÔòÖØ½¨hash±í
+ * äº§ç”Ÿ å¯ä»¥é‡å¤é”®å€¼çš„é™æ€hashè¡¨
+ * åŸæ•°æ®å¿…é¡»æ˜¯æ•°ç»„ï¼Œé‡å¤é”®å€¼å¿…é¡»æ’åœ¨ä¸€èµ·
+ * hashä¸€æ—¦å»ºç«‹ï¼ŒåŸæ•°æ®ä¸èƒ½å¢ã€åˆ ã€æ”¹ï¼Œå¦åˆ™é‡å»ºhashè¡¨
  */
 typedef struct {
-	void *data;		//Ô­Êı¾İÊı×é
-	int  data_count;	//Ô­Êı¾İµÄ³ß´ç
-	int  key_count;		//¼üÊıÁ¿£¬Èç¹ûÃ»ÓĞÖØÂë£¬=data_count
-	int (*do_hash)(void *key,int key_count);//hashº¯Êı
-	void *(*getdata)(void *data,int n);//È¡Êı¾İµÄº¯Êı£¬·µ»Ø&data[n]
-	int (*key_cmp)(void *data,void *key);//±È½Ï&data[n]ºÍkeyµÄº¯Êı,ÏàµÈ·µ»Ø0
-	void *index;//Ë÷Òı±í£¬ÓÉmulti_hashÉú³É£¬ÓÃ±ÏĞè×Ô¼ºÊÍ·Å
+	void *data;		//åŸæ•°æ®æ•°ç»„
+	int  data_count;	//åŸæ•°æ®çš„å°ºå¯¸
+	int  key_count;		//é”®æ•°é‡ï¼Œå¦‚æœæ²¡æœ‰é‡ç ï¼Œ=data_count
+	int (*do_hash)(void *key,int key_count);//hashå‡½æ•°
+	void *(*getdata)(void *data,int n);//å–æ•°æ®çš„å‡½æ•°ï¼Œè¿”å›&data[n]
+	int (*key_cmp)(void *data,void *key);//æ¯”è¾ƒ&data[n]å’Œkeyçš„å‡½æ•°,ç›¸ç­‰è¿”å›0
+	void *index;//ç´¢å¼•è¡¨ï¼Œç”±multi_hashç”Ÿæˆï¼Œç”¨æ¯•éœ€è‡ªå·±é‡Šæ”¾
 } hash_paramiter;
 
 #ifdef __cplusplus
@@ -21,18 +21,18 @@ extern "C" {
 #endif
 
 /**
- * ²úÉú ¿ÉÒÔÖØ¸´¼üÖµµÄhash±í
- * Ô­Êı¾İ±ØĞëÊÇÊı×é£¬ÖØ¸´¼üÖµ±ØĞëÅÅÔÚÒ»Æğ
- * paraÊÇhash²ÎÊı±í
- * mult_hash()·µ»Ø³åÍ»Êı£¬Ò»°ãÊÇkey_countµÄ1/3×óÓÒ,¹©Ñ¡Ôñdo_hashÊ±×ö²Î¿¼¡£
+ * äº§ç”Ÿ å¯ä»¥é‡å¤é”®å€¼çš„hashè¡¨
+ * åŸæ•°æ®å¿…é¡»æ˜¯æ•°ç»„ï¼Œé‡å¤é”®å€¼å¿…é¡»æ’åœ¨ä¸€èµ·
+ * paraæ˜¯hashå‚æ•°è¡¨
+ * mult_hash()è¿”å›å†²çªæ•°ï¼Œä¸€èˆ¬æ˜¯key_countçš„1/3å·¦å³,ä¾›é€‰æ‹©do_hashæ—¶åšå‚è€ƒã€‚
  */
 int multi_hash(hash_paramiter *param);
 
 /**
- * ¼ìË÷mukti_hash
- * paraÊÇhash²ÎÊı±í,Óëmulti_hashÏàÍ¬
- * ·µ»ØÖµÊÇÊı¾İÏÂ±ê¡£-1Ã»ÕÒµ½
- * a_count·µ»Ø¸ÃkeyÏÂÊı¾İµÄÊıÁ¿
+ * æ£€ç´¢mukti_hash
+ * paraæ˜¯hashå‚æ•°è¡¨,ä¸multi_hashç›¸åŒ
+ * è¿”å›å€¼æ˜¯æ•°æ®ä¸‹æ ‡ã€‚-1æ²¡æ‰¾åˆ°
+ * a_countè¿”å›è¯¥keyä¸‹æ•°æ®çš„æ•°é‡
  */
 int multi_hash_find(void *key,hash_paramiter *para,int *a_count);
 
