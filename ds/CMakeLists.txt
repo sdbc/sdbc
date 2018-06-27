@@ -1,0 +1,12 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+PROJECT(ds C)
+
+SET(CMAKE_BUILD_TYPE type_of_build)
+SET(CMAKE_C_FLAGS "-Werror -O3 -m64 -fPIC -g")
+
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/../include ${PROJECT_SOURCE_DIR})
+
+SET(SRC_LIST getdw.c tree.c tree_del.c multi_hash.c Binary_search.c bound.c)
+
+ADD_LIBRARY(${PROJECT_NAME} STATIC ${SRC_LIST})
